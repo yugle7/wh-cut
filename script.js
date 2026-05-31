@@ -179,8 +179,8 @@ function handleMouseUp() {
     }
 }
 
-document.onmousemove = handleMouseMove;
-document.onmouseup = handleMouseUp;
+document.onmousemove = document.ontouchmove = handleMouseMove;
+document.onmouseup = document.ontouchend = handleMouseUp;
 document.onmouseleave = handleMouseUp;
 
 // 1.1. Навигация
@@ -245,8 +245,7 @@ const sheetHeightDefault = 2070;
 
 // 2.2 Разделитель
 
-settingGutter.onmousedown = handleMouseDown;
-
+settingGutter.onmousedown = settingGutter.ontouchstart = handleMouseDown;
 
 // 2.2 Отображение данных
 
@@ -766,7 +765,7 @@ let takeState;
 
 // 3.2. Разделитель
 
-cuttingGutter.onmousedown = handleMouseDown;
+cuttingGutter.onmousedown = cuttingGutter.ontouchstart = handleMouseDown;
 
 // 3.2. Управление
 
@@ -807,11 +806,11 @@ const setPieces = () => {
     takeCounts = [...src.getElementsByClassName('value')];
 
     takePieces.forEach((q) => {
-        q.onmousedown = (e) => {
+        q.onmousedown = q.ontouchstart = (e) => {
             onMouseDown(e, dragTakePiece);
             setCutDirectionButton(cutDirection);
         }
-        q.onmouseup = () => {
+        q.onmouseup = q.ontouchend = () => {
             takePiece = q;
             toSelect(q);
         };
@@ -832,11 +831,11 @@ const addPieces = () => {
         q.style.aspectRatio = `${p.width} / ${p.height}`;
         q.style.backgroundColor = p.color;
 
-        q.onmousedown = (e) => {
+        q.onmousedown = q.ontouchstart = (e) => {
             onMouseDown(e, dragTakePiece);
             setCutDirectionButton(cutDirection);
         }
-        q.onmouseup = () => {
+        q.onmouseup = q.ontouchend = () => {
             takePiece = q;
             toSelect(q);
         };
@@ -909,7 +908,9 @@ const dropDragPiece = (e) => {
         cancelDragPiece();
     }
     window.removeEventListener('mousemove', toDragPiece);
+    window.removeEventListener('touchmove', toDragPiece);
     window.removeEventListener('mouseup', dropDragPiece);
+    window.removeEventListener('touchend', dropDragPiece);
 
     startPoint = null;
 }
@@ -1121,11 +1122,10 @@ const addDropPiece = () => {
     }
     dragPiece.style.width = 100 * dragState.width / dropState.width + '%';
 
-    dragPiece.onmousedown = (e) => onMouseDown(e, dragDropPiece);
-    dragPiece.onmouseup = (e) => {
+    dragPiece.onmousedown = dragPiece.ontouchstart = (e) => onMouseDown(e, dragDropPiece);
+    dragPiece.onmouseup = dragPiece.ontouchend = (e) => {
         e.preventDefault();
         if (click) {
-            console.log('dragPiece.onmouseup')
             dragPiece = e.currentTarget;
             dropPlace = dragPiece.parentElement;
 
@@ -1228,7 +1228,9 @@ const dragTakePiece = (x, y, t) => {
     if (selected !== dragPiece) toSelect(dragPiece);
 
     window.addEventListener('mousemove', toDragPiece);
+    window.addEventListener('touchmove', toDragPiece);
     window.addEventListener('mouseup', dropDragPiece);
+    window.addEventListener('touchend', dropDragPiece);
 }
 
 const dragDropPiece = (x, y, t) => {
@@ -1255,7 +1257,9 @@ const dragDropPiece = (x, y, t) => {
     }
 
     window.addEventListener('mousemove', toDragPiece);
+    window.addEventListener('touchmove', toDragPiece);
     window.addEventListener('mouseup', dropDragPiece);
+    window.addEventListener('touchend', dropDragPiece);
 }
 
 const toDragPiece = (e) => {
@@ -1267,7 +1271,7 @@ const toDragPiece = (e) => {
     dragPoint.x = e.clientX;
     dragPoint.y = e.clientY;
 
-    dragPiece.style.left = startPoint.left + dragPoint.x  - startPoint.x + 'px';
+    dragPiece.style.left = startPoint.left + dragPoint.x - startPoint.x + 'px';
     dragPiece.style.top = startPoint.top + dragPoint.y - startPoint.y + 'px';
 }
 
@@ -1316,9 +1320,9 @@ const toSelect = (q) => {
     }
 }
 
-window.addEventListener('mouseup', () => (click = null));
+const endClick = () => (click = null);
 
-window.addEventListener('mousemove', (e) => {
+const tryStartDrag = () => {
     if (click) {
         if ((Math.abs(click.x - e.clientX) > MIN_DRAG || Math.abs(click.y - e.clientY) > MIN_DRAG)) {
             const {x, y, t, f} = click;
@@ -1326,7 +1330,13 @@ window.addEventListener('mousemove', (e) => {
             f(x, y, t);
         }
     }
-});
+}
+
+window.addEventListener('mouseup', endClick);
+window.addEventListener('touchend', endClick);
+
+window.addEventListener('mousemove', tryStartDrag);
+window.addEventListener('touchmove', tryStartDrag);
 
 // Автосохранение
 
