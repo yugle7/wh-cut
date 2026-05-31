@@ -76,7 +76,6 @@ const cuttingGutter = document.getElementById("cutting-gutter");
 const toolsBlock = document.getElementById("tools");
 const cutDirectionButton = document.getElementById("cut-direction");
 const rotatePieceButton = document.getElementById("rotate-piece");
-const cutSheetsButton = document.getElementById("cut-sheets");
 
 const src = document.getElementById("src");
 const dst = document.getElementById("dst");
