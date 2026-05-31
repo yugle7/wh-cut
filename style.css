@@ -1,0 +1,547 @@
+:root {
+    --bg-header: #1e1e1e;
+    --bg-primary: #222;
+    --bg-secondary: #444;
+    --bg-hover: #262626;
+    --white: #bbb;
+    --white-max: #fff;
+    --green: #3fa883;
+    --green-max: #318b5b;
+    --blue: #6f77d6;
+    --blue-max: #5d68dc;
+    --red: #c37168;
+    --red-max: #dc685d;
+    --yellow: #d3b053;
+    --yellow-max: #f2ca4b;
+    --bg-selected: #202523;
+    --saturation: 40%;
+    --lightness: 40%;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    border: none;
+    line-height: 1.5;
+    font-weight: 400;
+    font-size: 18px;
+    font-family: monospace,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Open Sans Mono",
+    "Helvetica Neue",
+    sans-serif;
+    color: var(--white);
+    user-select: none; /* Запрещаем выделение текста при перетаскивании */
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+select,
+textarea,
+body {
+    background-color: var(--bg-primary);
+}
+
+#main {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 50px 20px;
+    max-width: 700px;
+}
+
+a, li {
+    cursor: pointer;
+}
+
+li:hover,
+a:hover {
+    opacity: 0.8;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.hided {
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 60px;
+}
+
+.gutter {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: calc(50% - 2px);
+    width: 5px;
+    background-color: var(--bg-secondary);
+    z-index: 1000;
+    cursor: col-resize;
+    user-select: none;
+}
+
+.left {
+    padding-left: 50px;
+}
+
+.right {
+    position: relative;
+    padding-right: 10px;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    z-index: 9999;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 1px 0 0 0 var(--bg-secondary);
+    background-color: var(--bg-header);
+}
+
+
+.title {
+    color: var(--green);
+    font-size: 26px;
+}
+
+h1, h2 {
+    color: var(--green);
+    outline: none;
+    border: none;
+    cursor: pointer;
+}
+
+h1 {
+    font-size: 30px;
+    padding: 10px 15px;
+}
+
+
+h1:hover,
+h2:hover {
+    opacity: 1;
+}
+
+
+#title:empty::before {
+    content: "Раскрой";
+    opacity: 0.5;
+    color: var(--white);
+}
+
+
+button {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+}
+
+
+svg {
+    background: transparent;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+
+.up {
+    position: sticky;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    left: 0;
+    right: 0;
+    top: 0;
+
+}
+
+nav h3 {
+    color: gray;
+}
+
+
+#to-left,
+#to-right {
+    display: none;
+}
+
+input {
+    background: transparent;
+}
+
+
+.section,
+section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    min-height: 50px;
+    padding: 5px 5px 5px 15px;
+}
+
+ol {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+
+#setting .selected {
+    /*box-shadow: 0 -2px 0 var(--green), 0 2px 0 var(--green);*/
+    /*background-color: var(--bg-selected);*/
+    background-color: #2c3532;
+}
+
+#cutting .selected {
+    --lightness: 50%;
+}
+
+.section span,
+.section div,
+section div {
+    display: flex;
+    align-items: center;
+}
+
+
+.yellow {
+    stroke: var(--yellow);
+}
+
+.red {
+    stroke: var(--red);
+}
+
+.green {
+    stroke: var(--green);
+}
+
+.blue {
+    stroke: var(--blue);
+}
+
+.gray {
+    stroke: gray;
+}
+
+
+button {
+    background: transparent;
+}
+
+input {
+    font: inherit;
+    border: none;
+    outline: none;
+    width: auto;
+    field-sizing: content;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    appearance: textfield;
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.menu {
+    background: transparent;
+    width: 50px;
+    height: 50px;
+    padding: 13px;
+    cursor: pointer;
+}
+
+.icon {
+    background: transparent;
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.menu:hover,
+.icon:hover {
+    transform: scale(1.1);
+}
+
+.menu svg,
+.icon svg {
+    width: auto;
+    height: 24px;
+}
+
+#erase {
+    display: none;
+}
+
+article {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    height: 100vh;
+    width: 100%;
+}
+
+.side {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 10px;
+}
+
+form {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+textarea {
+    width: 100%;
+    border: none;
+    outline: none;
+    resize: none;
+    overflow: hidden;
+}
+
+
+.button {
+    padding: 16px 32px;
+    font-size: 1.1rem;
+    background: var(--green);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+
+.button:hover {
+    transform: scale(1.01);
+}
+
+.section,
+button,
+h1, h2 {
+    opacity: 0.8;
+}
+
+*:hover {
+    opacity: 1;
+}
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+section button {
+    height: 100%;
+}
+
+input,
+select {
+    width: fit-content;
+    outline: none;
+    vertical-align: middle;
+}
+
+
+ol {
+    list-style: none;
+    counter-reset: item;
+    padding-left: 0;
+}
+
+ul li {
+    counter-increment: item;
+    margin-top: 12px;
+}
+
+ul li::before {
+    content: counter(item) " ";
+    color: var(--green-max);
+    font-size: 0.85em;
+    font-weight: normal;
+    display: inline-block;
+    text-align: right;
+    width: 2.5rem;
+    padding-right: 0.5rem;
+    margin-left: -0.5rem;
+}
+
+
+@media (max-width: 500px) {
+    #to-left,
+    #to-right {
+        display: inherit;
+    }
+
+    .gutter {
+        display: none;
+    }
+}
+
+/* Кнопки */
+
+button:focus {
+    outline: none;
+}
+
+
+.line {
+    width: 60px;
+    height: 5px;
+}
+
+.how {
+    display: flex;
+    gap: 6px;
+    align-items: end;
+}
+
+.unit {
+    color: gray;
+    opacity: 0.5;
+    font-size: 16px;
+    padding-left: 5px;
+}
+
+
+.delete {
+    color: var(--red);
+    font-size: 16px;
+    transition: 0.5s;
+}
+
+.delete:hover {
+    color: var(--red-max);
+
+}
+
+button:disabled svg {
+    stroke: gray;
+}
+
+#piece-edging {
+    padding: 20px;
+}
+
+#piece-edging div {
+    width: 60px;
+    height: 60px;
+    position: relative;
+}
+
+#dst {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    width: 100%;
+    gap: 20px;
+}
+
+#src {
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+    width: calc(100% - 70px);
+    margin: 15px;
+}
+
+#src div,
+#dst div {
+    width: 100%;
+}
+
+.center {
+    display: flex;
+    align-items: center;
+}
+
+
+#tools {
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.place {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.edge {
+    background: gray;
+    position: relative;
+}
+
+.drop {
+    background-color: var(--bg-header);
+    position: absolute;
+    transition: all 0.2s ease;
+}
+
+.cut {
+    position: absolute;
+    z-index: 1000;
+    background: gray;
+}
+
+.take {
+    cursor: grab;
+}
+
+.drag {
+    cursor: grabbing;
+    position: absolute;
+    z-index: 1000;
+    transition: transform 0.05s linear;
+}
+
+.to-cut {
+    padding-right: 20px;
+    opacity: 0.5;
+}
+

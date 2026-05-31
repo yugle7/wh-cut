@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Перевод</title>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+
+<body>
+<article id="main">
+    <button id="create-task" class="button">Создать раскрой</button>
+    <ol id="tasks"></ol>
+</article>
+
+<article id="setting" class="hidden">
+    <div class="side left">
+        <h1 id="task-title" contenteditable="plaintext-only"></h1>
+
+        <button id="to-update-sheet" class="section">
+            <span></span>
+            <span></span>
+        </button>
+
+        <br>
+        <button id="to-create-scrap" class="section">
+            <span class="title">Обрезки</span>
+            <svg class="icon yellow">
+                <use href="sprite.svg#plus"></use>
+            </svg>
+        </button>
+        <ol id="scraps"></ol>
+
+        <br>
+        <button id="to-create-edging" class="section">
+            <span class="title">Кромки</span>
+            <svg class="icon yellow">
+                <use href="sprite.svg#plus"></use>
+            </svg>
+        </button>
+        <ol id="edgings"></ol>
+
+        <br>
+        <button id="to-create-piece" class="section">
+            <span class="title">Детали</span>
+            <svg class="icon yellow nav">
+                <use href="sprite.svg#plus"></use>
+            </svg>
+        </button>
+        <ol id="pieces"></ol>
+    </div>
+
+    <div id="setting-gutter" class="gutter"></div>
+
+    <div class="side right">
+        <nav class="up">
+            <button id="remove" class="icon">
+                <svg class="red">
+                    <use href="sprite.svg#x"></use>
+                </svg>
+            </button>
+            <h3 id="form">Задание</h3>
+            <button id="update" class="icon">
+                <svg class="green">
+                    <use href="sprite.svg#save"></use>
+                </svg>
+            </button>
+            <button id="create" class="icon hidden">
+                <svg class="green">
+                    <use href="sprite.svg#plus"></use>
+                </svg>
+            </button>
+        </nav>
+
+        <form id="sheet">
+            <section>
+                <label for="task-kerf">Ширина реза</label>
+                <input type="number" id="task-kerf" placeholder="мм"/>
+            </section>
+            <section>
+                <span>Размеры листа</span>
+                <div>
+                    <label>
+                        <input type="number" id="sheet-width" placeholder="ширина" autocomplete="off"/>
+                    </label>
+                    <svg class="icon gray">
+                        <use href="sprite.svg#x"></use>
+                    </svg>
+                    <label>
+                        <input type="number" id="sheet-height" placeholder="высота" autocomplete="off"/>
+                    </label>
+                </div>
+            </section>
+            <section>
+                <label for="sheet-edge">Отступ от края</label>
+                <input type="number" id="sheet-edge" placeholder="мм" autocomplete="off"/>
+            </section>
+        </form>
+
+        <form id="scrap" class="hidden">
+            <section>
+                <span>Размеры</span>
+                <div>
+                    <label>
+                        <input type="number" id="scrap-width" placeholder="ширина" autocomplete="off"/>
+                    </label>
+                    <svg class="icon gray">
+                        <use href="sprite.svg#x"></use>
+                    </svg>
+                    <label>
+                        <input type="number" id="scrap-height" placeholder="высота" autocomplete="off"/>
+                    </label>
+                </div>
+            </section>
+            <section>
+                <label for="scrap-edge">Отступ от края</label>
+                <input type="number" id="scrap-edge" placeholder="мм" autocomplete="off"/>
+            </section>
+            <section>
+                <label for="scrap-count">Количество</label>
+                <input type="number" id="scrap-count" placeholder="шт" autocomplete="off"/>
+            </section>
+        </form>
+
+        <form id="edging" class="hidden">
+            <section>
+                <label for="edging-line">Линия</label>
+                <button id="edging-line"></button>
+            </section>
+            <section>
+                <label for="edging-thick">Толщина</label>
+                <input type="number" step="0.1" id="edging-thick" placeholder="мм" autocomplete="off"/>
+            </section>
+        </form>
+
+        <form id="piece" class="hidden">
+            <section>
+                <span>Размеры</span>
+                <div>
+                    <label>
+                        <input type="number" id="piece-width" placeholder="ширина" autocomplete="off"/>
+                    </label>
+                    <svg class="icon gray">
+                        <use href="sprite.svg#x"></use>
+                    </svg>
+                    <label>
+                        <input type="number" id="piece-height" placeholder="высота" autocomplete="off"/>
+                    </label>
+                </div>
+            </section>
+            <section>
+                <label for="piece-rotated">Можно вращать</label>
+                <button id="piece-rotated"></button>
+            </section>
+            <section>
+                <label for="piece-count">Количество</label>
+                <input type="number" id="piece-count" placeholder="шт" autocomplete="off"/>
+            </section>
+            <section>
+                <label for="piece-edging-up">Кромка сверху</label>
+                <button id="piece-edging-up"></button>
+            </section>
+            <section>
+                <label for="piece-edging-down">Кромка снизу</label>
+                <button id="piece-edging-down"></button>
+            </section>
+            <section>
+                <label for="piece-edging-left">Кромка слева</label>
+                <button id="piece-edging-left"></button>
+            </section>
+            <section>
+                <label for="piece-edging-right">Кромка справа</label>
+                <button id="piece-edging-right"></button>
+            </section>
+        </form>
+    </div>
+
+</article>
+
+<nav id="header" class="header hidden">
+    <button id="to-main" class="menu">
+        <svg class="blue">
+            <use href="sprite.svg#back"></use>
+        </svg>
+    </button>
+    <button id="to-setting" class="menu">
+        <svg class="yellow">
+            <use href="sprite.svg#set"></use>
+        </svg>
+    </button>
+    <button id="to-cutting" class="menu">
+        <svg class="yellow">
+            <use href="sprite.svg#cut"></use>
+        </svg>
+    </button>
+    <button id="remove-task" class="menu">
+        <svg class="red">
+            <use href="sprite.svg#delete"></use>
+        </svg>
+    </button>
+    <button id="download-cutting" class="menu hidden">
+        <svg class="green">
+            <use href="sprite.svg#download"></use>
+        </svg>
+    </button>
+    <div id="tools" class="hidden">
+        <button id="rotate-piece" class="menu">
+            <svg class="gray">
+                <use href="sprite.svg#rotate"></use>
+            </svg>
+        </button>
+        <button id="cut-direction" class="menu">
+            <svg class="gray">
+                <use href="sprite.svg#direction"></use>
+            </svg>
+        </button>
+        <button id="cut-sheets" class="menu">
+            <svg class="gray">
+                <use href="sprite.svg#cut"></use>
+            </svg>
+        </button>
+    </div>
+</nav>
+
+<article id="cutting" class="hidden">
+    <div class="side left">
+        <div id="dst">
+
+        </div>
+    </div>
+    <div id="cutting-gutter" class="gutter"></div>
+    <div class="side right">
+        <div id="src">
+
+        </div>
+    </div>
+
+</article>
+
+<script src="script.js"></script>
+
+</body>
+</html>
