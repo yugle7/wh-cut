@@ -140,6 +140,7 @@ const minWidth = 150;
 const maxWidth = 100000;
 
 function handleMouseDown(e) {
+    e.preventDefault();
     gutter = e.target;
     isDragging = true;
     wasDragging = false;
@@ -147,11 +148,11 @@ function handleMouseDown(e) {
     document.body.style.cursor = "col-resize";
     startX = e.clientX;
     startLeftWith = page.firstElementChild.getBoundingClientRect().width;
-    e.preventDefault();
 }
 
 function handleMouseMove(e) {
     if (!isDragging) return;
+    e.preventDefault();
 
     wasDragging = true;
     if (clickTimeout) {
@@ -180,8 +181,7 @@ function handleMouseUp() {
 }
 
 document.onmousemove = document.ontouchmove = handleMouseMove;
-document.onmouseup = document.ontouchend = handleMouseUp;
-document.onmouseleave = handleMouseUp;
+document.onmouseup = document.ontouchend = document.onmouseleave = handleMouseUp;
 
 // 1.1. Навигация
 
@@ -1300,6 +1300,7 @@ cutDirectionButton.onclick = () => {
 // Нажатия мышкой
 
 const onMouseDown = (e, f) => {
+    e.preventDefault();
     click = {
         x: e.clientX,
         y: e.clientY,
