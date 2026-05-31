@@ -1122,7 +1122,6 @@ const addDropPiece = () => {
 
     dragPiece.onpointerdown = (e) => onMouseDown(e, dragDropPiece);
     dragPiece.onpointerup = (e) => {
-        e.preventDefault();
         if (click) {
             dragPiece = e.currentTarget;
             dropPlace = dragPiece.parentElement;
