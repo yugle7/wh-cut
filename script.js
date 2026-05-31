@@ -1322,7 +1322,7 @@ const toSelect = (q) => {
 
 const endClick = () => (click = null);
 
-const tryStartDrag = () => {
+const tryStartDrag = (e) => {
     if (click) {
         if ((Math.abs(click.x - e.clientX) > MIN_DRAG || Math.abs(click.y - e.clientY) > MIN_DRAG)) {
             const {x, y, t, f} = click;
