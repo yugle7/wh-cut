@@ -180,8 +180,8 @@ function handleMouseUp() {
     }
 }
 
-document.onmousemove = document.ontouchmove = handleMouseMove;
-document.onmouseup = document.ontouchend = document.onmouseleave = handleMouseUp;
+document.onpointermove = handleMouseMove;
+document.onpointerup = document.onmouseleave = handleMouseUp;
 
 // 1.1. Навигация
 
@@ -245,7 +245,7 @@ const sheetHeightDefault = 2070;
 
 // 2.2 Разделитель
 
-settingGutter.onmousedown = settingGutter.ontouchstart = handleMouseDown;
+settingGutter.onpointerdown = handleMouseDown;
 
 // 2.2 Отображение данных
 
@@ -765,7 +765,7 @@ let takeState;
 
 // 3.2. Разделитель
 
-cuttingGutter.onmousedown = cuttingGutter.ontouchstart = handleMouseDown;
+cuttingGutter.onpointerdown = handleMouseDown;
 
 // 3.2. Управление
 
@@ -806,11 +806,11 @@ const setPieces = () => {
     takeCounts = [...src.getElementsByClassName('value')];
 
     takePieces.forEach((q) => {
-        q.onmousedown = q.ontouchstart = (e) => {
+        q.onpointerdown = (e) => {
             onMouseDown(e, dragTakePiece);
             setCutDirectionButton(cutDirection);
         }
-        q.onmouseup = q.ontouchend = () => {
+        q.onpointerup = () => {
             takePiece = q;
             toSelect(q);
         };
@@ -831,11 +831,11 @@ const addPieces = () => {
         q.style.aspectRatio = `${p.width} / ${p.height}`;
         q.style.backgroundColor = p.color;
 
-        q.onmousedown = q.ontouchstart = (e) => {
+        q.onpointerdown = (e) => {
             onMouseDown(e, dragTakePiece);
             setCutDirectionButton(cutDirection);
         }
-        q.onmouseup = q.ontouchend = () => {
+        q.onpointerup = () => {
             takePiece = q;
             toSelect(q);
         };
@@ -907,10 +907,8 @@ const dropDragPiece = (e) => {
     } else {
         cancelDragPiece();
     }
-    window.removeEventListener('mousemove', toDragPiece);
-    window.removeEventListener('touchmove', toDragPiece);
-    window.removeEventListener('mouseup', dropDragPiece);
-    window.removeEventListener('touchend', dropDragPiece);
+    window.removeEventListener('pointermove', toDragPiece);
+    window.removeEventListener('pointerup', dropDragPiece);
 
     startPoint = null;
 }
@@ -1122,8 +1120,8 @@ const addDropPiece = () => {
     }
     dragPiece.style.width = 100 * dragState.width / dropState.width + '%';
 
-    dragPiece.onmousedown = dragPiece.ontouchstart = (e) => onMouseDown(e, dragDropPiece);
-    dragPiece.onmouseup = dragPiece.ontouchend = (e) => {
+    dragPiece.onpointerdown = (e) => onMouseDown(e, dragDropPiece);
+    dragPiece.onpointerup = (e) => {
         e.preventDefault();
         if (click) {
             dragPiece = e.currentTarget;
@@ -1227,10 +1225,8 @@ const dragTakePiece = (x, y, t) => {
     document.body.appendChild(dragPiece);
     if (selected !== dragPiece) toSelect(dragPiece);
 
-    window.addEventListener('mousemove', toDragPiece);
-    window.addEventListener('touchmove', toDragPiece);
-    window.addEventListener('mouseup', dropDragPiece);
-    window.addEventListener('touchend', dropDragPiece);
+    window.addEventListener('pointermove', toDragPiece);
+    window.addEventListener('pointerup', dropDragPiece);
 }
 
 const dragDropPiece = (x, y, t) => {
@@ -1256,10 +1252,8 @@ const dragDropPiece = (x, y, t) => {
         setCutDirectionButton(dragState.cutDirection);
     }
 
-    window.addEventListener('mousemove', toDragPiece);
-    window.addEventListener('touchmove', toDragPiece);
-    window.addEventListener('mouseup', dropDragPiece);
-    window.addEventListener('touchend', dropDragPiece);
+    window.addEventListener('pointermove', toDragPiece);
+    window.addEventListener('pointerup', dropDragPiece);
 }
 
 const toDragPiece = (e) => {
@@ -1333,11 +1327,8 @@ const tryStartDrag = (e) => {
     }
 }
 
-window.addEventListener('mouseup', endClick);
-window.addEventListener('touchend', endClick);
-
-window.addEventListener('mousemove', tryStartDrag);
-window.addEventListener('touchmove', tryStartDrag);
+window.addEventListener('pointerup', endClick);
+window.addEventListener('pointermove', tryStartDrag);
 
 // Автосохранение
 
