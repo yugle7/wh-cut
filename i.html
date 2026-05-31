@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Перетаскивание квадрата — Pointer Events</title>
+    <style>
+        * {
+            user-select: none; /* запрет выделения текста при перетаскивании */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f5f7fc 0%, #e9eef4 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            touch-action: none; /* полностью отключает прокрутку/зум на всей странице (для перетаскивания без помех) */
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .draggable {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: #ff7e5e;
+            background: radial-gradient(circle at 30% 25%, #ff9a6e, #ff5e3a);
+            border-radius: 24px;
+            cursor: grab;
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255,255,255,0.6);
+            transition: box-shadow 0.1s, transform 0.05s linear;
+            touch-action: none;   /* гарантия, что браузер не перехватит события */
+            will-change: transform;
+        }
+
+        .draggable:active {
+            cursor: grabbing;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+            transition: none;
+        }
+
+        /* информация в углу */
+        .info {
+            position: fixed;
+            bottom: 16px;
+            left: 16px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 500;
+            pointer-events: none;
+            font-family: monospace;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="draggable" id="dragSquare"></div>
+</div>
+
+
+<script>
+    (function() {
+        const square = document.getElementById('dragSquare');
+
+        // Состояние перетаскивания
+        let isDragging = false;
+        let startX = 0, startY = 0;      // начальные координаты указателя (client)
+        let startLeft = 0, startTop = 0;  // начальные CSS позиции квадрата
+
+        // Функция получения текущих координат left/top из CSS
+        function getPosition() {
+            const left = parseFloat(square.style.left);
+            const top = parseFloat(square.style.top);
+            return {
+                left: isNaN(left) ? 0 : left,
+                top: isNaN(top) ? 0 : top
+            };
+        }
+
+        // Обработчик начала перетаскивания
+        function onPointerDown(e) {
+            e.preventDefault();
+            square.setPointerCapture(e.pointerId);
+
+            isDragging = true;
+
+            startX = e.clientX;
+            startY = e.clientY;
+
+            const pos = getPosition();
+            startLeft = pos.left;
+            startTop = pos.top;
+
+            square.style.cursor = 'grabbing';
+        }
+
+        // Обработчик движения
+        function onPointerMove(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+
+            square.style.left = startLeft + e.clientX - startX + 'px';
+            square.style.top = startTop + e.clientY - startY + 'px';
+        }
+
+        function onPointerUp(e) {
+            if (!isDragging) return;
+            square.releasePointerCapture(e.pointerId);
+            isDragging = false;
+            square.style.cursor = 'grab';
+        }
+
+
+        square.addEventListener('pointerdown', onPointerDown);
+        window.addEventListener('pointermove', onPointerMove);
+        window.addEventListener('pointerup', onPointerUp);
+        window.addEventListener('pointercancel', onPointerUp);
+
+        // Начальное позиционирование квадрата (по центру экрана)
+        function initPosition() {
+            const left = (window.innerWidth - square.offsetWidth) / 2;
+            const top = (window.innerHeight - square.offsetHeight) / 2;
+            square.style.left = left + 'px';
+            square.style.top = top + 'px';
+            square.style.position = 'absolute';
+        }
+
+        // Пересчитываем позицию при изменении размеров окна (чтобы квадрат не уползал за границы)
+        function onWindowResize() {
+            if (!isDragging) {
+                let currentLeft = parseFloat(square.style.left);
+                let currentTop = parseFloat(square.style.top);
+                const maxX = window.innerWidth - square.offsetWidth;
+                const maxY = window.innerHeight - square.offsetHeight;
+                if (currentLeft > maxX) currentLeft = maxX;
+                if (currentTop > maxY) currentTop = maxY;
+                if (currentLeft < 0) currentLeft = 0;
+                if (currentTop < 0) currentTop = 0;
+                square.style.left = currentLeft + 'px';
+                square.style.top = currentTop + 'px';
+            }
+        }
+
+        initPosition();
+        window.addEventListener('resize', onWindowResize);
+    })();
+</script>
+</body>
+</html>

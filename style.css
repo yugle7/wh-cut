@@ -38,7 +38,8 @@
     "Helvetica Neue",
     sans-serif;
     color: var(--white);
-    user-select: none; /* Запрещаем выделение текста при перетаскивании */
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 *,
@@ -97,6 +98,8 @@ a:hover {
     z-index: 1000;
     cursor: col-resize;
     user-select: none;
+    touch-action: none;
+    will-change: transform;
 }
 
 .left {
@@ -510,6 +513,8 @@ button:disabled svg {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    touch-action: none;
+    will-change: transform;
 }
 
 .edge {
@@ -521,6 +526,8 @@ button:disabled svg {
     background-color: var(--bg-header);
     position: absolute;
     transition: all 0.2s ease;
+    touch-action: none;
+    will-change: transform;
 }
 
 .cut {
@@ -531,6 +538,8 @@ button:disabled svg {
 
 .take {
     cursor: grab;
+    touch-action: none;
+    will-change: transform;
 }
 
 .drag {
@@ -538,6 +547,8 @@ button:disabled svg {
     position: absolute;
     z-index: 1000;
     transition: transform 0.05s linear;
+    touch-action: none;
+    will-change: transform;
 }
 
 .to-cut {

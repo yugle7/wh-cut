@@ -176,10 +176,8 @@ function handlePointerUp(e) {
 
 window.addEventListener('pointermove', handlePointerMove);
 window.addEventListener('pointerup', handlePointerUp);
-// window.addEventListener('mouseleave', handlePointerUp);
-// window.addEventListener('pointercancel', handlePointerUp);
-window.addEventListener('mouseleave', () => console.log('mouseleave'));
-window.addEventListener('pointercancel', () => console.log('pointercancel'));
+window.addEventListener('mouseleave', handlePointerUp);
+window.addEventListener('pointercancel', handlePointerUp);
 
 // 1.1. Навигация
 
@@ -285,7 +283,6 @@ const setSheet = ({width, height, edge}) => {
 // 2.4 Создание
 
 const copyScrapToForm = () => {
-    console.log('copyScrapToForm')
     const q = task.scraps[index];
     scrapWidthInput.value = q.width;
     scrapHeightInput.value = q.height;
@@ -294,7 +291,6 @@ const copyScrapToForm = () => {
 }
 
 const addScrap = ({width, height, edge, count}, i) => {
-    console.log('addScrap')
     let q = document.createElement('li');
     q.innerHTML = `<button class="section">${scrapHtml(width, height, edge, count)}</button>`
     q.firstChild.onclick = (e) => {
@@ -309,7 +305,6 @@ const addScrap = ({width, height, edge, count}, i) => {
 };
 
 const copyEdgingToForm = () => {
-    console.log('copyEdgingToForm')
     const q = task.edgings[index];
     edgingThickInput.value = q.thick;
     edgingLine = q.line;
@@ -317,7 +312,6 @@ const copyEdgingToForm = () => {
 }
 
 const addEdging = ({line, thick}, i) => {
-    console.log('addEdging')
     let q = document.createElement('li');
     q.innerHTML = `<button class="section">${edgingHtml(line, thick)}</button>`;
     q.firstChild.onclick = (e) => {
