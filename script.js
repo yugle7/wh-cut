@@ -855,7 +855,7 @@ const addPieces = () => {
 
 // 3.4 Отображение мест вставки
 
-const cutButtonHtml = () => `<button class="to-cut">собрать</button>`;
+const cutButtonHtml = () => `<button class="hidden">собрать</button>`;
 const placeTitleHtml = (width, height) => `<h4 class="center">${cutButtonHtml()}${widthHeightHtml(width, height)}</h4>`;
 const dropHtml = (width, height, edge, k) => `<div class="drop" data-k="${k}" style="width: ${100 - 200 * edge / width}%; aspect-ratio: ${width - 2 * edge} / ${height - 2 * edge}; left: ${100 * edge / width}%; top: ${100 * edge / width}%; background-color: var(--bg-header);"></div>`;
 const placeBodyHtml = (width, height, edge, k) => `<div class="edge" style="width: ${100 * width / task.sheet.width}%; aspect-ratio: ${width} / ${height}; background-color: var(--bg-secondary);">${dropHtml(width, height, edge, k)}</div>`;
