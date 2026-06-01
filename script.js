@@ -149,8 +149,8 @@ function handlePointerDown(e) {
 }
 
 function handlePointerMove(e) {
-    console.log('handlePointerMove')
     if (!gutter) return;
+    console.log('handlePointerMove')
     e.preventDefault();
 
     let leftWidth = startLeftWith + e.clientX - startX;
@@ -165,21 +165,18 @@ function handlePointerMove(e) {
 }
 
 function handlePointerUp(e) {
+    if (!gutter) return;
     console.log('handlePointerUp')
-    if (gutter) {
-        gutter.releasePointerCapture(e.pointerId);
-        gutter.classList.remove("dragging");
-        document.body.style.cursor = "";
-        gutter = null;
-    }
+    gutter.releasePointerCapture(e.pointerId);
+    gutter.classList.remove("dragging");
+    document.body.style.cursor = "";
+    gutter = null;
 }
 
 window.addEventListener('pointermove', handlePointerMove);
 window.addEventListener('pointerup', handlePointerUp);
-// window.addEventListener('mouseleave', handlePointerUp);
-// window.addEventListener('pointercancel', handlePointerUp);
-window.addEventListener('mouseleave', () => console.log('mouseleave'));
-window.addEventListener('pointercancel', () => console.log('pointercancel'));
+window.addEventListener('mouseleave', handlePointerUp);
+window.addEventListener('pointercancel', handlePointerUp);
 
 // 1.1. Навигация
 
@@ -813,6 +810,7 @@ const setPieces = () => {
             setCutDirectionButton(cutDirection);
         }
         q.onpointerup = () => {
+            if (!click) return;
             takePiece = q;
             toSelect(q);
         };
@@ -862,7 +860,6 @@ toCuttingButton.onclick = () => {
 }
 
 // 3.6 Перетаскивания
-
 
 const dropDragPiece = (e) => {
     console.log('dropDragPiece')
@@ -955,7 +952,6 @@ const findDropPlace = () => {
 }
 const toRotateDragPiece = () => {
     console.log('toRotateDragPiece');
-
     [dragState.width, dragState.height] = [dragState.height, dragState.width];
     dragPiece.style.width = 100 * dragState.width / task.sheet.width + '%';
     dragPiece.style.aspectRatio = `${dragState.width} / ${dragState.height}`;
@@ -963,7 +959,6 @@ const toRotateDragPiece = () => {
 
 const toRotateDropPiece = () => {
     console.log('toRotateDropPiece');
-
     [dragState.width, dragState.height] = [dragState.height, dragState.width];
     dragPiece.style.width = 100 * dragState.width / dropState.width + '%';
     dragPiece.style.aspectRatio = `${dragState.width} / ${dragState.height}`;
@@ -1260,6 +1255,7 @@ cutDirectionButton.onclick = () => {
 // Нажатия мышкой
 
 const onPointerDown = (e, f) => {
+    console.log('onPointerDown')
     e.preventDefault();
     click = {
         x: e.clientX,
@@ -1284,8 +1280,8 @@ const toSelect = (q) => {
 const endClick = () => (click = null);
 
 const tryStartDrag = (e) => {
-    // console.log('tryStartDrag');
     if (click) {
+        console.log('tryStartDrag');
         if ((Math.abs(click.x - e.clientX) > MIN_DRAG || Math.abs(click.y - e.clientY) > MIN_DRAG)) {
             const {x, y, t, f} = click;
             click = null;
