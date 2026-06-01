@@ -640,6 +640,7 @@ edgingLineInput.onclick = (e) => {
 }
 
 const getNextEdgingLine = (line) => {
+    console.log('getNextEdgingLine')
     const lines = task.edgings.filter(Boolean).map(q => q.line).sort();
     if (lines.length === 0) return null;
     if (line === null) return lines[0];
