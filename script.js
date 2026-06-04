@@ -222,7 +222,8 @@ toMainButton.onclick = () => {
 
 createTaskButton.onclick = async () => {
     await _createTask();
-    toSettingPage();
+    setTask(task);
+    changePage(settingPage);
 };
 
 const toTask = async (e) => {
@@ -301,8 +302,12 @@ const setTask = ({title, kerf, sheet, scraps, edgings, pieces}) => {
     toUpdateSheetLink.lastElementChild.innerHTML = `${getValue(kerf, 'мм')}`
 
     setSheet(sheet);
+
+    scrapsList.replaceChildren();
     scraps.forEach(addScrap);
+    edgingsList.replaceChildren();
     edgings.forEach(addEdging);
+    piecesList.replaceChildren();
     pieces.forEach(addPiece);
 }
 
@@ -594,13 +599,13 @@ const _loadTask = async (id) => {
 
     task = {
         id: 1,
-        title: 'Заголовок',
+        title: 'Раскрой',
         kerf: 4,
         sheet: {
             width: 2800, height: 2070, edge: 10
         },
         scraps: [{width: 1800, height: 1000, edge: 0, count: 1}],
-        edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.2},],
+        edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.2}],
         pieces: [{
             width: 334,
             height: 284,
@@ -662,7 +667,13 @@ const createTask = async () => {
 
 const _createTask = async () => {
     task = {
-        id: 3, title: "new cutting",
+        id: 3,
+        title: "Раскрой",
+        kerf: 4,
+        sheet: {width: 1000, height: 1000, edge: 10},
+        pieces: [],
+        edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.2}],
+        scraps: []
     }
 }
 
