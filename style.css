@@ -662,7 +662,7 @@ th {
     display: flex;
     flex-direction: row;
     align-items: center;
-    right: 2mm;
+    right: 10mm;
     top: 2mm;
 }
 
