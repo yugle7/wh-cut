@@ -75,25 +75,27 @@
         <form id="sheet">
             <section>
                 <label for="task-kerf">Ширина реза</label>
-                <input type="number" id="task-kerf" placeholder="мм"/>
+                <input type="number" inputmode="numeric" id="task-kerf" placeholder="мм"/>
             </section>
             <section>
                 <span>Размеры листа</span>
                 <div>
                     <label>
-                        <input type="number" id="sheet-width" placeholder="ширина" autocomplete="off"/>
+                        <input type="number" inputmode="numeric" id="sheet-width" placeholder="ширина"
+                               autocomplete="off"/>
                     </label>
                     <svg class="icon gray">
                         <use href="sprite.svg#x"></use>
                     </svg>
                     <label>
-                        <input type="number" id="sheet-height" placeholder="высота" autocomplete="off"/>
+                        <input type="number" inputmode="numeric" id="sheet-height" placeholder="высота"
+                               autocomplete="off"/>
                     </label>
                 </div>
             </section>
             <section>
                 <label for="sheet-edge">Отступ от края</label>
-                <input type="number" id="sheet-edge" placeholder="мм" autocomplete="off"/>
+                <input type="number" inputmode="numeric" id="sheet-edge" placeholder="мм" autocomplete="off"/>
             </section>
         </form>
 

@@ -1346,42 +1346,28 @@ const getArea = (width, height) => `right: ${L.right}mm;top: ${L.top}mm;width: $
 const backPdf = (s, zIndex) => `<div class="base" style="${s};z-index: ${zIndex}"></div>`
 
 const sheetPdf = (s, l, p) => `<div class="area" style="${s}">${l}${p}</div>`
-const piecePdf = (s, w, h, i) => `<div class="rect" style="${s}">${w}${h}${i}</div>`
-const placePdf = (s, w, h) => `<div class="rect gray" style="${s}">${w}${h}</div>`
+const piecePdf = (s, wh, i) => `<div class="rect" style="${s}">${wh}${i}</div>`
+const placePdf = (s, wh) => `<div class="rect gray" style="${s}">${wh}</div>`
 
 const indexPdf = (index, width, height) => {
-    let fontSize = Math.min(height / 1.2, 3);
-    if (index < 10) {
-        fontSize = Math.min(width / 2, fontSize);
-    } else if (index < 100) {
-        fontSize = Math.min(width / 3, fontSize);
-    }
+    const n = index.toString().length + 1;
+    const fontSize = Math.min(width / n, height / 1.2, 3);
     return `<div class="index gray" style="font-size: ${fontSize}mm;">#${index}.</div>`
 }
 
-const widthPdf = (number, width, height) => {
-    let fontSize = Math.min(height / 1.5, 5);
-    if (height < 10) width -= 5;
-    if (number < 10) {
-        fontSize = Math.min(width, fontSize);
-    } else if (number < 100) {
-        fontSize = Math.min(width / 2, fontSize);
-    } else if (number < 1000) {
-        fontSize = Math.min(width / 3, fontSize);
-    }
-    return fontSize < 2 ? '' : `<div class="width" style="font-size: ${fontSize}mm">${number}</div>`
+const widthPdf = (width, w, h, fontSize) => {
+    fontSize = Math.min(fontSize, w / width.toString().length, h / 1.2);
+    return fontSize > 2 ? `<div class="width" style="font-size: ${fontSize}mm">${width}</div>` : '';
 }
-const heightPdf = (number, width, height) => {
-    let fontSize = Math.min(width / 1.5, 5);
-    if (width < 10) height -= 5;
-    if (number < 10) {
-        fontSize = Math.min(height, fontSize);
-    } else if (number < 100) {
-        fontSize = Math.min(height / 2, fontSize);
-    } else if (number < 1000) {
-        fontSize = Math.min(height / 3, fontSize);
-    }
-    return fontSize < 1 ? '' : `<div class="height" style="font-size: ${fontSize}mm">${number}</div>`
+
+const heightPdf = (height, h, w, fontSize) => {
+    fontSize = Math.min(fontSize, h / height.toString().length, w / 1.2);
+    return fontSize > 2 ? `<div class="height" style="font-size: ${fontSize}mm">${height}</div>` : '';
+}
+
+const sizePdf = (width, height, w, h) => {
+    const fontSize = Math.min(5, (w + h) / (width.toString().length + height.toString().length + 2));
+    return widthPdf(width, w, h, fontSize) + heightPdf(height, h, w, fontSize);
 }
 
 const linePdf = (width, height) => {
@@ -1398,9 +1384,7 @@ const piecesPdf = (pieces, scale) => pieces.map(({left, top, width, height, i}) 
     const l = left * scale;
     const t = top * scale;
     const s = getRect(l, t, w, h);
-    console.log(s, left, top, width, height, i)
-    i = indexPdf(i, w, h);
-    return piecePdf(s, widthPdf(width, w, h), heightPdf(height, w, h), i) + backPdf(s, 3);
+    return piecePdf(s, sizePdf(width, height, w, h), indexPdf(i, w, h)) + backPdf(s, 3);
 }).join('\n');
 
 const placesPdf = (places, scale) => places.map(({left, top, width, height}) => {
@@ -1409,7 +1393,7 @@ const placesPdf = (places, scale) => places.map(({left, top, width, height}) => 
     const l = left * scale;
     const t = top * scale;
     const s = getRect(l, t, w, h);
-    return placePdf(s, widthPdf(width, w, h), heightPdf(height, w, h)) + backPdf(s, 1);
+    return placePdf(s, sizePdf(width, height, w, h)) + backPdf(s, 1);
 }).join('\n');
 
 
