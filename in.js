@@ -94,7 +94,7 @@ let pieceEdging = {left: null, up: null, right: null, down: null};
 // Константы
 
 const getIcon = (id) => `<svg class="icon gray"><use href="sprite.svg#${id}"></use></svg>`;
-const getLine = (line) => line === null ? `<svg class="line gray"><use href="sprite.svg#line"></use></svg>` : `<svg class="line yellow"><use href="sprite.svg#${edgingLines[line]}"></use></svg>`;
+const getLine = (line) => line === null ? `<svg class="junk gray"><use href="sprite.svg#line"></use></svg>` : `<svg class="junk yellow"><use href="sprite.svg#${edgingLines[line]}"></use></svg>`;
 const getValue = (value, unit) => `<span style="padding: 10px;"><span class="value">${value}</span><span class="unit">${unit}</span></span>`
 
 const x = getIcon('x');

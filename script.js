@@ -80,6 +80,40 @@ const rotatePieceButton = document.getElementById("rotate-piece");
 const src = document.getElementById("src");
 const dst = document.getElementById("dst");
 
+// 4. Печать
+
+const print = document.getElementById('print');
+
+const A4 = {
+    width: 297,
+    height: 210
+}
+
+const padding = 10;
+const U = {
+    top: padding,
+    left: padding,
+    right: padding,
+    height: 20
+}
+U.bottom = A4.height - 2 * padding - U.height;
+const R = {
+    top: 2 * padding + U.height,
+    right: padding,
+    width: 70,
+    bottom: padding
+}
+R.left = A4.width - R.width - padding;
+const L = {
+    top: R.top,
+    left: padding - 1,
+    right: padding + R.width + R.right + 1,
+    bottom: padding,
+}
+L.width = A4.width - L.left - L.right;
+L.height = A4.height - L.top - L.bottom;
+
+
 // Состояние
 
 let page = mainPage;
@@ -91,10 +125,11 @@ let edgingLine = -1;
 let pieceRotated = false;
 let pieceEdging = {left: null, up: null, right: null, down: null};
 
+
 // Константы
 
 const getIcon = (id) => `<svg class="icon gray"><use href="sprite.svg#${id}"></use></svg>`;
-const getLine = (line) => line === null ? `<svg class="line gray"><use href="sprite.svg#line"></use></svg>` : `<svg class="line yellow"><use href="sprite.svg#${edgingLines[line]}"></use></svg>`;
+const getLine = (line) => line === null ? `<svg class="line"><use href="sprite.svg#line"></use></svg>` : `<svg class="line yellow"><use href="sprite.svg#${edgingLines[line]}"></use></svg>`;
 const getValue = (value, unit) => `<span style="padding: 10px;"><span class="value">${value}</span><span class="unit">${unit}</span></span>`
 
 const x = getIcon('x');
@@ -769,8 +804,9 @@ cuttingGutter.onpointerdown = handlePointerDown;
 
 // 3.2. Управление
 
-downloadCuttingButton.onclick = async () => {
-    // загружаем pdf
+downloadCuttingButton.onclick = () => {
+    print.innerHTML = getPages().map(({sheet, pieces, places}) => pagePdf(sheet, pieces, places)).join('\n')
+    window.print();
 }
 
 // 3.3. Отображение деталей
@@ -822,7 +858,7 @@ const setPieces = () => {
 
 const cutButtonHtml = () => `<button class="hidden">собрать</button>`;
 const placeTitleHtml = (width, height) => `<h4 class="center">${cutButtonHtml()}${widthHeightHtml(width, height)}</h4>`;
-const dropHtml = (width, height, edge, k) => `<div class="drop" data-k="${k}" style="width: ${100 - 200 * edge / width}%; aspect-ratio: ${width - 2 * edge} / ${height - 2 * edge}; left: ${100 * edge / width}%; top: ${100 * edge / width}%; background-color: var(--bg-header);"></div>`;
+const dropHtml = (width, height, edge, k) => `<div class="drop" data-k="${k}" style="width: ${100 * (1 - 2 * edge / width)}%; aspect-ratio: ${width - 2 * edge} / ${height - 2 * edge}; left: ${100 * edge / width}%; top: ${100 * edge / height}%; background-color: var(--bg-header);"></div>`;
 const placeBodyHtml = (width, height, edge, k) => `<div class="edge" style="width: ${100 * width / task.sheet.width}%; aspect-ratio: ${width} / ${height}; background-color: var(--bg-secondary);">${dropHtml(width, height, edge, k)}</div>`;
 const placeHtml = (width, height, edge, k) => `<div class="place">${placeTitleHtml(width, height)}${placeBodyHtml(width, height, edge, k)}</div>`;
 
@@ -1071,6 +1107,7 @@ const addHorizontalCutLine = () => {
 const addDropPiece = () => {
     console.log('addDropPiece')
     dragPiece.style.removeProperty('inset');
+    dragPiece.style.cursor = 'grab';
     if (dragState.left) {
         dragPiece.style.left = '0';
     } else {
@@ -1108,6 +1145,7 @@ const cutDropPlace = () => {
     addDropPiece();
     addLeftDropPlace();
     addRightDropPlace();
+    // dropPlace.style.backgroundColor = 'gray'
     addVerticalCutLine();
     addHorizontalCutLine();
 }
@@ -1170,19 +1208,21 @@ const dragTakePiece = (x, y, t) => {
     };
 
     dragPiece = document.createElement('div');
-    dragPiece.style.aspectRatio = `${r.width} / ${r.height}`;
-    dragPiece.classList.add('drag');
+    dragPiece.style.aspectRatio = getComputedStyle(takePiece).aspectRatio;
+    dragPiece.style.position = 'absolute';
+    dragPiece.style.cursor = 'grabbing';
 
     dragPiece.dataset.i = takePiece.dataset.i;
     decTakeCount(takePiece.dataset.i)
 
     dragPiece.dataset.j = dragStates.length.toString();
-    dragStates.push({...takeState, cutDirection});
+    const {width, height, rotated, color} = takeState;
+    dragStates.push({width, height, rotated, cutDirection});
 
     dragPiece.style.width = r.width + 'px';
     dragPiece.style.left = r.left + 'px';
     dragPiece.style.top = r.top + 'px';
-    dragPiece.style.backgroundColor = takeState.color;
+    dragPiece.style.backgroundColor = color;
 
     document.body.appendChild(dragPiece);
     if (selected !== dragPiece) toSelect(dragPiece);
@@ -1207,6 +1247,7 @@ const dragDropPiece = (x, y, t) => {
     dragPiece.style.removeProperty('inset');
     dragPiece.style.left = r.left + 'px';
     dragPiece.style.top = r.top + 'px';
+    dragPiece.style.cursor = 'grabbing';
 
     document.body.appendChild(dragPiece);
     if (selected !== dragPiece) {
@@ -1234,10 +1275,12 @@ const toDragPiece = (e) => {
 // Кнопки изменений положения деталей и разрезов
 
 rotatePieceButton.onclick = () => {
-    if (selected === takePiece) {
-        rotateTakePiece();
-    } else if (selected === dragPiece) {
-        rotateDropPiece();
+    if (selected) {
+        if (selected === takePiece) {
+            rotateTakePiece();
+        } else if (selected === dragPiece) {
+            rotateDropPiece();
+        }
     }
 }
 const setCutDirectionButton = (cutDirection) => cutDirectionButton.firstElementChild.style.transform = `rotate(${cutDirection ? 0 : 90}deg)`
@@ -1293,6 +1336,136 @@ const tryStartDrag = (e) => {
 
 window.addEventListener('pointerup', endClick);
 window.addEventListener('pointermove', tryStartDrag);
+
+
+// Печать
+
+const getRect = (left, top, width, height) => `left: ${left}mm;top: ${top}mm;width: ${width}mm;height: ${height}mm;`;
+const getArea = (width, height) => `right: ${L.right}mm;top: ${L.top}mm;width: ${width}mm;height: ${height}mm;`;
+
+const backPdf = (s, zIndex) => `<div class="base" style="${s};z-index: ${zIndex}"></div>`
+
+const sheetPdf = (s, l, p) => `<div class="area" style="${s}">${l}${p}</div>`
+const piecePdf = (s, w, h, i) => `<div class="rect" style="${s}">${w}${h}${i}</div>`
+const placePdf = (s, w, h) => `<div class="rect gray" style="${s}">${w}${h}</div>`
+
+const indexPdf = (index, width, height) => {
+    let fontSize = Math.min(height / 1.2, 3);
+    if (index < 10) {
+        fontSize = Math.min(width / 2, fontSize);
+    } else if (index < 100) {
+        fontSize = Math.min(width / 3, fontSize);
+    }
+    return `<div class="index gray" style="font-size: ${fontSize}mm;">#${index}.</div>`
+}
+
+const widthPdf = (number, width, height) => {
+    let fontSize = Math.min(height / 1.5, 5);
+    if (height < 10) width -= 5;
+    if (number < 10) {
+        fontSize = Math.min(width, fontSize);
+    } else if (number < 100) {
+        fontSize = Math.min(width / 2, fontSize);
+    } else if (number < 1000) {
+        fontSize = Math.min(width / 3, fontSize);
+    }
+    return fontSize < 2 ? '' : `<div class="width" style="font-size: ${fontSize}mm">${number}</div>`
+}
+const heightPdf = (number, width, height) => {
+    let fontSize = Math.min(width / 1.5, 5);
+    if (width < 10) height -= 5;
+    if (number < 10) {
+        fontSize = Math.min(height, fontSize);
+    } else if (number < 100) {
+        fontSize = Math.min(height / 2, fontSize);
+    } else if (number < 1000) {
+        fontSize = Math.min(height / 3, fontSize);
+    }
+    return fontSize < 1 ? '' : `<div class="height" style="font-size: ${fontSize}mm">${number}</div>`
+}
+
+const linePdf = (width, height) => {
+    const lines = []
+    for (let y = -width; y <= height; y += 5) {
+        lines.push(`<line x1=0 y1=${y} x2=${width} y2=${y + width}></line>`)
+    }
+    return `<svg class="junk" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 ${width} ${height}">${lines.join('\n')}</svg>`
+}
+
+const piecesPdf = (pieces, scale) => pieces.map(({left, top, width, height, i}) => {
+    const w = width * scale;
+    const h = height * scale;
+    const l = left * scale;
+    const t = top * scale;
+    const s = getRect(l, t, w, h);
+    console.log(s, left, top, width, height, i)
+    i = indexPdf(i, w, h);
+    return piecePdf(s, widthPdf(width, w, h), heightPdf(height, w, h), i) + backPdf(s, 3);
+}).join('\n');
+
+const placesPdf = (places, scale) => places.map(({left, top, width, height}) => {
+    const w = width * scale;
+    const h = height * scale;
+    const l = left * scale;
+    const t = top * scale;
+    const s = getRect(l, t, w, h);
+    return placePdf(s, widthPdf(width, w, h), heightPdf(height, w, h)) + backPdf(s, 1);
+}).join('\n');
+
+
+const cutPdf = (sheet, pieces, places) => {
+    const {width, height} = sheet;
+    const scale = Math.min(L.width / width, L.height / height);
+    const w = width * scale;
+    const h = height * scale;
+    const s = getArea(w, h);
+    const l = linePdf(w, h);
+    const p = piecesPdf(pieces, scale) + placesPdf(places, scale);
+    return sheetPdf(s, l, p) + `<div class="rect" style="${s}"></div>`;
+}
+
+const pieceHeadPdf = `<tr><th>#</th><th>Ширина</th><th>Высота</th><th>Сколько</th></tr>`;
+const pieceItemPdf = (i, count) => {
+    const {width, height} = task.pieces[i];
+    return `<tr><td>${i}</td><td>${width}</td><td>${height}</td><td>${count}</td></tr>`
+}
+const pieceListPdf = (pieces) => {
+    const counts = pieces.reduce((acc, {i}) => {
+        acc[i] = (acc[i] || 0) + 1;
+        return acc;
+    }, {});
+    return Object.entries(counts).map(([i, count]) => pieceItemPdf(i, count)).join('\n');
+}
+const logoPdf = `<div class="logo">${getIcon('cut')} <span>whCut</span></div>`;
+
+const takePdf = (pieces) => `<table style="top: ${R.top}mm;right: ${R.right}mm; width: ${R.width}mm;"><thead>${pieceHeadPdf}</thead><tbody>${pieceListPdf(pieces)}</tbody></table>`
+const pagePdf = (sheet, pieces, places) => `<div class="page">${logoPdf}${cutPdf(sheet, pieces, places)}${takePdf(pieces)}</div>`;
+
+const getPages = () => [...dst.querySelectorAll('.edge')].map(e => {
+    const {left, top, width, height} = e.getBoundingClientRect();
+    const scale = getComputedStyle(e).aspectRatio.split('/')[0] / width;
+    const shift = {left, top};
+
+    return {
+        sheet: {width: Math.round(width * scale), height: Math.round(height * scale)},
+        places: [...e.querySelectorAll('[data-k]:empty')].map(p => {
+            let {left, top, width, height} = p.getBoundingClientRect();
+            left = Math.round((left - shift.left) * scale);
+            top = Math.round((top - shift.top) * scale);
+            width = Math.round(width * scale);
+            height = Math.round(height * scale);
+            return {left, top, width, height};
+        }),
+        pieces: [...e.querySelectorAll('[data-i]')].map(p => {
+            let {left, top, width, height} = p.getBoundingClientRect();
+            left = Math.round((left - shift.left) * scale);
+            top = Math.round((top - shift.top) * scale);
+            width = Math.round(width * scale);
+            height = Math.round(height * scale);
+            return {left, top, width, height, i: p.dataset.i};
+        })
+    };
+});
 
 // Автосохранение
 
