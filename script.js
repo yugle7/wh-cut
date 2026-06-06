@@ -133,13 +133,13 @@ let pieceEdging = {left: null, up: null, right: null, down: null};
 
 // Константы
 
-const getIcon = (id, color = "gray") => `<svg class="icon ${color}"><use href="sprite.svg#${id}"></use></svg>`;
-const getLine = (line) => line === null ? `<svg class="line gray"><use href="sprite.svg#line"></use></svg>` : `<svg class="line yellow"><use href="sprite.svg#${edgingLines[line]}"></use></svg>`;
-const getValue = (value, unit) => `<span style="padding: 10px;"><span class="value">${value}</span><span class="unit">${unit}</span></span>`
+const iconHtml = (id, color = "gray") => `<svg class="icon ${color}"><use href="sprite.svg#${id}"></use></svg>`;
+const lineHtml = (line) => line === null ? `<svg class="line gray"><use href="sprite.svg#line"></use></svg>` : `<svg class="line yellow"><use href="sprite.svg#${edgingLines[line]}"></use></svg>`;
+const valueHtml = (value, unit) => `<span style="padding: 10px;"><span class="value">${value}</span><span class="unit">${unit}</span></span>`
 
-const x = getIcon('x');
-const v = getIcon('v');
-const o = getIcon('o');
+const x = iconHtml('x');
+const v = iconHtml('v');
+const o = iconHtml('o');
 
 // Навигация
 
@@ -359,24 +359,24 @@ settingGutter.onpointerdown = handlePointerDown;
 
 // 2.2 Отображение данных
 
-const kerfHtml = () => `<span>${getValue(task.kerf || 0, 'мм')}</span>`;
+const kerfHtml = () => `<span>${valueHtml(task.kerf || 0, 'мм')}</span>`;
 
 const sheetHtml = (
     {
         width,
         height,
         edge
-    }) => `<div class="section"><span>${width}${x}${height}${v}${getValue(edge, 'мм')}</span>${kerfHtml()}</div>`;
+    }) => `<div class="section"><span>${width}${x}${height}${v}${valueHtml(edge, 'мм')}</span>${kerfHtml()}</div>`;
 
-const scrapHtml = (width, height, edge, count) => `<div>${width}${x}${height}${v}${getValue(edge, 'мм')}</div>${getValue(count, 'шт')}`;
+const scrapHtml = (width, height, edge, count) => `<div>${width}${x}${height}${v}${valueHtml(edge, 'мм')}</div>${valueHtml(count, 'шт')}`;
 
-const edgingHtml = (line, thick) => `<div>${getLine(line)}</div>${getValue(thick, 'мм')}`;
+const edgingHtml = (line, thick) => `<div>${lineHtml(line)}</div>${valueHtml(thick, 'мм')}`;
 
 const pieceHtml = (width, height, rotated, {left, up, right, down}, count) => {
-    const w = `<div class="col"><span>${width}</span>${getLine(up)}${getLine(down)}</div>`;
-    const h = `<div class="col"><span>${height}</span>${getLine(left)}${getLine(right)}</div>`;
+    const w = `<div class="col"><span>${width}</span>${lineHtml(up)}${lineHtml(down)}</div>`;
+    const h = `<div class="col"><span>${height}</span>${lineHtml(left)}${lineHtml(right)}</div>`;
 
-    return `<div>${w}${rotated ? o : x}${h}</div>${getValue(count, 'шт')}`
+    return `<div>${w}${rotated ? o : x}${h}</div>${valueHtml(count, 'шт')}`
 }
 
 // 2.3 Заполнение данных
@@ -387,7 +387,7 @@ const toDate = (isoDate) => {
     return `${day}.${month}.${year}`;
 }
 const dateHtml = () => (task.start && task.finish) ? `<div class="section"><span>${toDate(task.start)}</span><span class="date">${toDate(task.finish)}</span></div>` : '';
-const materialHtml = () => task.material ? `<div class="section"><span>${task.material}</span><span>${getValue(task.thick, 'мм')}</span></div>` : '';
+const materialHtml = () => task.material ? `<div class="section"><span>${task.material}</span><span>${valueHtml(task.thick, 'мм')}</span></div>` : '';
 
 const setTask = ({title, start, finish, material, thick, kerf, sheet, scraps, edgings, pieces}) => {
     taskTitleInput.innerText = title;
@@ -446,7 +446,7 @@ const copyEdgingToForm = () => {
     const q = task.edgings[index];
     edgingThickInput.value = q.thick;
     edgingLine = q.line;
-    edgingLineInput.innerHTML = getLine(q.line);
+    edgingLineInput.innerHTML = lineHtml(q.line);
 }
 
 const addEdging = ({line, thick}, i) => {
@@ -473,20 +473,20 @@ const copyPieceToForm = () => {
     pieceCountInput.value = q.count;
 
     pieceEdging = q.edging;
-    pieceEdgingUpInput.innerHTML = getLine(q.edging.up);
-    pieceEdgingDownInput.innerHTML = getLine(q.edging.down);
-    pieceEdgingLeftInput.innerHTML = getLine(q.edging.left);
-    pieceEdgingRightInput.innerHTML = getLine(q.edging.right);
+    pieceEdgingUpInput.innerHTML = lineHtml(q.edging.up);
+    pieceEdgingDownInput.innerHTML = lineHtml(q.edging.down);
+    pieceEdgingLeftInput.innerHTML = lineHtml(q.edging.left);
+    pieceEdgingRightInput.innerHTML = lineHtml(q.edging.right);
 }
 
 const addPiece = ({width, height, rotated, count, edging}, i) => {
     let {left, up, right, down} = edging;
 
-    const w = `<div class="col"><span>${width}</span>${getLine(up)}${getLine(down)}</div>`;
-    const h = `<div class="col"><span>${height}</span>${getLine(left)}${getLine(right)}</div>`;
+    const w = `<div class="col"><span>${width}</span>${lineHtml(up)}${lineHtml(down)}</div>`;
+    const h = `<div class="col"><span>${height}</span>${lineHtml(left)}${lineHtml(right)}</div>`;
 
     let q = document.createElement('li');
-    q.innerHTML = `<button class="section"><div>${w}${rotated ? o : x}${h}</div>${getValue(count, 'шт')}</button>`
+    q.innerHTML = `<button class="section"><div>${w}${rotated ? o : x}${h}</div>${valueHtml(count, 'шт')}</button>`
     q.firstChild.onclick = (e) => {
         index = i;
         copyPieceToForm();
@@ -669,7 +669,7 @@ toCreateEdgingLink.onclick = (e) => {
     edgingThickInput.value = '';
 
     edgingLine = (edgingLine + 1) % edgingLines.length;
-    edgingLineInput.innerHTML = getLine(edgingLine);
+    edgingLineInput.innerHTML = lineHtml(edgingLine);
 
     changeForm(e, edgingForm);
     formLabel.innerText = 'Кромка';
@@ -683,7 +683,7 @@ toCreatePieceLink.onclick = (e) => {
     pieceRotatedInput.innerText = 'нет';
 
     pieceEdging = {left: null, up: null, right: null, down: null};
-    pieceEdgingUpInput.innerHTML = pieceEdgingDownInput.innerHTML = pieceEdgingLeftInput.innerHTML = pieceEdgingRightInput.innerHTML = getLine(null);
+    pieceEdgingUpInput.innerHTML = pieceEdgingDownInput.innerHTML = pieceEdgingLeftInput.innerHTML = pieceEdgingRightInput.innerHTML = lineHtml(null);
 
     changeForm(e, pieceForm);
     formLabel.innerText = 'Деталь';
@@ -741,7 +741,7 @@ const createTask = async () => {
 edgingLineInput.onclick = (e) => {
     e.preventDefault();
     edgingLine = (edgingLine + 1) % edgingLines.length;
-    edgingLineInput.innerHTML = getLine(edgingLine);
+    edgingLineInput.innerHTML = lineHtml(edgingLine);
 }
 
 const getNextEdgingLine = (line) => {
@@ -758,25 +758,25 @@ const getNextEdgingLine = (line) => {
 pieceEdgingUpInput.onclick = (e) => {
     e.preventDefault();
     pieceEdging.up = getNextEdgingLine(pieceEdging.up);
-    pieceEdgingUpInput.innerHTML = getLine(pieceEdging.up);
+    pieceEdgingUpInput.innerHTML = lineHtml(pieceEdging.up);
 }
 
 pieceEdgingDownInput.onclick = (e) => {
     e.preventDefault();
     pieceEdging.down = getNextEdgingLine(pieceEdging.down);
-    pieceEdgingDownInput.innerHTML = getLine(pieceEdging.down);
+    pieceEdgingDownInput.innerHTML = lineHtml(pieceEdging.down);
 }
 
 pieceEdgingLeftInput.onclick = (e) => {
     e.preventDefault();
     pieceEdging.left = getNextEdgingLine(pieceEdging.left);
-    pieceEdgingLeftInput.innerHTML = getLine(pieceEdging.left);
+    pieceEdgingLeftInput.innerHTML = lineHtml(pieceEdging.left);
 }
 
 pieceEdgingRightInput.onclick = (e) => {
     e.preventDefault();
     pieceEdging.right = getNextEdgingLine(pieceEdging.right);
-    pieceEdgingRightInput.innerHTML = getLine(pieceEdging.right);
+    pieceEdgingRightInput.innerHTML = lineHtml(pieceEdging.right);
 }
 
 
@@ -797,7 +797,7 @@ const clearForm = () => {
         if (q.id === 'piece-rotated') {
             q.innerText = 'нет';
         } else {
-            q.innerHTML = getLine(null);
+            q.innerHTML = lineHtml(null);
         }
     });
 }
@@ -894,7 +894,7 @@ const widthHeightHtml = (width, height, rotated = false) => `${width}${rotated ?
 const getColors = n => [...Array(n)].map((_, i) => `hsl(${i / n * 360}, var(--saturation), var(--lightness))`);
 
 const pieceTitleHtml = (width, height, rotated) => `<h4 class="center">${widthHeightHtml(width, height, rotated)}</h4>`;
-const pieceBodyHtml = (width, height, color, count, i) => `<div class="center"><div class="take" data-i="${i}" style="width: ${100 * width / task.sheet.width}%; aspect-ratio: ${width} / ${height}; background-color: ${color};"></div>${getValue(count, 'шт')}</div>`;
+const pieceBodyHtml = (width, height, color, count, i) => `<div class="center"><div class="take" data-i="${i}" style="width: ${100 * width / task.sheet.width}%; aspect-ratio: ${width} / ${height}; background-color: ${color};"></div>${valueHtml(count, 'шт')}</div>`;
 
 const takePieceHtml = (width, height, rotated, color, count, i) => `<div>${pieceTitleHtml(width, height, rotated)}${pieceBodyHtml(width, height, color, count, i)}</div>`;
 
@@ -1550,7 +1550,7 @@ const pieceListPdf = (pieces) => {
     }, {});
     return Object.entries(counts).map(([i, count]) => pieceItemPdf(+i, count)).join('\n');
 }
-const logoPdf = `<div class="logo">${getIcon('cut', 'green')} <span>whCut</span></div>`;
+const logoPdf = `<div class="logo">${iconHtml('cut', 'green')} <span>whCut</span></div>`;
 
 const takePdf = (pieces) => `<table style="top: ${R.top}mm;right: ${R.right}mm; width: ${R.width}mm;"><thead>${pieceHeadPdf}</thead><tbody>${pieceListPdf(pieces)}</tbody></table>`
 const pagePdf = (sheet, pieces, places, t) => `<div class="page">${t}${logoPdf}${cutPdf(sheet, pieces, places)}${takePdf(pieces)}</div>`;
