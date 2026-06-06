@@ -6,7 +6,7 @@
     --white: #bbb;
     --white-max: #fff;
     --green: #3fa883;
-    --green-max: #318b5b;
+    --green-max: #359e79;
     --blue: #6f77d6;
     --blue-max: #5d68dc;
     --red: #c37168;
@@ -85,7 +85,13 @@ a:hover {
     display: flex;
     flex-direction: column;
     gap: 0;
-    width: 60px;
+    width: 100%;
+    align-items: center;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
 }
 
 .gutter {
@@ -290,6 +296,7 @@ input[type="number"] {
 .icon {
     background: transparent;
     width: 40px;
+    min-width: 40px;
     height: 40px;
     padding: 8px;
     cursor: pointer;
@@ -346,18 +353,22 @@ textarea {
 
 
 .button {
+    display: block;
+    opacity: 1;
     padding: 16px 32px;
     font-size: 1.1rem;
+    text-align: center;
+    width: 100%;
     background: var(--green);
-    color: var(--white);
+    color: white;
     border: none;
     border-radius: 8px;
-    cursor: pointer;
     transition: all 0.3s;
 }
 
 
 .button:hover {
+    background: var(--green-max);
     transform: scale(1.01);
 }
 
@@ -395,12 +406,12 @@ ol {
     padding-left: 0;
 }
 
-ul li {
+#tasks li {
     counter-increment: item;
     margin-top: 12px;
 }
 
-ul li::before {
+#tasks li::before {
     content: counter(item) " ";
     color: var(--green-max);
     font-size: 0.85em;
@@ -465,15 +476,6 @@ button:disabled svg {
     stroke: gray;
 }
 
-#piece-edging {
-    padding: 20px;
-}
-
-#piece-edging div {
-    width: 60px;
-    height: 60px;
-    position: relative;
-}
 
 #dst {
     display: flex;
@@ -536,11 +538,6 @@ button:disabled svg {
     background: gray;
 }
 
-.touch {
-    touch-action: none;
-    will-change: transform;
-}
-
 .take {
     cursor: grab;
     touch-action: none;
@@ -549,9 +546,22 @@ button:disabled svg {
     transition: transform 0.05s linear;
 }
 
+input[type="date"] {
+    margin-right: -20px;
+    opacity: 0.5;
+}
 
-.to-cut {
-    padding-right: 20px;
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-clear-button {
+    display: none;
+}
+
+input[type="text"] {
+    width: 100%;
+}
+
+.date {
+    padding: 10px;
     opacity: 0.5;
 }
 
@@ -560,10 +570,10 @@ button:disabled svg {
 #print * {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     line-height: 1.2;
+    font-size: 4mm;
 }
 
 #print {
-    font-size: 5mm;
     position: absolute;
     top: 0;
     left: 0;
@@ -642,17 +652,19 @@ table {
 }
 
 th, td {
-    font-size: 3mm;
     border: 1px solid black;
-    padding: 2mm 3mm;
+    padding: 1mm 2mm;
     text-align: center;
+    vertical-align: center;
+}
+
+.top {
     vertical-align: top;
 }
 
 th {
     background-color: lightgray;
     text-align: center;
-    font-weight: bold;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
 }
@@ -695,4 +707,28 @@ th {
     #print .gray * {
         color: gray;
     }
+
+    .line {
+        width: 40px;
+        height: 4px;
+    }
 }
+
+.task {
+    position: absolute;
+}
+
+.signs {
+    display: flex;
+    align-items: end;
+    width: 100%;
+    height: 50%;
+    border-bottom: 1px solid gray;
+}
+
+.sign {
+    display: flex;
+    width: 100%;
+    gap: 15px;
+}
+

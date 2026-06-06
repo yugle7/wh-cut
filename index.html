@@ -18,10 +18,7 @@
     <div class="side left">
         <h1 id="task-title" contenteditable="plaintext-only"></h1>
 
-        <button id="to-update-sheet" class="section">
-            <span></span>
-            <span></span>
-        </button>
+        <button id="to-update-sheet" class="list"></button>
 
         <br>
         <button id="to-create-scrap" class="section">
@@ -75,6 +72,22 @@
 
         <form id="sheet">
             <section>
+                <label for="task-start">Дата</label>
+                <input type="date" id="task-start"/>
+            </section>
+            <section>
+                <label for="task-finish">Дата готовности</label>
+                <input type="date" id="task-finish"/>
+            </section>
+            <section>
+                <label for="task-material" class="hidden">Материал листа</label>
+                <input type="text" id="task-material" placeholder="Материал листа"/>
+            </section>
+            <section>
+                <label for="task-thick">Толщина листа</label>
+                <input type="number" inputmode="numeric" id="task-thick" placeholder="мм"/>
+            </section>
+            <section>
                 <label for="task-kerf">Ширина реза</label>
                 <input type="number" inputmode="numeric" id="task-kerf" placeholder="мм"/>
             </section>
@@ -82,14 +95,14 @@
                 <span>Размеры листа</span>
                 <div>
                     <label>
-                        <input type="number" inputmode="numeric" id="sheet-width" placeholder="ширина"
+                        <input type="number" inputmode="numeric" id="sheet-width" placeholder="длина"
                                autocomplete="off"/>
                     </label>
                     <svg class="icon gray">
                         <use href="sprite.svg#x"></use>
                     </svg>
                     <label>
-                        <input type="number" inputmode="numeric" id="sheet-height" placeholder="высота"
+                        <input type="number" inputmode="numeric" id="sheet-height" placeholder="ширина"
                                autocomplete="off"/>
                     </label>
                 </div>
@@ -105,13 +118,13 @@
                 <span>Размеры</span>
                 <div>
                     <label>
-                        <input type="number" id="scrap-width" placeholder="ширина" autocomplete="off"/>
+                        <input type="number" id="scrap-width" placeholder="длина" autocomplete="off"/>
                     </label>
                     <svg class="icon gray">
                         <use href="sprite.svg#x"></use>
                     </svg>
                     <label>
-                        <input type="number" id="scrap-height" placeholder="высота" autocomplete="off"/>
+                        <input type="number" id="scrap-height" placeholder="ширина" autocomplete="off"/>
                     </label>
                 </div>
             </section>
@@ -141,13 +154,13 @@
                 <span>Размеры</span>
                 <div>
                     <label>
-                        <input type="number" id="piece-width" placeholder="ширина" autocomplete="off"/>
+                        <input type="number" id="piece-width" placeholder="длина" autocomplete="off"/>
                     </label>
                     <svg class="icon gray">
                         <use href="sprite.svg#x"></use>
                     </svg>
                     <label>
-                        <input type="number" id="piece-height" placeholder="высота" autocomplete="off"/>
+                        <input type="number" id="piece-height" placeholder="ширина" autocomplete="off"/>
                     </label>
                 </div>
             </section>

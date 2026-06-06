@@ -21,6 +21,10 @@ const sheetForm = document.getElementById("sheet");
 const toUpdateSheetLink = document.getElementById("to-update-sheet");
 
 const taskTitleInput = document.getElementById("task-title");
+const taskMaterialInput = document.getElementById("task-material");
+const taskThickInput = document.getElementById("task-thick");
+const taskStartInput = document.getElementById("task-start");
+const taskFinishInput = document.getElementById("task-finish");
 const taskKerfInput = document.getElementById("task-kerf");
 
 const sheetWidthInput = document.getElementById("sheet-width");
@@ -116,6 +120,7 @@ L.height = A4.height - L.top - L.bottom;
 
 // Состояние
 
+let tasks = [];
 let page = mainPage;
 let task = null;
 let form = sheetForm;
@@ -128,8 +133,8 @@ let pieceEdging = {left: null, up: null, right: null, down: null};
 
 // Константы
 
-const getIcon = (id) => `<svg class="icon gray"><use href="sprite.svg#${id}"></use></svg>`;
-const getLine = (line) => line === null ? `<svg class="line"><use href="sprite.svg#line"></use></svg>` : `<svg class="line yellow"><use href="sprite.svg#${edgingLines[line]}"></use></svg>`;
+const getIcon = (id, color = "gray") => `<svg class="icon ${color}"><use href="sprite.svg#${id}"></use></svg>`;
+const getLine = (line) => line === null ? `<svg class="line gray"><use href="sprite.svg#line"></use></svg>` : `<svg class="line yellow"><use href="sprite.svg#${edgingLines[line]}"></use></svg>`;
 const getValue = (value, unit) => `<span style="padding: 10px;"><span class="value">${value}</span><span class="unit">${unit}</span></span>`
 
 const x = getIcon('x');
@@ -221,9 +226,10 @@ toMainButton.onclick = () => {
 }
 
 createTaskButton.onclick = async () => {
-    await _createTask();
+    await createTask();
     setTask(task);
     changePage(settingPage);
+    addTask(task);
 };
 
 const toTask = async (e) => {
@@ -234,7 +240,7 @@ const toTask = async (e) => {
         edgingsList.replaceChildren();
         piecesList.replaceChildren();
 
-        await _loadTask(e.currentTarget.id);
+        await loadTask(e.currentTarget.id);
         setTask(task);
     }
 }
@@ -251,15 +257,88 @@ const addTask = ({id, title}) => {
 
 // 1.3 Получение данных
 
-const getTasks = async () => {
-    const response = await fetch(API_ENDPOINT);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return await response.json();
+const loadTasks = async () => {
+    if (API_ENDPOINT) {
+        const response = await fetch(API_ENDPOINT);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        tasks = await response.json();
+    } else {
+        const t = localStorage.getItem('tasks');
+        tasks = t ? JSON.parse(t) : fakeTasks;
+    }
 };
 
-const _getTasks = async () => {
-    return [{id: 1, title: 'first cutting'}, {id: 2, title: 'second cutting'}]
-};
+const fakeTasks = [
+    {
+        id: 0,
+        title: 'Раскрой меня',
+        start: '2026-06-01',
+        finish: '2026-07-20',
+        material: 'Владимирский ржаной',
+        thick: 12,
+        kerf: 4,
+        sheet: {
+            width: 2800, height: 2070, edge: 10
+        },
+        scraps: [{width: 1800, height: 1000, edge: 0, count: 1}],
+        edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.2}],
+        pieces: [{
+            width: 334,
+            height: 284,
+            rotated: true,
+            count: 2,
+            edging: {left: 0, right: 1, up: null, down: null}
+        }, {
+            width: 572,
+            height: 84,
+            rotated: false,
+            count: 1,
+            edging: {left: null, right: 1, up: 1, down: null}
+        }, {
+            width: 604,
+            height: 84,
+            rotated: true,
+            count: 1,
+            edging: {left: 0, right: null, up: null, down: null}
+        }, {
+            width: 388,
+            height: 324,
+            rotated: false,
+            count: 2,
+            edging: {left: 1, right: 0, up: null, down: 1}
+        }, {
+            width: 389,
+            height: 334,
+            rotated: false,
+            count: 1,
+            edging: {left: null, right: 1, up: 0, down: null}
+        }, {
+            width: 806,
+            height: 84,
+            rotated: true,
+            count: 1,
+            edging: {left: 0, right: 1, up: 1, down: null}
+        }, {
+            width: 734,
+            height: 334,
+            rotated: true,
+            count: 2,
+            edging: {left: 1, right: 0, up: null, down: null}
+        }, {
+            width: 805,
+            height: 324,
+            rotated: false,
+            count: 6,
+            edging: {left: 0, right: 0, up: 1, down: null}
+        }, {
+            width: 1034,
+            height: 334,
+            rotated: true,
+            count: 8,
+            edging: {left: null, right: 1, up: null, down: 1}
+        }]
+    }
+];
 
 
 // 2.1 Константы
@@ -280,7 +359,14 @@ settingGutter.onpointerdown = handlePointerDown;
 
 // 2.2 Отображение данных
 
-const sheetHtml = (width, height, edge) => `${width}${x}${height}${v}${getValue(edge, 'мм')}`
+const kerfHtml = () => `<span>${getValue(task.kerf || 0, 'мм')}</span>`;
+
+const sheetHtml = (
+    {
+        width,
+        height,
+        edge
+    }) => `<div class="section"><span>${width}${x}${height}${v}${getValue(edge, 'мм')}</span>${kerfHtml()}</div>`;
 
 const scrapHtml = (width, height, edge, count) => `<div>${width}${x}${height}${v}${getValue(edge, 'мм')}</div>${getValue(count, 'шт')}`;
 
@@ -295,12 +381,24 @@ const pieceHtml = (width, height, rotated, {left, up, right, down}, count) => {
 
 // 2.3 Заполнение данных
 
-const setTask = ({title, kerf, sheet, scraps, edgings, pieces}) => {
+const toDate = (isoDate) => {
+    if (!isoDate) return '';
+    const [year, month, day] = isoDate.split("-");
+    return `${day}.${month}.${year}`;
+}
+const dateHtml = () => (task.start && task.finish) ? `<div class="section"><span>${toDate(task.start)}</span><span class="date">${toDate(task.finish)}</span></div>` : '';
+const materialHtml = () => task.material ? `<div class="section"><span>${task.material}</span><span>${getValue(task.thick, 'мм')}</span></div>` : '';
+
+const setTask = ({title, start, finish, material, thick, kerf, sheet, scraps, edgings, pieces}) => {
     taskTitleInput.innerText = title;
 
-    taskKerfInput.value = kerf;
-    toUpdateSheetLink.lastElementChild.innerHTML = `${getValue(kerf, 'мм')}`
+    taskKerfInput.value = kerf || '';
+    taskStartInput.value = start;
+    taskFinishInput.value = finish;
+    taskMaterialInput.value = material || '';
+    taskThickInput.value = thick || '';
 
+    toUpdateSheetLink.innerHTML = dateHtml() + materialHtml() + sheetHtml(sheet);
     setSheet(sheet);
 
     scrapsList.replaceChildren();
@@ -312,8 +410,6 @@ const setTask = ({title, kerf, sheet, scraps, edgings, pieces}) => {
 }
 
 const setSheet = ({width, height, edge}) => {
-    toUpdateSheetLink.firstElementChild.innerHTML = sheetHtml(width, height, edge);
-
     sheetWidthInput.value = width;
     sheetHeightInput.value = height;
     sheetEdgeInput.value = edge;
@@ -467,12 +563,17 @@ const updatePiece = () => {
 
 const updateSheet = () => {
     task.sheet = {
-        width: sheetWidthInput.value, height: sheetHeightInput.value, edge: sheetEdgeInput.value
+        width: sheetWidthInput.value || 1,
+        height: sheetHeightInput.value || 1,
+        edge: sheetEdgeInput.value || 0
     }
     task.kerf = taskKerfInput.value;
+    task.material = taskMaterialInput.value;
+    task.thick = taskThickInput.value;
+    task.start = taskStartInput.value;
+    task.finish = taskFinishInput.value;
 
-    toUpdateSheetLink.firstElementChild.innerHTML = sheetHtml(...Object.values(task.sheet));
-    toUpdateSheetLink.lastElementChild.innerHTML = `${getValue(task.kerf, 'мм')}`
+    toUpdateSheetLink.innerHTML = dateHtml() + materialHtml() + sheetHtml(task.sheet);
 }
 
 // 2.4 Навигация
@@ -486,28 +587,33 @@ removeTaskButton.onclick = async () => {
     if (task) {
         const q = document.getElementById(task.id)
         q.remove()
-        await _deleteTask(task.id);
+        await deleteTask(task.id);
         task = null;
     }
     changePage(mainPage);
 }
 
 const deleteTask = async () => {
-    if (!task) return;
-    const url = new URL(API_ENDPOINT);
-    url.searchParams.set("task_id", '-' + task.id)
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    if (task) {
+        if (API_ENDPOINT) {
+            const url = new URL(API_ENDPOINT);
+            url.searchParams.set("task_id", '-' + task.id)
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        } else {
+            tasks = tasks.filter(({id}) => task.id != id);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+    }
+
 };
 
-const _deleteTask = async () => {
-    console.log('delete task', task.id);
-}
 
 taskTitleInput.onblur = async () => {
     const title = taskTitleInput.innerText.trim();
     if (task.title !== title) {
-        task.title = title;
+        task.title = document.getElementById(task.id).innerText = title;
+        saveTask();
         await blurAutoSave({task_id: task.id, title});
     }
 };
@@ -587,95 +693,48 @@ toCreatePieceLink.onclick = (e) => {
 // 2.7 отправка и получение данных
 
 const loadTask = async (id) => {
-    const url = new URL(API_ENDPOINT);
-    url.searchParams.set("task_id", id)
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    task = await response.json();
+    if (API_ENDPOINT) {
+        const url = new URL(API_ENDPOINT);
+        url.searchParams.set("task_id", id)
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        task = await response.json();
+    } else {
+        task = tasks.find(q => q.id == id);
+    }
 }
 
-const _loadTask = async (id) => {
-    console.log('load task', id);
-
-    task = {
-        id: 1,
-        title: 'Раскрой',
-        kerf: 4,
-        sheet: {
-            width: 2800, height: 2070, edge: 10
-        },
-        scraps: [{width: 1800, height: 1000, edge: 0, count: 1}],
-        edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.2}],
-        pieces: [{
-            width: 334,
-            height: 284,
-            rotated: true,
-            count: 2,
-            edging: {left: 0, right: 1, up: null, down: null}
-        }, {
-            width: 572,
-            height: 84,
-            rotated: false,
-            count: 1,
-            edging: {left: null, right: 1, up: 1, down: null}
-        }, {
-            width: 604,
-            height: 84,
-            rotated: true,
-            count: 1,
-            edging: {left: 0, right: null, up: null, down: null}
-        }, {
-            width: 388,
-            height: 324,
-            rotated: false,
-            count: 2,
-            edging: {left: 1, right: 0, up: null, down: 1}
-        }, {
-            width: 389,
-            height: 334,
-            rotated: false,
-            count: 1,
-            edging: {left: null, right: 1, up: 0, down: null}
-        }, {
-            width: 806,
-            height: 84,
-            rotated: true,
-            count: 1,
-            edging: {left: 0, right: 1, up: 1, down: null}
-        }, {
-            width: 734,
-            height: 334,
-            rotated: true,
-            count: 2,
-            edging: {left: 1, right: 0, up: null, down: null}
-        }, {
-            width: 805,
-            height: 324,
-            rotated: false,
-            count: 6,
-            edging: {left: 0, right: 0, up: 1, down: null}
-        }, {width: 1034, height: 334, rotated: true, count: 8, edging: {left: null, right: 1, up: null, down: 1}}]
-    };
+const saveTask = async () => {
+    if (API_ENDPOINT) {
+        const url = new URL(API_ENDPOINT);
+        url.searchParams.set("task", JSON.stringify(task))
+        await fetch(url);
+    } else {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
 }
 
 const createTask = async () => {
-    const url = new URL(API_ENDPOINT);
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    task = await response.json();
-};
-
-const _createTask = async () => {
-    task = {
-        id: 3,
-        title: "Раскрой",
-        kerf: 4,
-        sheet: {width: 1000, height: 1000, edge: 10},
-        pieces: [],
-        edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.2}],
-        scraps: []
+    if (API_ENDPOINT) {
+        const url = new URL(API_ENDPOINT);
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        task = await response.json();
+    } else {
+        task = {
+            id: tasks.length,
+            title: "Раскрой",
+            kerf: 4,
+            sheet: {width: 1000, height: 1000, edge: 10},
+            pieces: [],
+            edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.2}],
+            scraps: []
+        }
+        tasks.push(task);
+        localStorage.setItem('tasks', JSON.stringify(tasks));
     }
 }
+
 
 // 2.8 Изменение
 
@@ -783,6 +842,7 @@ updateButton.onclick = (e) => {
     } else {
         updateSheet();
     }
+    saveTask();
 }
 
 // 3.1 Состояние
@@ -815,8 +875,16 @@ cuttingGutter.onpointerdown = handlePointerDown;
 
 // 3.2. Управление
 
+const setScale = ({width, height}) => {
+    scale = Math.min(L.width / width, L.height / height)
+}
+
 downloadCuttingButton.onclick = () => {
-    print.innerHTML = getPages().map(({sheet, pieces, places}) => pagePdf(sheet, pieces, places)).join('\n')
+    const t = taskPdf(task);
+    setScale(task.sheet);
+
+    print.innerHTML = takePagePdf(t) + getPages().map((
+        {sheet, pieces, places}) => pagePdf(sheet, pieces, places, t)).join('\n')
     window.print();
 }
 
@@ -874,14 +942,19 @@ const placeBodyHtml = (width, height, edge, k) => `<div class="edge" style="widt
 const placeHtml = (width, height, edge, k) => `<div class="place">${placeTitleHtml(width, height)}${placeBodyHtml(width, height, edge, k)}</div>`;
 
 const setPlaces = () => {
-    const states = [...task.scraps, task.sheet];
+    const states = [...task.scraps, task.sheet].filter(Boolean);
     dst.innerHTML = states.map((
         {
             width,
             height,
             edge
         }, k) => placeHtml(width, height, edge, k)).join('\n');
-    dropStates = states.map(({width, height, edge}) => ({width: width - 2 * edge, height: height - 2 * edge}));
+    dropStates = states.map(({width, height, edge}) => ({
+        left: 0,
+        top: 0,
+        width: width - 2 * edge,
+        height: height - 2 * edge
+    }));
 }
 
 // 3.5 Отображение страницы
@@ -1015,7 +1088,7 @@ const toRotateDropPiece = () => {
 const addRightDropPlace = () => {
     // console.log('addRightDropPlace')
     const rect = {width: dropState.width - dragState.width - task.kerf};
-    if (rect.width <= 0) return;
+    if (rect.width <= 0) return false;
 
     const place = document.createElement('DIV');
     place.classList.add('drop');
@@ -1038,12 +1111,13 @@ const addRightDropPlace = () => {
     place.style.height = 100 * rect.height / dropState.height + '%';
 
     dropPlace.appendChild(place);
+    return true;
 }
 
 const addLeftDropPlace = () => {
     // console.log('addLeftDropPlace')
     const rect = {height: dropState.height - dragState.height - task.kerf};
-    if (rect.height <= 0) return;
+    if (rect.height <= 0) return false;
 
     const place = document.createElement('DIV');
     place.classList.add('drop');
@@ -1066,6 +1140,7 @@ const addLeftDropPlace = () => {
     place.style.height = 100 * rect.height / dropState.height + '%';
 
     dropPlace.appendChild(place);
+    return true;
 }
 
 const addVerticalCutLine = () => {
@@ -1154,11 +1229,9 @@ const cutDropPlace = () => {
     console.assert(dragState === dragStates[dragPiece.dataset.j])
 
     addDropPiece();
-    addLeftDropPlace();
-    addRightDropPlace();
+    addLeftDropPlace() && addHorizontalCutLine();
+    addRightDropPlace() && addVerticalCutLine();
     // dropPlace.style.backgroundColor = 'gray'
-    addVerticalCutLine();
-    addHorizontalCutLine();
 }
 
 const incTakeCount = (i) => {
@@ -1351,8 +1424,55 @@ window.addEventListener('pointermove', tryStartDrag);
 
 // Печать
 
+let scale;
+
+const valuePdf = (key, value) => `<div class="sign"><span>${key}:</span><span>${value}</span></div>`
+
+const taskPdf = ({title, start, finish, material, thick}) => {
+    const s = getHead();
+    return `<div class="task" style="${s}">
+    <div class="signs">
+        ${valuePdf('Заказ', title)}
+        ${valuePdf('Дата', toDate(start))}
+        ${valuePdf('Дата готовности', toDate(finish))}
+    </div>
+    <div class="signs">
+        ${valuePdf('Материал', material)}
+        ${valuePdf('Толщина', thick ? thick + ' мм' : '')}
+    </div>
+</div>`;
+}
+
+// Все детали
+
+const linePdf = (line) => line === null ? '' : `<svg class="line yellow"><use href="sprite.svg#${edgingLines[line]}"></use></svg>`;
+
+const flagPdf = (flag) => `<td style="color: green;">${flag ? `&#10003;` : ''}</td>`;
+const whPdf = (width, height, {left, right, up, down}) => {
+    const w = `<div class="col"><span>${width}</span>${linePdf(up)}${linePdf(down)}</div>`;
+    const h = `<div class="col"><span>${height}</span>${linePdf(left)}${linePdf(right)}</div>`;
+    return `<td>${w}</td><td>${h}</td>`
+
+}
+const takePagePdf = (t) => `<div class="page">${t}${logoPdf}<table style="left: ${padding}mm;top: ${L.top}mm;"><thead>${takeHeadPdf}</thead><tbody>${takeListPdf()}</tbody></table></div>`
+const takeHeadPdf = `<tr><th>#</th><th>Длина</th><th>Ширина</th><th>Кол-во</th><th>Пов-от</th><th>Наименование</th><th>ДО</th></tr>`;
+const takeItemPdf = (
+    {
+        width,
+        height,
+        count,
+        rotated,
+        name,
+        extra,
+        edging
+    }, i) => `<tr><td>${i + 1}</td>${whPdf(width, height, edging)}<td>${count}</td>${flagPdf(rotated)}<td>${name || ""}</td>${flagPdf(extra)}</tr>`;
+const takeListPdf = () => task.pieces.map(takeItemPdf).join('\n');
+
+// Раскрой
+
 const getRect = (left, top, width, height) => `left: ${left}mm;top: ${top}mm;width: ${width}mm;height: ${height}mm;`;
 const getArea = (width, height) => `right: ${L.right}mm;top: ${L.top}mm;width: ${width}mm;height: ${height}mm;`;
+const getHead = () => `left: ${U.left}mm;top: ${U.top}mm;right: ${U.right}mm;height: ${U.height}mm;`;
 
 const backPdf = (s, zIndex) => `<div class="base" style="${s};z-index: ${zIndex}"></div>`
 
@@ -1363,7 +1483,7 @@ const placePdf = (s, wh) => `<div class="rect gray" style="${s}">${wh}</div>`
 const indexPdf = (index, width, height) => {
     const n = index.toString().length + 1;
     const fontSize = Math.min(width / n, height / 1.2, 3);
-    return `<div class="index gray" style="font-size: ${fontSize}mm;">#${index}.</div>`
+    return `<div class="index gray" style="font-size: ${fontSize}mm;">#${index + 1}.</div>`
 }
 
 const widthPdf = (width, w, h, fontSize) => {
@@ -1381,7 +1501,7 @@ const sizePdf = (width, height, w, h) => {
     return widthPdf(width, w, h, fontSize) + heightPdf(height, h, w, fontSize);
 }
 
-const linePdf = (width, height) => {
+const tapePdf = (width, height) => {
     const lines = []
     for (let y = -width; y <= height; y += 5) {
         lines.push(`<line x1=0 y1=${y} x2=${width} y2=${y + width}></line>`)
@@ -1389,16 +1509,16 @@ const linePdf = (width, height) => {
     return `<svg class="junk" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 ${width} ${height}">${lines.join('\n')}</svg>`
 }
 
-const piecesPdf = (pieces, scale) => pieces.map(({left, top, width, height, i}) => {
+const piecesPdf = (pieces) => pieces.map(({left, top, width, height, i}) => {
     const w = width * scale;
     const h = height * scale;
     const l = left * scale;
     const t = top * scale;
     const s = getRect(l, t, w, h);
-    return piecePdf(s, sizePdf(width, height, w, h), indexPdf(i, w, h)) + backPdf(s, 3);
+    return piecePdf(s, sizePdf(width, height, w, h), indexPdf(+i, w, h)) + backPdf(s, 3);
 }).join('\n');
 
-const placesPdf = (places, scale) => places.map(({left, top, width, height}) => {
+const placesPdf = (places) => places.map(({left, top, width, height}) => {
     const w = width * scale;
     const h = height * scale;
     const l = left * scale;
@@ -1410,31 +1530,30 @@ const placesPdf = (places, scale) => places.map(({left, top, width, height}) => 
 
 const cutPdf = (sheet, pieces, places) => {
     const {width, height} = sheet;
-    const scale = Math.min(L.width / width, L.height / height);
     const w = width * scale;
     const h = height * scale;
     const s = getArea(w, h);
-    const l = linePdf(w, h);
-    const p = piecesPdf(pieces, scale) + placesPdf(places, scale);
+    const l = tapePdf(w, h);
+    const p = piecesPdf(pieces) + placesPdf(places);
     return sheetPdf(s, l, p) + `<div class="rect" style="${s}"></div>`;
 }
 
-const pieceHeadPdf = `<tr><th>#</th><th>Ширина</th><th>Высота</th><th>Сколько</th></tr>`;
+const pieceHeadPdf = `<tr><th>#</th><th>Длина</th><th>Ширина</th><th>Кол-во</th></tr>`;
 const pieceItemPdf = (i, count) => {
-    const {width, height} = task.pieces[i];
-    return `<tr><td>${i}</td><td>${width}</td><td>${height}</td><td>${count}</td></tr>`
+    const {width, height, edging} = task.pieces[i];
+    return `<tr><td>${i + 1}</td>${whPdf(width, height, edging)}<td>${count}</td></tr>`
 }
 const pieceListPdf = (pieces) => {
     const counts = pieces.reduce((acc, {i}) => {
         acc[i] = (acc[i] || 0) + 1;
         return acc;
     }, {});
-    return Object.entries(counts).map(([i, count]) => pieceItemPdf(i, count)).join('\n');
+    return Object.entries(counts).map(([i, count]) => pieceItemPdf(+i, count)).join('\n');
 }
-const logoPdf = `<div class="logo">${getIcon('cut')} <span>whCut</span></div>`;
+const logoPdf = `<div class="logo">${getIcon('cut', 'green')} <span>whCut</span></div>`;
 
 const takePdf = (pieces) => `<table style="top: ${R.top}mm;right: ${R.right}mm; width: ${R.width}mm;"><thead>${pieceHeadPdf}</thead><tbody>${pieceListPdf(pieces)}</tbody></table>`
-const pagePdf = (sheet, pieces, places) => `<div class="page">${logoPdf}${cutPdf(sheet, pieces, places)}${takePdf(pieces)}</div>`;
+const pagePdf = (sheet, pieces, places, t) => `<div class="page">${t}${logoPdf}${cutPdf(sheet, pieces, places)}${takePdf(pieces)}</div>`;
 
 const getPages = () => [...dst.querySelectorAll('.edge')].map(e => {
     const {left, top, width, height} = e.getBoundingClientRect();
@@ -1468,32 +1587,35 @@ let saveTimeout = null;
 let abortController = null;
 
 
-async function saveToServer(update) {
+async function updateTask(update) {
     if (abortController) abortController.abort();
-    console.log('saveToServer:', update);
+    console.log('updateTask:', update);
 
     abortController = new AbortController();
     const signal = abortController.signal;
 
     try {
-        const response = await fetch(API_ENDPOINT, {
-            method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(update)
-        });
-
-        if (!response.ok) {
-            console.error('saveToServer: HTTP', response.status);
-            return false;
+        if (API_ENDPOINT) {
+            const response = await fetch(API_ENDPOINT, {
+                method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(update)
+            });
+            if (!response.ok) {
+                console.error('updateTask: HTTP', response.status);
+                return false;
+            }
+            await response.json();
+            return true;
+        } else {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
         }
 
-        await response.json();
-        return true;
 
     } catch (error) {
         if (error.name === 'AbortError') {
-            console.log('saveToServer cancelled');
+            console.log('updateTask cancelled');
             return false;
         }
-        console.error('saveToServer:', error);
+        console.error('updateTask:', error);
         return false;
 
     } finally {
@@ -1503,33 +1625,22 @@ async function saveToServer(update) {
     }
 }
 
-async function _saveToServer(update) {
-    if (abortController) abortController.abort();
-    console.log('saveToServer:', update);
-
-    abortController = new AbortController();
-    const signal = abortController.signal;
-
-    console.log(update);
-    if (abortController && abortController.signal === signal) {
-        abortController = null;
-    }
-}
 
 const blurAutoSave = async (update) => {
     if (saveTimeout) {
         clearTimeout(saveTimeout);
         saveTimeout = null;
     }
-    await _saveToServer(update);
+    await updateTask(update);
 }
 
 
 // Начальная загрузка
 
-_getTasks()
-    .then(cuttings => cuttings.forEach(addTask))
-    .catch(error => console.error(error));
+(function () {
+    loadTasks();
+    tasks.forEach(addTask);
+})();
 
 
 
