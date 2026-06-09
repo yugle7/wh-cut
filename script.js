@@ -973,13 +973,14 @@ const setTakes = () => {
         q = q.lastElementChild.firstElementChild;
         q.dataset.i = i.toString();
 
-        q.onpointerup = () => {
+        q.onpointerup = (e) => {
             console.log('take.onpointerup')
             if (!down) return;
             take = takes[i];
             toSelect(take);
         };
         q.onpointerdown = (e) => {
+            q.releasePointerCapture(e.pointerId);
             console.log('take.onpointerdown')
             onPointerDown(e, dragTake);
         }
