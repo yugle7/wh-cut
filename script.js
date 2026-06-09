@@ -1576,7 +1576,7 @@ const takesListPdf = (drags) => {
     }, {});
     return Object.entries(counts).map(([i, count]) => takesItemPdf(+i, count)).join('\n');
 }
-const pdfLogo = `<div class="logo">${iconHtml('cut', 'green')} <span>whCut</span></div>`;
+const pdfLogo = `<div class="logo">${iconHtml('cutting', 'green')} <span>whCut</span></div>`;
 
 const takesPdf = (drags) => `<table style="top: ${S.top}mm;right: ${S.right}mm; width: ${S.width}mm;">
     <thead>${takesHeadPdf}</thead>
