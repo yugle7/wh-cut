@@ -514,20 +514,20 @@ const addScrap = (scrap, i) => {
 const createScrap = () => {
     index = task.scraps.length;
     task.scraps.push({
-        width: scrapWidthInput.value,
-        height: scrapHeightInput.value,
-        edge: scrapEdgeInput.value,
-        count: scrapCountInput.value
+        width: +scrapWidthInput.value,
+        height: +scrapHeightInput.value,
+        edge: +scrapEdgeInput.value,
+        count: +scrapCountInput.value
     });
     link = addScrap(task.scraps[index], index);
 }
 
 const updateScrap = () => {
     task.scraps[index] = {
-        width: scrapWidthInput.value,
-        height: scrapHeightInput.value,
-        edge: scrapEdgeInput.value,
-        count: scrapCountInput.value,
+        width: +scrapWidthInput.value,
+        height: +scrapHeightInput.value,
+        edge: +scrapEdgeInput.value,
+        count: +scrapCountInput.value,
     }
     link.innerHTML = scrapHtml(task.scraps[index]);
 }
@@ -606,22 +606,22 @@ const addPiece = (piece, i) => {
 const createPiece = () => {
     index = task.pieces.length;
     task.pieces.push({
-        width: pieceWidthInput.value,
-        height: pieceHeightInput.value,
+        width: +pieceWidthInput.value,
+        height: +pieceHeightInput.value,
         rotated: pieceRotated,
         edging: pieceEdging,
-        count: pieceCountInput.value
+        count: +pieceCountInput.value
     });
     link = addPiece(task.pieces[index], index);
 }
 
 const updatePiece = () => {
     task.pieces[index] = {
-        width: pieceWidthInput.value,
-        height: pieceHeightInput.value,
+        width: +pieceWidthInput.value,
+        height: +pieceHeightInput.value,
         rotated: pieceRotated,
         edging: pieceEdging,
-        count: pieceCountInput.value
+        count: +pieceCountInput.value
     };
     link.innerHTML = pieceHtml(task.pieces[index]);
 }
@@ -630,9 +630,9 @@ const updatePiece = () => {
 
 const updateTask = () => {
     task.title = taskTitleInput.value || labels.task;
-    task.kerf = taskKerfInput.value || 0;
+    task.kerf = +taskKerfInput.value || 0;
     task.material = taskMaterialInput.value;
-    task.thick = taskThickInput.value;
+    task.thick = +taskThickInput.value;
     task.start = taskStartInput.value;
     task.finish = taskFinishInput.value;
 
@@ -641,9 +641,9 @@ const updateTask = () => {
 
 const updateSheet = () => {
     task.sheet = {
-        width: sheetWidthInput.value || 1,
-        height: sheetHeightInput.value || 1,
-        edge: sheetEdgeInput.value || 0
+        width: +sheetWidthInput.value || 1,
+        height: +sheetHeightInput.value || 1,
+        edge: +sheetEdgeInput.value || 0
     }
     toUpdateSheetLink.innerHTML = sheetHtml(task.sheet);
 }
