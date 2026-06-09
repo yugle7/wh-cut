@@ -1467,11 +1467,13 @@ const headPdf = ({title, start, finish, material, thick}) => {
 
 // 4.2 Постановка задачи
 
-const linePdf = (line, color = 'yellow') => line ? `<svg class="line ${color}">${spriteHtml(edgingLines[line])}</use></svg>` : '';
+const linePdf = (line, color = 'yellow') => line !== null ? `<svg class="line ${color}">${spriteHtml(edgingLines[line])}</use></svg>` : '';
 
 const flagPdf = (flag) => `<td style="color: green;">${flag ? `&#10003;` : ''}</td>`;
 
 const whPdf = (width, height, {left, right, up, down}) => {
+    console.log(up, down);
+    console.log(left, right);
     const w = `<div class="col"><span>${width}</span>${linePdf(up)}${linePdf(down)}</div>`;
     const h = `<div class="col"><span>${height}</span>${linePdf(left)}${linePdf(right)}</div>`;
     return `<td>${w}</td><td>${h}</td>`
@@ -1570,7 +1572,7 @@ const takesListPdf = (drags) => {
         acc[i] = (acc[i] || 0) + 1;
         return acc;
     }, {});
-    return Object.entries(counts).map(([i, count]) => takesItemPdf(i, count)).join('\n');
+    return Object.entries(counts).map(([i, count]) => takesItemPdf(+i, count)).join('\n');
 }
 const pdfLogo = `<div class="logo">${iconHtml('cut', 'green')} <span>whCut</span></div>`;
 
