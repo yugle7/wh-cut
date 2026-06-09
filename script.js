@@ -980,8 +980,8 @@ const setTakes = () => {
             toSelect(take);
         };
         q.onpointerdown = (e) => {
-            q.releasePointerCapture(e.pointerId);
             console.log('take.onpointerdown')
+            q.releasePointerCapture(e.pointerId);
             onPointerDown(e, dragTake);
         }
         takes[i].html = q
@@ -1013,9 +1013,10 @@ const asZone = ({width, height, edge}) => ({width, height, drops: [asDrop(width,
 
 const setZones = () => {
     console.log('setZones')
-    const n = 1; // todo: вычислить количество листов
+    const n = 1;
+    // todo: вычислить количество листов
     zones = [
-        ...task.scraps.filter(Boolean).map(asZone),
+        ...task.scraps.flatMap(q=> Array(q.count).fill(q).map(asZone)),
         ...Array(n).fill(task.sheet).map(asZone)
     ]
     dropArea.innerHTML = zones.map(zoneHtml).join('');
