@@ -89,7 +89,14 @@ a:hover {
     align-items: center;
 }
 
-.list {
+#to-update-task {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    width: 100%;
+}
+
+.column {
     display: flex;
     flex-direction: column;
 }
@@ -117,7 +124,7 @@ a:hover {
     padding-right: 10px;
 }
 
-.header {
+#menu {
     position: fixed;
     top: 0;
     bottom: 0;
@@ -223,13 +230,12 @@ ol {
 
 
 #setting .selected {
-    /*box-shadow: 0 -2px 0 var(--green), 0 2px 0 var(--green);*/
-    /*background-color: var(--bg-selected);*/
     background-color: #2c3532;
 }
 
 #cutting .selected {
     --lightness: 50%;
+    z-index: 9999;
 }
 
 .section span,
@@ -477,24 +483,18 @@ button:disabled svg {
 }
 
 
-#dst {
-    display: flex;
-    flex-direction: column;
-    padding: 15px;
+#cutting .side {
     width: 100%;
     gap: 20px;
 }
 
-#src {
-    display: flex;
-    gap: 20px;
-    flex-direction: column;
-    width: calc(100% - 70px);
-    margin: 15px;
+#cutting .left {
+    padding: 15px 15px 15px 65px;
+    width: 100%;
 }
 
-#src div,
-#dst div {
+#cutting .right {
+    padding: 15px 65px 15px 15px;
     width: 100%;
 }
 
@@ -511,6 +511,14 @@ button:disabled svg {
     gap: 10px;
 }
 
+.touch {
+    touch-action: none;
+    will-change: transform;
+}
+.end {
+    align-items: flex-end;
+}
+
 .place {
     display: flex;
     flex-direction: column;
@@ -519,8 +527,8 @@ button:disabled svg {
     will-change: transform;
 }
 
-.edge {
-    background: gray;
+.zone {
+    background: var(--bg-secondary);
     position: relative;
 }
 
@@ -593,13 +601,6 @@ input[type="text"] {
     box-sizing: border-box;
 }
 
-.area {
-    position: absolute;
-    background-color: lightgray;
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
-    z-index: 0;
-}
 
 .rect {
     box-shadow: inset 0 0 0 1px black;
@@ -607,12 +608,16 @@ input[type="text"] {
     z-index: 9999;
 }
 
+.value {
+    padding: 10px;
+}
+
 .base {
     position: absolute;
     background: white;
 }
 
-.junk {
+.tape {
     position: absolute;
     stroke: lightgray;
     stroke-width: 0.5;
@@ -692,6 +697,14 @@ th {
 
     body * {
         visibility: hidden;
+    }
+
+    .area {
+        position: absolute;
+        background-color: lightgray;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+        z-index: 0;
     }
 
     #print {

@@ -16,9 +16,8 @@
 
 <article id="setting" class="hidden">
     <div class="side left">
-        <h1 id="task-title" contenteditable="plaintext-only"></h1>
-
-        <button id="to-update-sheet" class="list"></button>
+        <div id="to-update-task"></div>
+        <button id="to-update-sheet"></button>
 
         <br>
         <button id="to-create-scrap" class="section">
@@ -57,7 +56,7 @@
                     <use href="sprite.svg#x"></use>
                 </svg>
             </button>
-            <h3 id="form">Задание</h3>
+            <h3 id="form">Задача</h3>
             <button id="update" class="icon">
                 <svg class="green">
                     <use href="sprite.svg#save"></use>
@@ -70,7 +69,11 @@
             </button>
         </nav>
 
-        <form id="sheet">
+        <form id="task">
+            <section>
+                <label for="task-title" class="hidden">Название задачи</label>
+                <input type="text" id="task-title" placeholder="Название задачи"/>
+            </section>
             <section>
                 <label for="task-start">Дата</label>
                 <input type="date" id="task-start"/>
@@ -87,10 +90,9 @@
                 <label for="task-thick">Толщина листа</label>
                 <input type="number" inputmode="numeric" id="task-thick" placeholder="мм"/>
             </section>
-            <section>
-                <label for="task-kerf">Ширина реза</label>
-                <input type="number" inputmode="numeric" id="task-kerf" placeholder="мм"/>
-            </section>
+        </form>
+
+        <form id="sheet" class="hidden">
             <section>
                 <span>Размеры листа</span>
                 <div>
@@ -111,6 +113,10 @@
                 <label for="sheet-edge">Отступ от края</label>
                 <input type="number" inputmode="numeric" id="sheet-edge" placeholder="мм" autocomplete="off"/>
             </section>
+            <section>
+                <label for="task-kerf">Ширина реза</label>
+                <input type="number" inputmode="numeric" id="task-kerf" placeholder="мм"/>
+            </section>
         </form>
 
         <form id="scrap" class="hidden">
@@ -118,23 +124,25 @@
                 <span>Размеры</span>
                 <div>
                     <label>
-                        <input type="number" id="scrap-width" placeholder="длина" autocomplete="off"/>
+                        <input type="number" inputmode="numeric" id="scrap-width" placeholder="длина"
+                               autocomplete="off"/>
                     </label>
                     <svg class="icon gray">
                         <use href="sprite.svg#x"></use>
                     </svg>
                     <label>
-                        <input type="number" id="scrap-height" placeholder="ширина" autocomplete="off"/>
+                        <input type="number" inputmode="numeric" id="scrap-height" placeholder="ширина"
+                               autocomplete="off"/>
                     </label>
                 </div>
             </section>
             <section>
                 <label for="scrap-edge">Отступ от края</label>
-                <input type="number" id="scrap-edge" placeholder="мм" autocomplete="off"/>
+                <input type="number" inputmode="numeric" id="scrap-edge" placeholder="мм" autocomplete="off"/>
             </section>
             <section>
                 <label for="scrap-count">Количество</label>
-                <input type="number" id="scrap-count" placeholder="шт" autocomplete="off"/>
+                <input type="number" inputmode="numeric" id="scrap-count" placeholder="шт" autocomplete="off"/>
             </section>
         </form>
 
@@ -145,7 +153,8 @@
             </section>
             <section>
                 <label for="edging-thick">Толщина</label>
-                <input type="number" step="0.1" id="edging-thick" placeholder="мм" autocomplete="off"/>
+                <input type="number" inputmode="numeric" step="0.1" id="edging-thick" placeholder="мм"
+                       autocomplete="off"/>
             </section>
         </form>
 
@@ -154,13 +163,15 @@
                 <span>Размеры</span>
                 <div>
                     <label>
-                        <input type="number" id="piece-width" placeholder="длина" autocomplete="off"/>
+                        <input type="number" inputmode="numeric" id="piece-width" placeholder="длина"
+                               autocomplete="off"/>
                     </label>
                     <svg class="icon gray">
                         <use href="sprite.svg#x"></use>
                     </svg>
                     <label>
-                        <input type="number" id="piece-height" placeholder="ширина" autocomplete="off"/>
+                        <input type="number" inputmode="numeric" id="piece-height" placeholder="ширина"
+                               autocomplete="off"/>
                     </label>
                 </div>
             </section>
@@ -170,7 +181,7 @@
             </section>
             <section>
                 <label for="piece-count">Количество</label>
-                <input type="number" id="piece-count" placeholder="шт" autocomplete="off"/>
+                <input type="number" inputmode="numeric" id="piece-count" placeholder="шт" autocomplete="off"/>
             </section>
             <section>
                 <label for="piece-edging-up">Кромка сверху</label>
@@ -193,25 +204,25 @@
 
 </article>
 
-<nav id="header" class="header hidden">
+<nav id="menu" class="hidden">
     <button id="to-main" class="menu">
         <svg class="blue">
-            <use href="sprite.svg#back"></use>
+            <use href="sprite.svg#main"></use>
         </svg>
     </button>
     <button id="to-setting" class="menu">
         <svg class="yellow">
-            <use href="sprite.svg#set"></use>
+            <use href="sprite.svg#setting"></use>
         </svg>
     </button>
     <button id="to-cutting" class="menu">
         <svg class="yellow">
-            <use href="sprite.svg#cut"></use>
+            <use href="sprite.svg#cutting"></use>
         </svg>
     </button>
     <button id="remove-task" class="menu">
         <svg class="red">
-            <use href="sprite.svg#delete"></use>
+            <use href="sprite.svg#remove"></use>
         </svg>
     </button>
     <button id="download-cutting" class="menu hidden">
@@ -234,18 +245,11 @@
 </nav>
 
 <article id="cutting" class="hidden">
-    <div class="side left">
-        <div id="dst">
-
-        </div>
-    </div>
+    <div id="drop" class="side left"></div>
     <div id="cutting-gutter" class="gutter"></div>
-    <div class="side right">
-        <div id="src">
-
-        </div>
-    </div>
+    <div id="take" class="side right"></div>
 </article>
+
 <div id="print"></div>
 
 <script src="script.js"></script>
