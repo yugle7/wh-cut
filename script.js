@@ -454,7 +454,7 @@ const pieceHtml = ({width, height, rotated, edging, count}) => {
     const w = `<div class="col"><span>${width}</span>${lineHtml(up)}${lineHtml(down)}</div>`;
     const h = `<div class="col"><span>${height}</span>${lineHtml(left)}${lineHtml(right)}</div>`;
 
-    return `<button class="section"><div>${w}${rotated ? o : x}${h}</div>${valueHtml(count, 'шт')}</button>`
+    return `<div>${w}${rotated ? o : x}${h}</div>${valueHtml(count, 'шт')}`
 }
 
 // 2.2 Заполнение полей задачи
@@ -591,7 +591,7 @@ const copyPieceToForm = ({width, height, rotated, count, edging}) => {
 
 const addPiece = (piece, i) => {
     let q = document.createElement('li');
-    q.innerHTML = pieceHtml(piece)
+    q.innerHTML = `<button class="section">${pieceHtml(piece)}</button>`
     q.firstChild.onclick = (e) => {
         index = i;
         copyPieceToForm(piece);
