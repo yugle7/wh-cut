@@ -142,6 +142,8 @@ const toDate = (isoDate) => {
 
 const isOn = (inner, outer) => inner.left >= outer.left && inner.top >= outer.top && inner.left + inner.width <= outer.left + outer.width && inner.top + inner.height <= outer.top + outer.height;
 
+const p = (value) => `${(100 * value).toFixed(3)}%`;
+
 // 2. HTML
 
 const spriteHtml = (name) => `<use href="sprite.svg#${name}"></use>`;
@@ -272,7 +274,7 @@ let page = mainPage;
 let tasks = [];
 let task = null;
 
-// 2. Редактор
+// 2. Параметры задачи
 
 let form = taskForm;
 let link = null;
@@ -282,10 +284,18 @@ let edgingLine = -1;
 let pieceRotated = false;
 let pieceEdging = {left: null, up: null, right: null, down: null};
 
-// 3. Печать
+// 3. Редактор раскроя
+
+let colors = [];
+
+// 4. Печать
 
 let scale;
 let pdfHead;
+
+// 5. Автоматический раскрой
+
+let mins;
 
 // Навигация
 
@@ -956,12 +966,11 @@ const takeHtml = (width, height, rotated, count, color) => `<div>
 </div>`;
 
 const setTakes = () => {
-    const colors = getColors(task.pieces.length);
     takes = task.pieces.map(({width, height, rotated, count}, i) => ({
         width,
         height,
         rotated,
-        count,
+        count: 0,
         color: colors[i]
     }));
 
@@ -971,7 +980,8 @@ const setTakes = () => {
 
     takeArea.childNodes.forEach((q, i) => {
         q = q.lastElementChild.firstElementChild;
-        q.dataset.i = i.toString();
+        q.dataset.i = i;
+        q.parentElement.parentElement.classList.add('hidden');
 
         q.onpointerup = (e) => {
             console.log('take.onpointerup')
@@ -991,61 +1001,92 @@ const setTakes = () => {
 
 // 3.4 Отображение мест вставки
 
-const cutButtonHtml = () => `<button class="hidden">${labels.cut}</button>`;
-const zoneTitleHtml = (width, height) => `<h4 class="center">${cutButtonHtml()}${widthHeightHtml(width, height)}</h4>`;
-const zoneBodyHtml = (width, height) => `<div class="zone" style="width: ${width * 100 / task.sheet.width}%; aspect-ratio: ${width} / ${height};"></div>`;
+const createZone = (zone, i) => {
+    console.log('createZone')
 
-const zoneHtml = (
-    {
-        width,
-        height
-    }) => `<div class="column end touch">${zoneTitleHtml(width, height)}${zoneBodyHtml(width, height)}</div>`;
-const dropHtml = (
-    {
-        left,
-        top,
-        width,
-        height
-    }) => `<div class="drop" style="width: ${width * 100 / zone.width}%; aspect-ratio: ${width} / ${height}; left: ${left * 100 / zone.width}%; top: ${top * 100 / zone.height}%;"></div>`;
+    const area = document.createElement('DIV');
+    area.classList.add("area");
 
-const asDrop = (width, height, edge) => ({left: edge, top: edge, width: width - 2 * edge, height: height - 2 * edge});
-const asZone = ({width, height, edge}) => ({width, height, drops: [asDrop(width, height, edge)], drags: []});
+    const title = document.createElement('H4');
+    title.classList.add('center');
+    title.innerHTML = widthHeightHtml(zone.width, zone.height);
+    area.appendChild(title);
 
-const setZones = () => {
-    console.log('setZones')
-    const n = 1;
-    // todo: вычислить количество листов
-    zones = [
-        ...task.scraps.flatMap(q=> Array(q.count).fill(q).map(asZone)),
-        ...Array(n).fill(task.sheet).map(asZone)
-    ]
-    dropArea.innerHTML = zones.map(zoneHtml).join('');
-    dropArea.childNodes.forEach((q, i) => {
-        q = q.lastChild;
-        q.dataset.i = i.toString();
-        zones[i].html = q;
-    });
+    const q = zone.html = document.createElement('DIV');
+    q.classList.add('zone');
+    q.dataset.i = i;
+    q.style.width = p(zone.width / task.sheet.width);
+    q.style.aspectRatio = `${zone.width} / ${zone.height}`;
+    area.appendChild(q);
+
+    dropArea.appendChild(area);
 }
 
-const setDrops = () => zones.forEach(({width, height, html, drops}) => {
-    zone = {width, height};
 
-    html.innerHTML = drops.map(dropHtml).join('');
-    html.childNodes.forEach((q, i) => {
-        q.dataset.i = i.toString();
-        drops[i].html = q;
-        q.onpointerup = dropDrag;
-    });
-})
+const createDrop = (drop, i) => {
+    console.log('createDrop')
+
+    const q = drop.html = document.createElement('DIV');
+    q.classList.add('drop');
+
+    q.dataset.i = i;
+
+    q.style.left = p(drop.left / zone.width);
+    q.style.top = p(drop.top / zone.height);
+
+    q.style.width = p(drop.width / zone.width);
+    q.style.height = p(drop.height / zone.height);
+
+    q.onpointerup = dropDrag;
+    if (!drop.busy) zone.html.appendChild(q);
+}
+
+const createDrag = (drag, i) => {
+    console.log('createDrag')
+
+    const q = drag.html = document.createElement('DIV');
+    q.dataset.i = i;
+    drag.toLeft = drag.toTop = true;
+
+    q.style.cursor = 'grab';
+    q.style.left = p(drag.left / zone.width);
+    q.style.top = p(drag.top / zone.height);
+    q.style.width = p(drag.width / zone.width);
+    q.style.aspectRatio = `${drag.width} / ${drag.height}`;
+    q.style.position = 'absolute';
+    q.style.backgroundColor = colors[drag.take]
+
+    q.onpointerdown = (e) => onPointerDown(e, dragDrop);
+    q.onpointerup = onDragClick;
+
+    zone.html.appendChild(q);
+}
+
+const setZones = () => {
+    console.log('setZones');
+
+    toCut();
+    dropArea.replaceChildren()
+    zones.forEach(createZone);
+
+    for (let i = 0; i < zones.length; i++) {
+        zone = zones[i];
+        zone.drops.forEach(createDrop);
+        zone.drags.forEach(createDrag);
+    }
+    ;
+    console.log(zones)
+}
 
 // 3.5 Отображение страницы
 
 const clearCutting = () => {
     toSelect(null);
 
+    colors = getColors(task.pieces.length);
+
     setTakes();
     setZones();
-    setDrops();
 }
 
 toCuttingButton.onclick = () => {
@@ -1158,11 +1199,11 @@ const addDrop = (drop) => {
     q.dataset.i = zone.drops.length.toString();
     zone.drops.push(drop);
 
-    q.style.left = drop.left * 100 / zone.width + '%';
-    q.style.top = drop.top * 100 / zone.height + '%';
+    q.style.left = p(drop.left / zone.width);
+    q.style.top = p(drop.top / zone.height);
 
-    q.style.width = drop.width * 100 / zone.width + '%';
-    q.style.height = drop.height * 100 / zone.height + '%';
+    q.style.width = p(drop.width / zone.width);
+    q.style.height = p(drop.height / zone.height);
 
     q.onpointerup = dropDrag;
     zone.html.appendChild(q);
@@ -1200,9 +1241,9 @@ const addDrag = () => {
 
     const q = drag.html;
     q.style.cursor = 'grab';
-    q.style.left = drag.left * 100 / zone.width + '%';
-    q.style.top = drag.top * 100 / zone.height + '%';
-    q.style.width = drag.width * 100 / zone.width + '%';
+    q.style.left = p(drag.left / zone.width);
+    q.style.top = p(drag.top / zone.height);
+    q.style.width = p(drag.width / zone.width);
     q.style.pointerEvents = 'auto';
 
     q.onpointerdown = (e) => onPointerDown(e, dragDrop);
@@ -1369,6 +1410,8 @@ const decTakeCount = (take) => {
 const clearDrop = () => {
     console.log('clearDrop');
 
+    console.log(zone)
+    console.log(drop)
     zone.html.appendChild(drop.html);
     zone.drags.forEach(q => {
         if (q.html && q !== drag && isOn(q, drop)) {
@@ -1604,6 +1647,256 @@ const getCuttings = () => zones.map(({width, height, drops, drags}) => ({
         l: left * scale, t: top * scale, w: width * scale, h: height * scale
     }))
 }));
+
+// 5. Автоматическое вычисление раскроя
+
+function getVerticalPacks(takes, drop) {
+    const dst = [];
+
+    takes.forEach(({width, height, rotated, count}, i) => {
+        if (count === 0) return;
+        const a = width * height;
+
+        function add(w, h) {
+            let height = h;
+            let area = a;
+            const takes = [i];
+            while (height <= drop.height && takes.length <= count) {
+                dst.push({width: w, height, area, takes: takes.slice()});
+                height += h + task.kerf;
+                area += a
+                takes.push(i);
+            }
+        }
+
+        if (rotated && height <= drop.width) {
+            add(height, width);
+        }
+        if (width <= drop.width) {
+            add(width, height);
+        }
+    });
+
+    return dst;
+}
+
+function cutHorizontalLine(packs, {width, height}, counts) {
+    packs = packs.filter(pack =>
+        pack.height <= height && pack.takes.every(i => counts[i] > 0)
+    );
+
+    const states = new Array(width + task.kerf);
+    for (let i = 0; i < states.length; i++) states[i] = [];
+    states[0].push({
+        counts: new Array(counts.length).fill(0),
+        area: 0,
+        pack: 0,
+        n: null
+    });
+
+    let line = {area: 0, packs: [], height};
+    let L = 0;
+    let N = 0;
+
+    for (let left = 0; left < width; left++) {
+        if (states[left].length === 0) continue;
+
+        states[left].forEach((state, n) => {
+            const c = state.counts;
+
+            for (let k = state.pack; k < packs.length; k++) {
+                const pack = packs[k];
+                for (const i of pack.takes) c[i]++;
+
+                if (pack.takes.every(i => c[i] <= counts[i])) {
+                    const l = left + pack.width + task.kerf;
+                    if (l <= width) {
+                        const a = state.area + pack.area;
+                        if (a > line.area) {
+                            line.area = a;
+                            L = l;
+                            N = states[l].length;
+                        }
+                        states[l].push({counts: [...c], area: a, pack: k, n});
+                    }
+                }
+                for (const i of pack.takes) c[i]--;
+            }
+        });
+    }
+
+    while (L) {
+        const state = states[L][N];
+        const pack = packs[state.pack];
+        line.packs.push(pack);
+        L -= pack.width + task.kerf;
+        N = state.n;
+    }
+    line.score = line.area / line.height;
+
+    return line;
+}
+
+function getHeights(takes, drop, counts) {
+    const heights = [];
+
+    counts.forEach((c, i) => {
+        if (c === 0) return;
+        const {rotated, height, width} = takes[i];
+        if (rotated && height < width && width <= drop.height && height <= drop.width) {
+            heights.push(width);
+        } else if (height <= drop.height && width <= drop.width) {
+            heights.push(height);
+        }
+    })
+    return heights;
+}
+
+function cutVerticalLines(drop, takes) {
+    takes = takes.map(({width, height, rotated, count}) => ({width: height, height: width, rotated, count}));
+    drop = {width: drop.width, height: drop.height};
+    return cutHorizontalLines(drop, takes);
+}
+
+function cutHorizontalLines(drop, takes) {
+    const packs = getVerticalPacks(takes, drop);
+    const counts = takes.map(({count}) => count);
+
+    const dst = {area: 0, lines: []};
+
+    let area = 0
+    const lines = [];
+
+    while (drop.height > 0) {
+        let line = cutHorizontalLine(packs, drop, counts);
+
+        if (area + line.area > dst.area) {
+            line.height = 0;
+            for (const pack of line.packs) {
+                if (pack.height > line.height) line.height = pack.height;
+            }
+            dst.area = area + line.area;
+            dst.lines = [...lines, line];
+        }
+        if (line.score === 0) break;
+
+        for (const height of getHeights(takes, drop, counts)) {
+            const l = cutHorizontalLine(packs, {width: drop.width, height}, counts);
+            if (l.score > line.score) {
+                line = l;
+            }
+        }
+        lines.push(line);
+        area += line.area;
+
+        drop.height -= line.height + task.kerf;
+        line.packs.forEach(({takes}) => takes.forEach(i => counts[i]--));
+    }
+
+    return dst.lines;
+}
+
+
+const pushDrop = ({width, height}, drop) => {
+    if (drop.width <= width + task.kerf) return null;
+    zone.drops.push({
+        top: drop.top, left: drop.left + width + task.kerf,
+        width: drop.width - width - task.kerf, height
+    });
+}
+
+const pushDrag = (take, pack, drop) => {
+    let {i, rotated, width, height} = take;
+    if (rotated && (width < height || width > pack.width) && height <= pack.width) {
+        [width, height] = [height, width];
+    }
+    zone.drags.push({
+        left: drop.left, top: drop.top,
+        rotated, width, height,
+        take: i, drop: zone.drops.length
+    });
+    zone.drops.push({...drop, busy: true});
+    return {width, height};
+}
+
+function pushPack(pack, drop, takes) {
+    let first = true;
+    for (const j of pack.takes) {
+        const drag = pushDrag(takes[j], pack, drop);
+
+        if (first) {
+            drop.width = pack.width;
+            drop.height = pack.height;
+            first = false;
+        } else {
+            pushDrop(drag, drop);
+        }
+        drop.top += drag.height + task.kerf;
+        drop.height -= drag.height + task.kerf;
+    }
+    if (drop.height > 0) {
+        zone.drops.push(drop);
+    }
+}
+
+function pushLine(line, drop, takes) {
+    for (const pack of line.packs) {
+        pack.height = line.height;
+        pushPack(pack, {...drop}, takes);
+
+        drop.left += pack.width + task.kerf;
+        drop.width -= pack.width + task.kerf;
+        drop.height = pack.height;
+    }
+    if (drop.width > 0) {
+        zone.drops.push(drop);
+    }
+}
+
+function pushLines(lines, drop, takes) {
+    lines.forEach(line => {
+        pushLine(line, {...drop}, takes);
+        drop.top += line.height + task.kerf;
+        drop.height -= line.height + task.kerf;
+    })
+    if (drop.height > 0) {
+        zone.drops.push(drop);
+    }
+}
+
+const horizontalCut = (drop, takes) => {
+    const lines = cutHorizontalLines({...drop}, takes);
+    lines.forEach(({packs}) => packs.forEach(pack => pack.takes.forEach(i => takes[i].count--)));
+    pushLines(lines, drop, takes);
+}
+
+const asDrop = (width, height, edge) => ({left: edge, top: edge, width: width - 2 * edge, height: height - 2 * edge});
+const asZone = ({width, height, edge}) => ({width, height, drops: [asDrop(width, height, edge)], drags: []});
+
+const toCut = () => {
+    const scraps = task.scraps.flatMap(q => Array(q.count).fill(q));
+    zones = [];
+
+    let takes = task.pieces.map(({width, height, rotated, count}, i) => ({width, height, rotated, count, i}));
+
+    let k = 0;
+    while (takes.length) {
+        if (k < scraps.length) {
+            zone = asZone(scraps[k]);
+            k++;
+        } else {
+            zone = asZone(task.sheet)
+        }
+
+        const drops = zone.drops.filter(d => !d.busy);
+        zone.drops = zone.drops.filter(d => d.busy);
+
+        drops.forEach(drop => horizontalCut(drop, takes));
+
+        zones.push(zone);
+        takes = takes.filter(({count}) => count);
+    }
+}
 
 // 5. Автосохранение
 

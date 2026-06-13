@@ -96,9 +96,12 @@ a:hover {
     width: 100%;
 }
 
-.column {
+.area {
     display: flex;
     flex-direction: column;
+    align-items: flex-end;
+    touch-action: none;
+    will-change: transform;
 }
 
 .gutter {
@@ -511,13 +514,6 @@ button:disabled svg {
     gap: 10px;
 }
 
-.touch {
-    touch-action: none;
-    will-change: transform;
-}
-.end {
-    align-items: flex-end;
-}
 
 .place {
     display: flex;
@@ -700,6 +696,7 @@ th {
     }
 
     .area {
+        display: block;
         position: absolute;
         background-color: lightgray;
         print-color-adjust: exact;

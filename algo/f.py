@@ -1,157 +1,169 @@
-class FreeRect:
-    __slots__ = ('x', 'y', 'w', 'h')
-
-    def __init__(self, x: int, y: int, w: int, h: int):
-        self.x = x
-        self.y = y
-        self.w = w
-        self.h = h
-
-    def a(self) -> int:
-        return self.w * self.h
+import json
 
 
-def guillotine_cut(
-        plates: list,  # (ширина, высота, количество)
-        rectangles: list,  # (ширина, высота, количество)
-        allow_rotation: bool = True,
-):
-    """
-    Гильотинный раскрой с выбором по BAF + BSSF.
-    Возвращает список: (индекс_листа, [(x, y, w, h, rotated), ...])
-    """
-    # Разворачиваем листы
-    drops = []
-    for w, h, c in plates:
-        drops.extend([{'w': w, 'h': h}] * c)
+def get_mins(drags):
+    return {
+        'width': min(min(q['width'], q['height']) if q['rotated'] else q['width'] for q in drags),
+        'height': min(min(q['width'], q['height']) if q['rotated'] else q['height'] for q in drags)
+    } if drags else {}
 
-    # Разворачиваем детали
-    drags = []
-    for w, h, c in rectangles:
-        drags.extend([{'w': w, 'h': h}] * c)
 
-    # Сортируем по убыванию площади
-    drags.sort(key=lambda r: r['width'] * r['height'], reverse=True)
+def get_loss(drop, mins):
+    s = drop['width'] * drop['height']
+    if drop['width'] < mins['width'] or drop['height'] < mins['height']:
+        return s
+    return s * 0.1 / (1 + 1 / min(drop['width'], drop['height']))
 
-    results = []
 
-    for plate_idx, drop in enumerate(drops):
-        rects = [{'x': 0, 'y': 0, 'w': drop['w'], 'h': drop['h']}]
-        placed = []
-        remaining = drags[:]
+def guillotine_cut(zones, task):
+    task['pieces'].sort(key=lambda q: q['width'] * q['height'], reverse=True)
+
+    dst = []
+
+    drags = [{
+        'width': p['width'],
+        'height': p['height'],
+        'rotated': p['rotated'],
+        'count': p['count'],
+        'i': i
+    } for i, p in enumerate(task['pieces'])]
+
+    k = 0
+    while True:
+        zone = zones[k]
+        k = min(k + 1, len(zones))
+        drops = [{
+            'left': zone['e'],
+            'top': zone['e'],
+            'width': zone['width'] - 2 * zone['e'],
+            'height': zone['height'] - 2 * zone['e']
+        }]
+
+        cuts = []
 
         i = 0
-        while i < len(remaining):
-            rect = remaining[i]
-            cut = {}
+        while i < len(drags):
+            drag = drags[i]
+            cut = None
 
-            def get():
-                for cut_direction in (True, False):
-                    baf, bssf = evaluate_placement(r, rect[0], rect[1], cut_direction)
-                    if compare_candidates(baf, bssf, cut['baf'], cut['bssf']):
-                        return {
-                            'baf': baf,
-                            'bssf': bssf,
-                            'r': r,
-                            'rotated': False,
-                            'direction': cut_direction,
-                            'i': idx
-                        }
-                return cut
+            mins = get_mins(drags[i + 1:])
 
-            for idx, r in enumerate(rects):
-                # Оригинальная ориентация
-                if r['w'] >= rect['w'] and r['h'] >= rect['h']:
-                    cut = get()
-                # Повёрнутая ориентация
-                if r['rotated'] and r['w'] >= rect['h'] and r['h'] >= rect['w']:
-                    r['w'], r['h'] = r['h'], r['w']
-                    cut = get()
+            for j, drop in enumerate(drops):
+                for rotated, fail in [
+                    (False, drop['width'] < drag['width'] or drop['height'] < drag['height']),
+                    (True, not drag['rotated'] or drag['height'] > drop['width'] or drag['width'] > drop['height'])
+                ]:
+                    if fail:
+                        continue
+                    if rotated:
+                        drag['width'], drag['height'] = drag['height'], drag['width']
 
-            if not (
-                    cut):
+                    for direction in (True, False):
+                        score = get_score(drop, drag, direction, mins) if mins else 0
+
+                        if not cut or score > cut['score']:
+                            cut = {
+                                'score': score,
+                                'direction': direction,
+                                'rotated': rotated,
+                                'j': j
+                            }
+                    if rotated:
+                        drag['width'], drag['height'] = drag['height'], drag['width']
+
+            if not cut:
                 i += 1
                 continue
 
-            w = rect[0] if not best_orientation else rect[1]
-            h = rect[1] if not best_orientation else rect[0]
-            x, y = best_rect.x, best_rect.y
-            placed.append((x, y, w, h, best_orientation))
+            drag = drags[i]
+            drag['count'] -= 1
+            if not drag['count']:
+                drags.pop(i)
 
-            # Создаём два новых прямоугольника в зависимости от типа реза
-            if best_cut_type == 'vertical':
-                # Вертикальный разрез: сначала отрезаем правую часть
-                right = FreeRect(x + w, y, best_rect.w - w, best_rect.h)
-                top = FreeRect(x, y + h, best_rect.w, best_rect.h - h)
-            else:  # horizontal
-                # Горизонтальный разрез: сначала отрезаем верхнюю часть
-                top = FreeRect(x, y + h, best_rect.w, best_rect.h - h)
-                right = FreeRect(x + w, y, best_rect.w - w, h)
+            drop = drops.pop(cut['j'])
 
-            # Удаляем использованную область и добавляем новые (только положительные)
-            rects.pop(best_rect_idx)
-            if right.w > 0 and right.h > 0:
-                rects.append(right)
-            if top.w > 0 and top.h > 0:
-                rects.append(top)
+            cuts.append({
+                'drop': drop,
+                'drag': drag['i'],
+                'direction': cut['direction'],
+                'rotated': cut['rotated'],
+            })
 
-            # Удаляем размещённую деталь из списка оставшихся
-            remaining.pop(i)
-            # Не увеличиваем i, т.к. список сдвинулся
+            if cut['rotated']:
+                drag['width'], drag['height'] = drag['height'], drag['width']
 
-        results.append((plate_idx, placed))
+            if cut['direction']:
+                right = {
+                    'left': drop['left'] + drag['width'],
+                    'top': drop['top'],
+                    'width': drop['width'] - drag['width'],
+                    'height': drop['height']
+                }
+                top = {
+                    'left': drop['left'],
+                    'top': drop['top'] + drag['height'],
+                    'width': drag['width'],
+                    'height': drop['height'] - drag['height']
+                }
+            else:
+                right = {
+                    'left': drop['left'] + drag['width'],
+                    'top': drop['top'],
+                    'width': drop['width'] - drag['width'],
+                    'height': drag['height']
+                }
+                top = {
+                    'left': drop['left'],
+                    'top': drop['top'] + drag['height'],
+                    'width': drop['width'],
+                    'height': drop['height'] - drag['height']
+                }
 
-    return results
+            if right['width'] and right['height']:
+                drops.append(right)
+            if top['width'] and top['height']:
+                drops.append(top)
+
+        dst.append({
+            'width': zone['width'],
+            'height': zone['height'],
+            'cuts': cuts
+        })
+        if not drags:
+            break
+
+    return dst
 
 
-def evaluate_placement(r: dict, p: dict, cut_direction: bool):
+def get_score(drop: dict, drag: dict, cut_direction: bool, mins: dict):
     if cut_direction:
-        R = {'w': r['w'] - p['w'], 'h': r['h']}
-        T = {'w': r['w'], 'h': r['h'] - p['h']}
+        R = {'width': drop['width'] - drag['width'], 'height': drop['height']}
+        T = {'width': drop['width'], 'height': drop['height'] - drag['height']}
     else:
-        R = {'w': r['w'] - p['w'], 'h': p['h']}
-        T = {'w': r['w'], 'h': r['h'] - p['h']}
+        R = {'width': drop['width'] - drag['width'], 'height': drag['height']}
+        T = {'width': drop['width'], 'height': drop['height'] - drag['height']}
 
-    baf = (R['w'] * R['h'] if R['w'] > 0 and R['h'] > 0 else 0) + \
-          (T['w'] * T['h'] if T['w'] > 0 and T['h'] > 0 else 0)
-
-    if baf > 0:
-        bssf = int('inf')
-        if R['w'] > 0 and R['h'] > 0:
-            bssf =min(bssf, R['w'], R['h'])
-        if T['w'] > 0 and T['h'] > 0:
-            bssf = min(bssf, T['w'], T['h'])
-    else:
-        bssf = -1
-
-    return baf, bssf
+    return get_loss(drop, mins) - get_loss(R, mins) - get_loss(T, mins)
 
 
-def compare_candidates(leftover1: int, bssf1: int, leftover2: int, bssf2: int, strategy: str) -> bool:
-    """
-    Сравнивает два варианта размещения. Возвращает True, если первый лучше второго.
-    """
-    if strategy == 'baf':
-        return leftover1 < leftover2
-    else:  # 'baf+bssf'
-        # Сначала сравниваем по оставшейся площади с эпсилон (0.1% от площади детали? используем относительное)
-        # Для простоты: если разница в площади меньше 1e-6, то сравниваем по BSSF
-        if abs(leftover1 - leftover2) < 1e-6:
-            # Чем больше BSSF, тем лучше
-            return bssf1 > bssf2
-        return leftover1 < leftover2
-
-
-# -------------------------------------------------------------------
-# Пример использования
 if __name__ == "__main__":
-    plates = [(2000, 1000, 2)]  # два листа 2000x1000
-    rectangles = [(400, 300, 10), (500, 200, 5)]
+    zones = [
+        {
+            'width': 2000,
+            'height': 1000,
+            'e': 0
+        },
+        {
+            'width': 2800,
+            'height': 2080,
+            'e': 10
+        }
+    ]
+    task = {
+        'pieces': [
+            {'width': 400, 'height': 300, 'rotated': True, 'count': 10},
+            {'width': 500, 'height': 200, 'rotated': False, 'count': 15}
+        ]
+    }
 
-    result = guillotine_cut(plates, rectangles, allow_rotation=True, strategy='baf+bssf')
-
-    for plate_idx, items in result:
-        print(f"Лист {plate_idx}:")
-        for x, y, w, h, rot in items:
-            print(f"  Деталь {w}x{h} в ({x}, {y}) {'повёрнута' if rot else ''}")
-        print(f"  Всего деталей: {len(items)}\n")
+    print(json.dumps(guillotine_cut(zones, task), indent=2))
