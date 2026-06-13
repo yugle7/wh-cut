@@ -241,6 +241,12 @@ ol {
     z-index: 9999;
 }
 
+#cutting {
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+}
+
 .section span,
 .section div,
 section div {

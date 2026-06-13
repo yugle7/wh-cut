@@ -1263,6 +1263,7 @@ const cutDrop = () => {
     addRightDrop();
 
     drop.html.remove();
+    drop.busy = true;
 }
 
 const canDropDrag = () => {
@@ -1413,6 +1414,7 @@ const clearDrop = () => {
     console.log(zone)
     console.log(drop)
     zone.html.appendChild(drop.html);
+    drag.busy = false;
     zone.drags.forEach(q => {
         if (q.html && q !== drag && isOn(q, drop)) {
             q.html.remove();
@@ -1676,8 +1678,7 @@ function getVerticalPacks(takes, drop) {
             add(width, height);
         }
     });
-
-    return dst;
+    return dst.sort((a, b) => a.height - b.height || a.width - b.width);
 }
 
 function cutHorizontalLine(packs, {width, height}, counts) {
