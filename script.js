@@ -117,7 +117,7 @@ const edgingLines = ['line', 'dash', 'wave'];
 const defaultTask = {
     kerf: 4,
     title: "Раскрой",
-    sheet: {width: 2800, height: 2070},
+    sheet: {width: 2800, height: 2070, edge: null},
     scraps: [],
     edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.2}],
     pieces: [],
@@ -154,7 +154,7 @@ const lineHtml = (line) => {
     line = line === null ? "line" : edgingLines[line];
     return `<svg class="line ${color}">${spriteHtml(line)}</svg>`;
 }
-const valueHtml = (value, unit) => `<span class="value"><span>${value}</span><span class="unit">${unit}</span></span>`
+const valueHtml = (value, unit) => `<span class="value"><span>${value || 0}</span><span class="unit">${unit}</span></span>`
 
 const x = iconHtml('x');
 const v = iconHtml('v');
