@@ -193,7 +193,79 @@ A.height = A4.height - A.top - A.bottom;
 
 // 4. Отладка
 
-const fakeTasks = [
+// const fakeTasks = [
+//     {
+//         id: 0,
+//         title: 'Раскрой меня',
+//         start: '2026-06-01',
+//         finish: '2026-07-20',
+//         material: 'Владимирский ржаной',
+//         thick: 12,
+//         kerf: 4,
+//         sheet: {
+//             width: 2800, height: 2070, edge: 10
+//         },
+//         scraps: [{width: 1800, height: 1000, edge: 0, count: 1}],
+//         edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.2}],
+//         pieces: [{
+//             width: 334,
+//             height: 284,
+//             rotated: true,
+//             count: 2,
+//             edging: {left: 0, right: 1, up: null, down: null}
+//         }, {
+//             width: 572,
+//             height: 84,
+//             rotated: false,
+//             count: 1,
+//             edging: {left: null, right: 1, up: 1, down: null}
+//         }, {
+//             width: 604,
+//             height: 84,
+//             rotated: true,
+//             count: 1,
+//             edging: {left: 0, right: null, up: null, down: null}
+//         }, {
+//             width: 388,
+//             height: 324,
+//             rotated: false,
+//             count: 2,
+//             edging: {left: 1, right: 0, up: null, down: 1}
+//         }, {
+//             width: 389,
+//             height: 334,
+//             rotated: false,
+//             count: 1,
+//             edging: {left: null, right: 1, up: 0, down: null}
+//         }, {
+//             width: 806,
+//             height: 84,
+//             rotated: true,
+//             count: 1,
+//             edging: {left: 0, right: 1, up: 1, down: null}
+//         }, {
+//             width: 734,
+//             height: 334,
+//             rotated: true,
+//             count: 2,
+//             edging: {left: 1, right: 0, up: null, down: null}
+//         }, {
+//             width: 805,
+//             height: 324,
+//             rotated: false,
+//             count: 6,
+//             edging: {left: 0, right: 0, up: 1, down: null}
+//         }, {
+//             width: 1034,
+//             height: 334,
+//             rotated: true,
+//             count: 8,
+//             edging: {left: null, right: 1, up: null, down: 1}
+//         }]
+//     }
+// ];
+
+fakeTasks = [
     {
         id: 0,
         title: 'Раскрой меня',
@@ -205,61 +277,61 @@ const fakeTasks = [
         sheet: {
             width: 2800, height: 2070, edge: 10
         },
-        scraps: [{width: 1800, height: 1000, edge: 0, count: 1}],
+        scraps: [{width: 2800, height: 2070, edge: 10, count: 1}],
         edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.2}],
         pieces: [{
-            width: 334,
-            height: 284,
+            width: 568,
+            height: 80,
             rotated: true,
-            count: 2,
+            count: 1,
             edging: {left: 0, right: 1, up: null, down: null}
         }, {
-            width: 572,
-            height: 84,
-            rotated: false,
-            count: 1,
+            width: 384,
+            height: 320,
+            rotated: true,
+            count: 2,
             edging: {left: null, right: 1, up: 1, down: null}
         }, {
-            width: 604,
-            height: 84,
+            width: 801,
+            height: 320,
             rotated: true,
-            count: 1,
+            count: 6,
             edging: {left: 0, right: null, up: null, down: null}
         }, {
-            width: 388,
-            height: 324,
-            rotated: false,
-            count: 2,
+            width: 802,
+            height: 80,
+            rotated: true,
+            count: 1,
             edging: {left: 1, right: 0, up: null, down: 1}
         }, {
-            width: 389,
-            height: 334,
-            rotated: false,
+            width: 600,
+            height: 80,
+            rotated: true,
             count: 1,
             edging: {left: null, right: 1, up: 0, down: null}
         }, {
-            width: 806,
-            height: 84,
+            width: 385,
+            height: 330,
             rotated: true,
             count: 1,
             edging: {left: 0, right: 1, up: 1, down: null}
         }, {
-            width: 734,
-            height: 334,
-            rotated: true,
-            count: 2,
-            edging: {left: 1, right: 0, up: null, down: null}
-        }, {
-            width: 805,
-            height: 324,
-            rotated: false,
-            count: 6,
-            edging: {left: 0, right: 0, up: 1, down: null}
-        }, {
-            width: 1034,
-            height: 334,
+            width: 1030,
+            height: 330,
             rotated: true,
             count: 8,
+            edging: {left: 1, right: 0, up: null, down: null}
+        }, {
+            width: 730,
+            height: 330,
+            rotated: true,
+            count: 2,
+            edging: {left: 0, right: 0, up: 1, down: null}
+        }, {
+            width: 280,
+            height: 330,
+            rotated: true,
+            count: 2,
             edging: {left: null, right: 1, up: null, down: 1}
         }]
     }
@@ -1772,10 +1844,6 @@ function cutHorizontalLines(drop, takes) {
         let line = cutHorizontalLine(packs, drop, counts);
 
         if (area + line.area > dst.area) {
-            line.height = 0;
-            for (const pack of line.packs) {
-                if (pack.height > line.height) line.height = pack.height;
-            }
             dst.area = area + line.area;
             dst.lines = [...lines, line];
         }
@@ -1875,7 +1943,7 @@ const asDrop = (width, height, edge) => ({left: edge, top: edge, width: width - 
 const asZone = ({width, height, edge}) => ({width, height, drops: [asDrop(width, height, edge)], drags: []});
 
 const toCut = () => {
-    const scraps = task.scraps.flatMap(q => Array(q.count).fill(q));
+    const scraps = task.scraps.filter(Boolean).flatMap(q => Array(q.count).fill(q));
     zones = [];
 
     let takes = task.pieces.map(({width, height, rotated, count}, i) => ({width, height, rotated, count, i}));

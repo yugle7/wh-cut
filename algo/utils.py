@@ -140,6 +140,6 @@ def change(dst: list[tuple], src: list[tuple]) -> None:
 
 
 def load(src: str) -> list[tuple]:
-    with open(f'src/{src}.csv') as src:
+    with open(f'../src/{src}.csv') as src:
         dst = [q.split(',') for q in src]
         return [(int(w), int(h), z == 'true', int(c)) for w, h, z, c in dst]

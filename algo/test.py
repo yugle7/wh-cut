@@ -11,8 +11,7 @@ if __name__ == '__main__':
     q = []
     for w, h, z, c in pieces:
         q.append({'w':w, 'h':h, 'z':z, 'c': c})
-    print(json.dumps(q))
-    exit(0)
+
     a = sum_a(pieces)
 
     print('- количество деталей:', sum_c(pieces))
