@@ -95,6 +95,8 @@ const cuttingPage = document.getElementById("cutting");
 const fastCutButton = document.getElementById("fast-cut");
 const slowCutButton = document.getElementById("slow-cut");
 
+const clearButton = document.getElementById("clear");
+
 const downloadCuttingButton = document.getElementById("download-cutting");
 const cuttingGutter = document.getElementById("cutting-gutter");
 
@@ -385,10 +387,16 @@ const changePage = (p) => {
             removeTaskButton.classList.remove('hidden');
             downloadCuttingButton.classList.add('hidden');
 
+            toSettingButton.classList.add('hidden');
+            toCuttingButton.classList.remove('hidden');
+
             toolsBlock.classList.add('hidden');
         } else {
             removeTaskButton.classList.add('hidden');
             downloadCuttingButton.classList.remove('hidden');
+
+            toSettingButton.classList.remove('hidden');
+            toCuttingButton.classList.add('hidden');
 
             toolsBlock.classList.remove('hidden');
         }
@@ -2102,6 +2110,8 @@ fastCutButton.onclick = (e) => {
     addRects(rects, drops);
 }
 
+clearButton.onclick = () => clearCutting();
+
 // 5.3 Отобразить раскрой
 
 const setTake = (drag) => {
@@ -2277,6 +2287,4 @@ const blurAutoSave = async (update) => {
     loadTasks();
     tasks.forEach(addTask);
 })();
-
-
 
