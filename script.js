@@ -1841,7 +1841,7 @@ const getVerticalPacks = (takes, counts) => {
         }
 
         rotated && add(height, width);
-        // add(width, height);
+        add(width, height);
     });
     return dst.sort((a, b) => b.height - a.height || b.width - a.width);
 }
@@ -1868,7 +1868,7 @@ const getStates = (packs, counts, fit) => {
 
 const cutHorizontalLine = (packs, counts, fit) => {
     const states = getStates(packs, counts, fit);
-    
+
     let S;
     const updateBestState = (s) => (!S || s.busy > S.busy || (s.busy === S.busy && s.k < S.k)) && (S = s);
 
