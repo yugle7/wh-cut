@@ -1,13 +1,13 @@
 import json
 
-from algo.exact import exact
+from exact import exact
 from main import main
 from rough import get_a, rough
 from utils import *
 from draw import *
 
 if __name__ == '__main__':
-    pieces = get_pieces(load('A/4'))
+    pieces = get_pieces(load('B/1'))
     a = sum_a(pieces)
 
     print('- количество деталей:', sum_c(pieces))

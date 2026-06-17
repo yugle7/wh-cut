@@ -124,30 +124,3 @@ def main(sheets: list[tuple], pieces: list[tuple]) -> list[tuple]:
 
     return R
 
-
-if __name__ == '__main__':
-
-    def stack(sheets):
-        H = max(h for w, h in sheets)
-        return [(0, i * H, w, h) for i, (w, h) in enumerate(sheets)]
-
-
-    def count(pieces):
-        C = {}
-        for w, h, z, c in pieces:
-            k = (h, w, z) if z and w < h else (w, h, z)
-            if k in C:
-                C[k] += c
-            else:
-                C[k] = c
-        return [(w, h, z, c) for (w, h, z), c in C.items()]
-
-
-    sheets = [
-        [43, 334], [1034, 50], [324, 110], [324, 110], [324, 110], [334, 252], [334, 686], [84, 914], [26, 1720], [388, 1406], [84, 1450], [84, 1482], [284, 1720], [1944, 2054]
-    ]
-    pieces = [[572, 84, True, 1], [388, 324, True, 2], [604, 84, True, 1], [284, 334, True, 1]]
-
-    pieces = count(pieces)
-    sheets = stack(sheets)
-    print(main(sheets, pieces))

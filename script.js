@@ -92,7 +92,8 @@ const formLabel = document.getElementById("form");
 // 4. Редактор раскроя
 
 const cuttingPage = document.getElementById("cutting");
-const cutButton = document.getElementById("cut");
+const fastCutButton = document.getElementById("fast-cut");
+const slowCutButton = document.getElementById("slow-cut");
 
 const downloadCuttingButton = document.getElementById("download-cutting");
 const cuttingGutter = document.getElementById("cutting-gutter");
@@ -1798,7 +1799,7 @@ const getCuttings = () => zones.map(({width, height, drops, drags}) => ({
         width, height, i: take,
         l: left * scale, t: top * scale, w: width * scale, h: height * scale
     }))
-}));
+})).filter(({drags}) => drags.length);
 
 // 5. Автоматический раскрой
 
@@ -2060,13 +2061,14 @@ const toCut = (drops, takes, n = 7) => {
 
 // 5.2 Раскрой на сервере
 
-cutButton.onclick = (e) => {
+slowCutButton.onclick = (e) => {
     e.preventDefault();
 
     const takes = takesRect();
     const drops = dropsRect();
 
-    autoCut();
+    const rects = toCut(drops, takes);
+    console.log('rects:', rects);
 
     fetch(ALGO_URL, {
         method: 'POST',
@@ -2078,13 +2080,26 @@ cutButton.onclick = (e) => {
                 throw new Error(`HTTP ${response.status}`);
             }
             return response.json();
+
         })
-        .then(result => {
-            console.log(result);
+        .then(rects => {
+            addRects(rects, drops);
+            console.log('rects:', rects);
         })
         .catch(error => {
             console.error(error);
         });
+}
+
+fastCutButton.onclick = (e) => {
+    e.preventDefault();
+
+    const takes = takesRect();
+    const drops = dropsRect();
+
+    const rects = toCut(drops, takes);
+    console.log('rects:', rects);
+    addRects(rects, drops);
 }
 
 // 5.3 Отобразить раскрой
@@ -2185,15 +2200,7 @@ const addCut = (drop, rects, create = true) => {
     }
 }
 
-const autoCut = () => {
-    const drops = dropsRect();
-    const takes = takesRect();
-
-    console.log('drops:', drops)
-    console.log('takes:', takes)
-
-    const rects = toCut(drops, takes);
-    console.log('rects:', rects);
+const addRects = (rects, drops) => {
     let i = 0;
 
     for (zone of zones) {

@@ -1,8 +1,6 @@
 from collections import Counter
 from functools import lru_cache
 
-from tqdm import tqdm
-
 from const import *
 from utils import take
 
@@ -123,7 +121,7 @@ def get_rects(W: int, H: int, pieces: list[tuple], C: int) -> list[tuple]:
             for q in qL:
                 areas[q | u] = areas[q] + A
 
-    for mask in tqdm(range(3, len(rects))):
+    for mask in range(3, len(rects)):
         if rects[mask] or norms[mask] != mask:
             continue
 

@@ -3,9 +3,22 @@ import json
 from main import main
 
 
-def stack(sheets):
-    H = max(h for w, h in sheets)
-    return [(0, i * H, w, h) for i, (w, h) in enumerate(sheets)]
+def get_height(sheets):
+    return max(h for w, h in sheets)
+
+
+def stack(sheets, height):
+    return [(0, i * height, w, h) for i, (w, h) in enumerate(sheets)]
+
+
+def unstack(rects, height):
+    dst = []
+    for x, y, w, h in rects:
+        i, y = divmod(y, height)
+        while i >= len(dst):
+            dst.append([])
+        dst[i].append([x, y, w, h])
+    return dst
 
 
 def count(pieces):
@@ -46,13 +59,19 @@ def handler(event, context):
                 'body': json.dumps({'error': 'Missing "data" field in JSON'})
             }
 
-        sheets = stack(sheets)
+        height = get_height(sheets)
+
+        sheets = stack(sheets, height)
         pieces = count(pieces)
 
         print(sheets)
         print(pieces)
 
-        res = {"sheets": sheets, "pieces": pieces}  # main(sheets, pieces)
+        rects = main(sheets, pieces)
+        print(rects)
+        res = unstack(rects, height)
+
+        print(res)
 
         return {
             "statusCode": 200,
@@ -69,3 +88,14 @@ def handler(event, context):
             'statusCode': 500,
             'body': json.dumps({'error': f'Internal error: {str(e)}'})
         }
+
+
+if __name__ == '__main__':
+    event = {
+        'httpMethod': 'POST',
+        'body': json.dumps({
+            'drops': [(2700, 2054), (84, 72), (2784, 2054)],
+            'takes': [(388, 324, True, 2), (805, 324, True, 6), (389, 334, True, 1), (1034, 334, True, 8), (734, 334, True, 2), (334, 284, True, 2)]
+        })
+    }
+    print(handler(event, None))
