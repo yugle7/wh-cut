@@ -2181,12 +2181,13 @@ const autoCut = () => {
 
     for (zone of zones) {
         zone.drops.filter(({busy}) => busy === false).forEach(q => {
-            q.html.remove();
-            q.busy = null;
+            if (rects[i] && rects[i].length) {
+                q.html.remove();
+                q.busy = null;
 
-            drop = q;
-
-            addCut([0, 0, ...drops[i]], rects[i]);
+                drop = q;
+                addCut([0, 0, ...drops[i]], rects[i]);
+            }
             i++;
         });
     }
