@@ -2140,20 +2140,37 @@ const asDrag = ([l, t, w, h]) => ({
     height: h - task.kerf
 });
 
+const findDrag = ([left, top, width, height], rects) => {
+    let drag = rects.find(([l, t]) => left === l && top === t);
+    if (drag) return drag;
+
+    let L = width;
+    let T = height;
+    rects.forEach(([l, t]) => {
+        L = Math.min(L, l - left);
+        T = Math.min(T, t - top);
+    });
+    rects.forEach(q => {
+        q[0] -= L;
+        q[1] -= T;
+    });
+    return rects.find(([l, t]) => left === l && top === t);
+}
+
 const addCut = (drop, rects, create = true) => {
     console.log('addCut')
     if (!rects.length) {
         createDrop(asDrop(drop));
         return;
     }
-    const [left, top, width, height] = drop;
-
     if (create) {
-        const drag = rects.find(([l, t]) => left === l && top === t);
+        const drag = findDrag(drop, rects);
 
         createDrag(asDrag(drag));
         createDrop(asDrop(drop, true));
     }
+    const [left, top, width, height] = drop;
+
     const T = findHorizontalCut(rects);
     const L = findVerticalCut(rects);
     const H = top + height - T
