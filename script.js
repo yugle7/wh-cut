@@ -1567,8 +1567,6 @@ const decTakeCount = (take) => {
 const clearDrop = () => {
     console.log('clearDrop');
 
-    console.log(zone)
-    console.log(drop)
     zone.html.appendChild(drop.html);
     drop.busy = false;
     zone.drags.forEach(q => {
@@ -1578,14 +1576,12 @@ const clearDrop = () => {
             incTakeCount(takes[q.take]);
         }
     });
-    console.log(drop);
     zone.drops.forEach(q => {
         if (q.html && q !== drop && isOn(q, drop)) {
             q.html.remove();
             q.html = q.busy = null;
         }
     });
-    console.log(zone.drops)
 }
 
 const cancelDrag = () => {
@@ -1675,8 +1671,6 @@ const linePdf = (line, color = 'yellow') => line !== null ? `<svg class="line ${
 const flagPdf = (flag) => `<td style="color: green;">${flag ? `&#10003;` : ''}</td>`;
 
 const whPdf = (width, height, {left, right, up, down}) => {
-    console.log(up, down);
-    console.log(left, right);
     const w = `<div class="col"><span>${width}</span>${linePdf(up)}${linePdf(down)}</div>`;
     const h = `<div class="col"><span>${height}</span>${linePdf(left)}${linePdf(right)}</div>`;
     return `<td>${w}</td><td>${h}</td>`
@@ -1808,7 +1802,7 @@ const getCuttings = () => zones.map(({width, height, drops, drags}) => ({
 
 // 5. Автоматический раскрой
 
-const takesRect = () => takes.map(
+const takesRect = () => takes.filter(({count}) => count > 0).map(
     ({width, height, rotated, count}) => [width + task.kerf, height + task.kerf, rotated, count]
 );
 
@@ -1982,16 +1976,19 @@ const getBestStates = (src, n = 7) => {
 }
 
 const cutHorizontalLines = (width, height, takes) => {
-    let S = {busy: 0};
+    let S = {busy: 0, free: 0, packs: [], counts: takes.map(q => q[3]), n: null};
+    const updateBestState = (s) => (s.busy > S.busy || (s.busy === S.busy && s.free > S.free)) && (S = s);
+
     line = {width};
 
     const states = new Array(height + 1).fill(null);
-    states[0] = [{busy: 0, free: 0, packs: [], counts: takes.map(q => q[3]), n: null}];
+    states[0] = [S];
 
     states.forEach((q, top) => {
         if (!q) return;
 
         states[top] = q = getBestStates(q.sort((u, v) => v.busy - u.busy || v.free - u.free));
+        updateBestState(q[0]);
 
         q.forEach(({busy, counts}, n) => {
             line.height = height - top;
@@ -2010,7 +2007,6 @@ const cutHorizontalLines = (width, height, takes) => {
                     counts: getCounts(line.packs, [...counts]),
                     top, n
                 }
-                if (s.busy > S.busy || (s.busy === S.busy && s.free > S.free)) S = s;
                 const t = top + h;
                 states[t] ? states[t].push(s) : (states[t] = [s]);
             }
@@ -2027,14 +2023,12 @@ const cutHorizontalLines = (width, height, takes) => {
     return S;
 }
 
-
 const cutVerticalLines = (width, height, takes) => {
     takes = takes.map(([width, height, rotated, count]) => [height, width, rotated, count]);
     const dst = cutHorizontalLines(height, width, takes);
     dst.rects = dst.rects.map(([top, left, height, width]) => [left, top, width, height]);
     return dst;
 }
-
 
 const toCut = (drops, takes, n = 7) => {
     let src = [{busy: 0, free: 0, rects: [], takes}];
@@ -2058,7 +2052,6 @@ const toCut = (drops, takes, n = 7) => {
         src = dst;
 
         src.sort((a, b) => b.busy - a.busy || b.free - a.free);
-        console.log(src[0])
 
         if (!src[0].takes.length) return src[0].rects;
         if (src.length > n) src.length = n;
@@ -2148,7 +2141,7 @@ const asDrag = ([l, t, w, h]) => ({
 });
 
 const addCut = (drop, rects, create = true) => {
-    console.log('addCut', drop, rects)
+    console.log('addCut')
     if (!rects.length) {
         createDrop(asDrop(drop));
         return;
@@ -2157,7 +2150,6 @@ const addCut = (drop, rects, create = true) => {
 
     if (create) {
         const drag = rects.find(([l, t]) => left === l && top === t);
-        console.log('drag:', drag, rects, drop)
 
         createDrag(asDrag(drag));
         createDrop(asDrop(drop, true));
@@ -2180,16 +2172,20 @@ const autoCut = () => {
     const drops = dropsRect();
     const takes = takesRect();
 
+    console.log('drops:', drops)
+    console.log('takes:', takes)
+
     const rects = toCut(drops, takes);
     console.log('rects:', rects);
     let i = 0;
 
     for (zone of zones) {
-        const t = zone.drops.filter(({busy}) => busy === false);
-        console.log(t)
-        t.forEach(q => {
+        zone.drops.filter(({busy}) => busy === false).forEach(q => {
             q.html.remove();
+            q.busy = null;
+
             drop = q;
+
             addCut([0, 0, ...drops[i]], rects[i]);
             i++;
         });
