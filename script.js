@@ -1,4 +1,5 @@
-const API_ENDPOINT = ""; // https://d5ds1trsppqs2rog97qd.cmxivbes.apigw.yandexcloud.net";
+const DATA_URL = ""; // https://d5ds1trsppqs2rog97qd.cmxivbes.apigw.yandexcloud.net";
+const ALGO_URL = "https://d5d313gii5f4ak4h4arg.wnq2w1o5.apigw.yandexcloud.net";
 
 // Элементы
 
@@ -91,6 +92,7 @@ const formLabel = document.getElementById("form");
 // 4. Редактор раскроя
 
 const cuttingPage = document.getElementById("cutting");
+const cutButton = document.getElementById("cut");
 
 const downloadCuttingButton = document.getElementById("download-cutting");
 const cuttingGutter = document.getElementById("cutting-gutter");
@@ -367,7 +369,7 @@ let pdfHead;
 
 // 5. Автоматический раскрой
 
-let mins;
+let line;
 
 // Навигация
 
@@ -489,8 +491,8 @@ const addTask = ({id, title}) => {
 // 1.2 Получение данных
 
 const loadTasks = async () => {
-    if (API_ENDPOINT) {
-        const response = await fetch(API_ENDPOINT);
+    if (DATA_URL) {
+        const response = await fetch(DATA_URL);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         tasks = await response.json();
     } else {
@@ -833,8 +835,8 @@ toCreatePieceLink.onclick = (e) => {
 // 2.9 Отправка и получение данных
 
 const loadTask = async (id) => {
-    if (API_ENDPOINT) {
-        const url = new URL(API_ENDPOINT);
+    if (DATA_URL) {
+        const url = new URL(DATA_URL);
         url.searchParams.set("task_id", id)
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -847,8 +849,8 @@ const loadTask = async (id) => {
 
 const saveTask = async () => {
     console.assert(task);
-    if (API_ENDPOINT) {
-        const url = new URL(API_ENDPOINT);
+    if (DATA_URL) {
+        const url = new URL(DATA_URL);
         url.searchParams.set("task", JSON.stringify(task))
         await fetch(url);
     } else {
@@ -858,8 +860,8 @@ const saveTask = async () => {
 
 const deleteTask = async () => {
     console.assert(task);
-    if (API_ENDPOINT) {
-        const url = new URL(API_ENDPOINT);
+    if (DATA_URL) {
+        const url = new URL(DATA_URL);
         url.searchParams.set("task_id", '-' + task.id)
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -869,8 +871,8 @@ const deleteTask = async () => {
 }
 
 const createTask = async () => {
-    if (API_ENDPOINT) {
-        const url = new URL(API_ENDPOINT);
+    if (DATA_URL) {
+        const url = new URL(DATA_URL);
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         task = await response.json();
@@ -1042,7 +1044,7 @@ const setTakes = () => {
         width,
         height,
         rotated,
-        count: 0,
+        count,
         color: colors[i]
     }));
 
@@ -1053,7 +1055,6 @@ const setTakes = () => {
     takeArea.childNodes.forEach((q, i) => {
         q = q.lastElementChild.firstElementChild;
         q.dataset.i = i;
-        q.parentElement.parentElement.classList.add('hidden');
 
         q.onpointerup = (e) => {
             console.log('take.onpointerup')
@@ -1067,7 +1068,6 @@ const setTakes = () => {
             onPointerDown(e, dragTake);
         }
         takes[i].html = q
-
     });
 }
 
@@ -1094,14 +1094,14 @@ const createZone = (zone, i) => {
     dropArea.appendChild(area);
 }
 
-
-const createDrop = (drop, i) => {
+const createDrop = (drop) => {
     console.log('createDrop')
 
     const q = drop.html = document.createElement('DIV');
     q.classList.add('drop');
 
-    q.dataset.i = i;
+    q.dataset.i = zone.drops.length;
+    zone.drops.push(drop);
 
     q.style.left = p(drop.left / zone.width);
     q.style.top = p(drop.top / zone.height);
@@ -1110,17 +1110,23 @@ const createDrop = (drop, i) => {
     q.style.height = p(drop.height / zone.height);
 
     q.onpointerup = dropDrag;
-    if (!drop.busy) zone.html.appendChild(q);
+    if (drop.busy === false) zone.html.appendChild(q);
 }
 
-const createDrag = (drag, i) => {
+const createDrag = (drag) => {
     console.log('createDrag')
 
     const q = drag.html = document.createElement('DIV');
-    q.dataset.i = i;
     drag.toLeft = drag.toTop = true;
 
+    setTake(drag);
+    drag.drop = zone.drops.length;
+
+    q.dataset.i = zone.drags.length;
+    zone.drags.push(drag);
+
     q.style.cursor = 'grab';
+    q.style.zIndex = 9999;
     q.style.left = p(drag.left / zone.width);
     q.style.top = p(drag.top / zone.height);
     q.style.width = p(drag.width / zone.width);
@@ -1134,23 +1140,100 @@ const createDrag = (drag, i) => {
     zone.html.appendChild(q);
 }
 
+// 3.5 Оценка количества зон
+
+const dropJson = (width, height, edge) => ({
+    left: edge,
+    top: edge,
+    width: width - 2 * edge,
+    height: height - 2 * edge,
+    busy: false
+});
+
+const zoneJson = ({width, height, edge}) => ({width, height, drops: [dropJson(width, height, edge)], drags: []});
+
+const getDrops = () => {
+    const dst = task.scraps.filter(Boolean).flatMap(
+        ({width, height, edge, count}) => Array(count).fill({
+            width: width - 2 * edge + task.kerf,
+            height: height - 2 * edge + task.kerf
+        })
+    );
+    return dst.sort((a, b) => b.width + b.height - a.width - a.height);
+}
+
+const sheetJson = () => {
+    const {width, height, edge} = task.sheet;
+    return {
+        width: width - 2 * edge + task.kerf,
+        height: height - 2 * edge + task.kerf
+    };
+}
+
+const getTakes = () => {
+    const dst = task.pieces.filter(Boolean).map(
+        ({width, height, rotated, count}) => ({width, height, rotated, count})
+    )
+    return dst.sort((a, b) => b.width + b.height - a.width - a.height || a.rotated - b.rotated)
+}
+
+const getZones = () => {
+    const dst = task.scraps.filter(Boolean).flatMap(
+        q => Array(q.count).fill(zoneJson(q))
+    );
+
+    const drops = getDrops();
+    const takes = getTakes();
+    const sheet = sheetJson();
+
+    takes.forEach(({width, height, rotated, count}) => {
+        const match = (q) => (width <= q.width && height <= q.height) || (rotated && height <= q.width && width <= q.height);
+
+        for (let i = 0; i < count; i++) {
+            let drop = drops.find(match);
+
+            if (!drop) {
+                if (!match(sheet)) break;
+                dst.push(zoneJson(task.sheet));
+
+                drop = {...sheet};
+                drops.push(drop);
+            }
+            if (width <= drop.width && height <= drop.height) {
+                drop.width -= width;
+                drop.height -= height;
+            } else {
+                drop.width -= height;
+                drop.height -= width;
+            }
+            if (drop.width >= drop.height) {
+                if (drop.height > task.kerf) {
+                    drops.push({width, height: drop.height})
+                }
+                drop.height += height;
+            } else {
+                if (drop.width > task.kerf) {
+                    drops.push({width: drop.width, height})
+                }
+                drop.width += width;
+            }
+        }
+    });
+
+    return dst;
+}
+
 const setZones = () => {
     console.log('setZones');
+    zones = getZones();
 
-    toCut();
     dropArea.replaceChildren()
     zones.forEach(createZone);
 
-    for (let i = 0; i < zones.length; i++) {
-        zone = zones[i];
-        zone.drops.forEach(createDrop);
-        zone.drags.forEach(createDrag);
-    }
-    ;
-    console.log(zones)
+    for (zone of zones) createDrop(zone.drops.pop());
 }
 
-// 3.5 Отображение страницы
+// 3.6 Отображение страницы
 
 const clearCutting = () => {
     toSelect(null);
@@ -1166,7 +1249,7 @@ toCuttingButton.onclick = () => {
     changePage(cuttingPage);
 }
 
-// 3.6 Начало перетаскивания
+// 3.7 Начало перетаскивания
 
 const startMove = (x, y, left, top) => {
     move = {x, y, dx: left - x, dy: top - y};
@@ -1267,6 +1350,7 @@ const toDrag = (e) => {
 const addDrop = (drop) => {
     const q = drop.html = document.createElement('DIV');
     q.classList.add('drop');
+    drop.busy = false;
 
     q.dataset.i = zone.drops.length.toString();
     zone.drops.push(drop);
@@ -1382,7 +1466,7 @@ const dropDrag = (e) => {
     }
 }
 
-// 3.7 Вращения и изменение направления реза
+// 3.8 Вращения и изменение направления реза
 
 const onDragClick = (e) => {
     console.log('onDragClick')
@@ -1432,7 +1516,7 @@ const changeCutDirection = () => {
     }
 }
 
-// 3.8 Кнопки изменений положения деталей и разрезов
+// 3.9 Кнопки изменений положения деталей и разрезов
 
 rotatePieceButton.onclick = () => {
     if (selected) {
@@ -1460,7 +1544,7 @@ cutDirectionButton.onclick = () => {
 
 }
 
-// 3.9 Счетчики деталей
+// 3.10 Счетчики деталей
 
 const incTakeCount = (take) => {
     console.log('incTakeCount')
@@ -1486,7 +1570,7 @@ const clearDrop = () => {
     console.log(zone)
     console.log(drop)
     zone.html.appendChild(drop.html);
-    drag.busy = false;
+    drop.busy = false;
     zone.drags.forEach(q => {
         if (q.html && q !== drag && isOn(q, drop)) {
             q.html.remove();
@@ -1498,7 +1582,7 @@ const clearDrop = () => {
     zone.drops.forEach(q => {
         if (q.html && q !== drop && isOn(q, drop)) {
             q.html.remove();
-            q.html = null;
+            q.html = q.busy = null;
         }
     });
     console.log(zone.drops)
@@ -1514,7 +1598,7 @@ const cancelDrag = () => {
     drag = null;
 }
 
-// 3.10 Нажатия и клики
+// 3.11 Нажатия и клики
 
 const onPointerDown = (e, f) => {
     console.log('onPointerDown')
@@ -1722,252 +1806,397 @@ const getCuttings = () => zones.map(({width, height, drops, drags}) => ({
     }))
 }));
 
-// 5. Автоматическое вычисление раскроя
+// 5. Автоматический раскрой
 
-function getVerticalPacks(takes, drop) {
+const takesRect = () => takes.map(
+    ({width, height, rotated, count}) => [width + task.kerf, height + task.kerf, rotated, count]
+);
+
+const dropsRect = () => zones.flatMap(({drops}) => drops.filter(
+    ({busy}) => busy === false)).map(({width, height}) => [width + task.kerf, height + task.kerf]);
+
+
+// 5.1 Раскрой на клиенте
+
+const getVerticalPacks = (takes, counts) => {
     const dst = [];
 
-    takes.forEach(({width, height, rotated, count}, i) => {
-        if (count === 0) return;
-        const a = width * height;
+    takes.forEach(([width, height, rotated], i) => {
+        const b = width * height;
 
         function add(w, h) {
-            let height = h;
-            let area = a;
+            if (w > line.width) return;
             const takes = [i];
-            while (height <= drop.height && takes.length <= count) {
-                dst.push({width: w, height, area, takes: takes.slice()});
-                height += h + task.kerf;
-                area += a
+
+            let height = h;
+            let busy = b;
+
+            while (height <= line.height && takes.length <= counts[i]) {
+                dst.push({width: w, height, busy: busy, takes: [...takes]});
+
+                height += h;
+                busy += b;
                 takes.push(i);
             }
         }
 
-        if (rotated && height <= drop.width) {
-            add(height, width);
-        }
-        if (width <= drop.width) {
-            add(width, height);
-        }
+        rotated && add(height, width);
+        // add(width, height);
     });
-    return dst.sort((a, b) => a.height - b.height || a.width - b.width);
+    return dst.sort((a, b) => b.height - a.height || b.width - a.width);
 }
 
-function cutHorizontalLine(packs, {width, height}, counts) {
-    packs = packs.filter(pack =>
-        pack.height <= height && pack.takes.every(i => counts[i] > 0)
-    );
+const getStates = (packs, counts, fit) => {
+    const states = new Array(line.width + 1).fill(null);
 
-    const states = new Array(width + task.kerf);
-    for (let i = 0; i < states.length; i++) states[i] = [];
-    states[0].push({
-        counts: new Array(counts.length).fill(0),
-        area: 0,
-        pack: 0,
-        n: null
+    for (let k = 0; k < packs.length; k++) {
+        const pack = packs[k];
+
+        if (fit && pack.height < line.height) break;
+
+        const s = {
+            busy: pack.busy,
+            counts: getCounts([pack], [...counts]),
+            k, left: 0
+        };
+
+        const l = pack.width;
+        states[l] ? states[l].push(s) : (states[l] = [s]);
+    }
+    return states;
+}
+
+const cutHorizontalLine = (packs, counts, fit) => {
+    const states = getStates(packs, counts, fit);
+    
+    let S;
+    const updateBestState = (s) => (!S || s.busy > S.busy || (s.busy === S.busy && s.k < S.k)) && (S = s);
+
+    states.forEach((q, left) => {
+        if (!q) return;
+
+        states[left] = q = getBestStates(q.sort((u, v) => v.busy - u.busy || u.k - v.k));
+        updateBestState(q[0]);
+
+        q.forEach(({busy, counts, k}, n) => {
+            for (; k < packs.length; k++) {
+                const pack = packs[k];
+
+                const l = left + pack.width;
+                if (l > line.width) continue;
+
+                const s = {
+                    busy: busy + pack.busy,
+                    counts: getCounts([pack], [...counts]),
+                    k, n, left
+                };
+                if (s.counts.every(n => n >= 0)) {
+                    states[l] ? states[l].push(s) : (states[l] = [s]);
+                }
+            }
+        })
     });
 
-    let line = {area: 0, packs: [], height};
-    let L = 0;
-    let N = 0;
+    line.packs = [];
 
-    for (let left = 0; left < width; left++) {
-        if (states[left].length === 0) continue;
+    if (S) {
+        line.busy = S.busy;
+        line.packs.push(packs[S.k]);
+        while (S.left) {
+            S = states[S.left][S.n];
+            line.packs.push(packs[S.k]);
+        }
+        line.packs.reverse();
+    } else {
+        line.busy = 0;
+    }
+    calcFree();
+}
 
-        states[left].forEach((state, n) => {
-            const c = state.counts;
+const calcFree = () => {
+    let h = 0;
+    let w = 0;
+    line.packs.forEach(({width, height}) => {
+        if (height > h) h = height;
+        w += width;
+    })
+    line.free = line.width * line.height - w * h;
+}
 
-            for (let k = state.pack; k < packs.length; k++) {
-                const pack = packs[k];
-                for (const i of pack.takes) c[i]++;
+const getHeights = (takes, counts) => {
+    const dst = new Set([line.height]);
 
-                if (pack.takes.every(i => c[i] <= counts[i])) {
-                    const l = left + pack.width + task.kerf;
-                    if (l <= width) {
-                        const a = state.area + pack.area;
-                        if (a > line.area) {
-                            line.area = a;
-                            L = l;
-                            N = states[l].length;
-                        }
-                        states[l].push({counts: [...c], area: a, pack: k, n});
-                    }
+    takes.forEach(([width, height, rotated], i) => {
+        if (counts[i] > 0) {
+            if (rotated && height < width && width < line.height && height <= line.width) {
+                dst.add(width);
+            } else if (height < line.height && width <= line.width) {
+                dst.add(height);
+            }
+        }
+    });
+    return Array.from(dst).sort((a, b) => b - a);
+}
+
+const getLineRects = (packs, takes, top) => {
+    const dst = [];
+    let left = 0;
+
+    packs.forEach(pack => {
+        let t = top;
+
+        pack.takes.forEach(i => {
+            const [width, height, rotated] = takes[i];
+
+            const rotate = rotated && (
+                width > pack.width || (width < height && height <= pack.width)
+            );
+
+            const rect = rotate ? [left, t, height, width] : [left, t, width, height];
+            dst.push(rect);
+
+            t += rotate ? width : height;
+        })
+        left += pack.width;
+    })
+    return dst;
+}
+
+const getCounts = (packs, counts) => {
+    packs.forEach(pack => pack.takes.forEach(i => counts[i]--));
+    return counts;
+}
+
+const getBestStates = (src, n = 7) => {
+    const dst = [];
+    let C = null;
+    for (const q of src) {
+        const c = JSON.stringify(q.counts);
+        if (c !== C) {
+            C = c;
+            dst.push(q);
+            if (dst.length === n) break;
+        }
+    }
+    return dst;
+}
+
+const cutHorizontalLines = (width, height, takes) => {
+    let S = {busy: 0};
+    line = {width};
+
+    const states = new Array(height + 1).fill(null);
+    states[0] = [{busy: 0, free: 0, packs: [], counts: takes.map(q => q[3]), n: null}];
+
+    states.forEach((q, top) => {
+        if (!q) return;
+
+        states[top] = q = getBestStates(q.sort((u, v) => v.busy - u.busy || v.free - u.free));
+
+        q.forEach(({busy, counts}, n) => {
+            line.height = height - top;
+
+            for (const h of getHeights(takes, counts)) {
+                line.height = h;
+
+                const packs = getVerticalPacks(takes, counts)
+                cutHorizontalLine(packs, counts, top + h < height);
+                if (!line.busy) break;
+
+                const s = {
+                    busy: busy + line.busy,
+                    free: line.free,
+                    packs: line.packs,
+                    counts: getCounts(line.packs, [...counts]),
+                    top, n
                 }
-                for (const i of pack.takes) c[i]--;
+                if (s.busy > S.busy || (s.busy === S.busy && s.free > S.free)) S = s;
+                const t = top + h;
+                states[t] ? states[t].push(s) : (states[t] = [s]);
             }
         });
-    }
+    });
 
-    while (L) {
-        const state = states[L][N];
-        const pack = packs[state.pack];
-        line.packs.push(pack);
-        L -= pack.width + task.kerf;
-        N = state.n;
-    }
-    line.score = line.area / line.height;
+    S.rects = [];
 
-    return line;
+    let s = S;
+    while (s.busy) {
+        S.rects = [...getLineRects(s.packs, takes, s.top), ...S.rects];
+        s = states[s.top][s.n];
+    }
+    return S;
 }
 
-function getHeights(takes, drop, counts) {
-    const heights = [];
 
-    counts.forEach((c, i) => {
-        if (c === 0) return;
-        const {rotated, height, width} = takes[i];
-        if (rotated && height < width && width <= drop.height && height <= drop.width) {
-            heights.push(width);
-        } else if (height <= drop.height && width <= drop.width) {
-            heights.push(height);
-        }
+const cutVerticalLines = (width, height, takes) => {
+    takes = takes.map(([width, height, rotated, count]) => [height, width, rotated, count]);
+    const dst = cutHorizontalLines(height, width, takes);
+    dst.rects = dst.rects.map(([top, left, height, width]) => [left, top, width, height]);
+    return dst;
+}
+
+
+const toCut = (drops, takes, n = 7) => {
+    let src = [{busy: 0, free: 0, rects: [], takes}];
+
+    for (const [width, height] of drops) {
+        let dst = [];
+        src.forEach(q => {
+            [cutHorizontalLines, cutVerticalLines].forEach(f => {
+                const {busy, free, rects, counts} = f(width, height, q.takes);
+
+                dst.push({
+                    busy: q.busy + busy,
+                    free: Math.max(q.free, free),
+                    rects: [...q.rects, rects],
+                    takes: q.takes.map(
+                        ([width, height, rotated], i) => [width, height, rotated, counts[i]]
+                    ).filter(q => q[3] > 0)
+                });
+            });
+        });
+        src = dst;
+
+        src.sort((a, b) => b.busy - a.busy || b.free - a.free);
+        console.log(src[0])
+
+        if (!src[0].takes.length) return src[0].rects;
+        if (src.length > n) src.length = n;
+    }
+}
+
+// 5.2 Раскрой на сервере
+
+cutButton.onclick = (e) => {
+    e.preventDefault();
+
+    const takes = takesRect();
+    const drops = dropsRect();
+
+    autoCut();
+
+    fetch(ALGO_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({drops, takes})
     })
-    return heights;
-}
-
-function cutVerticalLines(drop, takes) {
-    takes = takes.map(({width, height, rotated, count}) => ({width: height, height: width, rotated, count}));
-    drop = {width: drop.width, height: drop.height};
-    return cutHorizontalLines(drop, takes);
-}
-
-function cutHorizontalLines(drop, takes) {
-    const packs = getVerticalPacks(takes, drop);
-    const counts = takes.map(({count}) => count);
-
-    const dst = {area: 0, lines: []};
-
-    let area = 0
-    const lines = [];
-
-    while (drop.height > 0) {
-        let line = cutHorizontalLine(packs, drop, counts);
-
-        if (area + line.area > dst.area) {
-            dst.area = area + line.area;
-            dst.lines = [...lines, line];
-        }
-        if (line.score === 0) break;
-
-        for (const height of getHeights(takes, drop, counts)) {
-            const l = cutHorizontalLine(packs, {width: drop.width, height}, counts);
-            if (l.score > line.score) {
-                line = l;
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
             }
+            return response.json();
+        })
+        .then(result => {
+            console.log(result);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}
+
+// 5.3 Отобразить раскрой
+
+const setTake = (drag) => {
+    take = null;
+
+    for (let i = 0; i < takes.length; i++) {
+        const {width, height, rotated, count} = takes[i];
+        if (!count) continue;
+
+        if (width === drag.width && height === drag.height) {
+            drag.take = i
+            take = takes[i];
+            if (!rotated) break;
+        } else if (!take && rotated && width === drag.height && height === drag.width) {
+            drag.take = i;
+            take = takes[i];
         }
-        lines.push(line);
-        area += line.area;
-
-        drop.height -= line.height + task.kerf;
-        line.packs.forEach(({takes}) => takes.forEach(i => counts[i]--));
     }
-
-    return dst.lines;
+    decTakeCount(take);
 }
 
-
-const pushDrop = ({width, height}, drop) => {
-    if (drop.width <= width + task.kerf) return null;
-    zone.drops.push({
-        top: drop.top, left: drop.left + width + task.kerf,
-        width: drop.width - width - task.kerf, height
-    });
+const findCut = (q) => {
+    let Y = q[0][1];
+    for (const [x, y] of q) {
+        if (x >= Y) break;
+        if (y > Y) Y = y;
+    }
+    return Y;
 }
 
-const pushDrag = (take, pack, drop) => {
-    let {i, rotated, width, height} = take;
-    if (rotated && (width < height || width > pack.width) && height <= pack.width) {
-        [width, height] = [height, width];
-    }
-    zone.drags.push({
-        left: drop.left, top: drop.top,
-        rotated, width, height,
-        take: i, drop: zone.drops.length
-    });
-    zone.drops.push({...drop, busy: true});
-    return {width, height};
-}
+const findVerticalCut = (rects) => findCut(
+    rects.map(([left, top, width, height]) => [left, left + width]).sort((a, b) => a[0] - b[0] || b[1] - a[1])
+);
 
-function pushPack(pack, drop, takes) {
-    let first = true;
-    for (const j of pack.takes) {
-        const drag = pushDrag(takes[j], pack, drop);
+const findHorizontalCut = (rects) => findCut(
+    rects.map(([left, top, width, height]) => [top, top + height]).sort((a, b) => a[0] - b[0] || b[1] - a[1])
+);
 
-        if (first) {
-            drop.width = pack.width;
-            drop.height = pack.height;
-            first = false;
-        } else {
-            pushDrop(drag, drop);
-        }
-        drop.top += drag.height + task.kerf;
-        drop.height -= drag.height + task.kerf;
-    }
-    if (drop.height > 0) {
-        zone.drops.push(drop);
-    }
-}
+const asDrop = ([left, top, width, height], busy = false) => ({
+    left: left + drop.left,
+    top: top + drop.top,
+    width: width - task.kerf,
+    height: height - task.kerf,
+    busy
+});
 
-function pushLine(line, drop, takes) {
-    for (const pack of line.packs) {
-        pack.height = line.height;
-        pushPack(pack, {...drop}, takes);
+const asDrag = ([l, t, w, h]) => ({
+    left: l + drop.left,
+    top: t + drop.top,
+    width: w - task.kerf,
+    height: h - task.kerf
+});
 
-        drop.left += pack.width + task.kerf;
-        drop.width -= pack.width + task.kerf;
-        drop.height = pack.height;
+const addCut = (drop, rects, create = true) => {
+    console.log('addCut', drop, rects)
+    if (!rects.length) {
+        createDrop(asDrop(drop));
+        return;
     }
-    if (drop.width > 0) {
-        zone.drops.push(drop);
+    const [left, top, width, height] = drop;
+
+    if (create) {
+        const drag = rects.find(([l, t]) => left === l && top === t);
+        console.log('drag:', drag, rects, drop)
+
+        createDrag(asDrag(drag));
+        createDrop(asDrop(drop, true));
+    }
+    const T = findHorizontalCut(rects);
+    const L = findVerticalCut(rects);
+    const H = top + height - T
+    const W = left + width - L
+
+    if (W > H) {
+        addCut([left, top, width - W, height], rects.filter(([l, t, w, h]) => l < L), false)
+        addCut([L, top, W, height], rects.filter(([l, t, w, h]) => l >= L))
+    } else if (H) {
+        addCut([left, top, width, height - H], rects.filter(([l, t, w, h]) => t < T), false)
+        addCut([left, T, width, H], rects.filter(([l, t, w, h]) => t >= T))
     }
 }
 
-function pushLines(lines, drop, takes) {
-    lines.forEach(line => {
-        pushLine(line, {...drop}, takes);
-        drop.top += line.height + task.kerf;
-        drop.height -= line.height + task.kerf;
-    })
-    if (drop.height > 0) {
-        zone.drops.push(drop);
+const autoCut = () => {
+    const drops = dropsRect();
+    const takes = takesRect();
+
+    const rects = toCut(drops, takes);
+    console.log('rects:', rects);
+    let i = 0;
+
+    for (zone of zones) {
+        const t = zone.drops.filter(({busy}) => busy === false);
+        console.log(t)
+        t.forEach(q => {
+            q.html.remove();
+            drop = q;
+            addCut([0, 0, ...drops[i]], rects[i]);
+            i++;
+        });
     }
 }
 
-const horizontalCut = (drop, takes) => {
-    const lines = cutHorizontalLines({...drop}, takes);
-    lines.forEach(({packs}) => packs.forEach(pack => pack.takes.forEach(i => takes[i].count--)));
-    pushLines(lines, drop, takes);
-}
-
-const asDrop = (width, height, edge) => ({left: edge, top: edge, width: width - 2 * edge, height: height - 2 * edge});
-const asZone = ({width, height, edge}) => ({width, height, drops: [asDrop(width, height, edge)], drags: []});
-
-const toCut = () => {
-    const scraps = task.scraps.filter(Boolean).flatMap(q => Array(q.count).fill(q));
-    zones = [];
-
-    let takes = task.pieces.map(({width, height, rotated, count}, i) => ({width, height, rotated, count, i}));
-
-    let k = 0;
-    while (takes.length) {
-        if (k < scraps.length) {
-            zone = asZone(scraps[k]);
-            k++;
-        } else {
-            zone = asZone(task.sheet)
-        }
-
-        const drops = zone.drops.filter(d => !d.busy);
-        zone.drops = zone.drops.filter(d => d.busy);
-
-        drops.forEach(drop => horizontalCut(drop, takes));
-
-        zones.push(zone);
-        takes = takes.filter(({count}) => count);
-    }
-}
-
-// 5. Автосохранение
+// 6. Автосохранение
 
 let saveTimeout = null;
 let abortController = null;
@@ -1981,8 +2210,8 @@ async function editTask(update) {
     const signal = abortController.signal;
 
     try {
-        if (API_ENDPOINT) {
-            const response = await fetch(API_ENDPOINT, {
+        if (DATA_URL) {
+            const response = await fetch(DATA_URL, {
                 method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(update)
             });
             if (!response.ok) {

@@ -2,7 +2,6 @@ from collections import Counter
 
 from const import KERF
 from rough import get_r
-from utils import printer, timer
 
 
 # todo: учесть чуть большие размеры
@@ -81,8 +80,6 @@ def get_a(rects: list[tuple]):
     return sum(w * h for x, y, w, h in rects)
 
 
-@printer
-@timer
 def main(sheets: list[tuple], pieces: list[tuple]) -> list[tuple]:
     A = 0
     R = []
@@ -91,12 +88,12 @@ def main(sheets: list[tuple], pieces: list[tuple]) -> list[tuple]:
 
     tasks = [(sheets, d)]
     j = 0
-    while j < len(tasks):
+    while pieces and j < len(tasks):
         sheets, d = tasks[j]
         j += 1
 
         # r = get_r(sheets, pieces) if j > 1 else None
-        r = get_r(sheets, pieces) # так медленнее
+        r = get_r(sheets, pieces)  # так медленнее
 
         if r:
             a = get_a(r)
@@ -106,7 +103,6 @@ def main(sheets: list[tuple], pieces: list[tuple]) -> list[tuple]:
 
         w = get_w(d)
         h = get_h(d)
-        print(w, h)
 
         i = n = len(sheets)
         while i:
@@ -128,6 +124,30 @@ def main(sheets: list[tuple], pieces: list[tuple]) -> list[tuple]:
 
     return R
 
-# 16469006
-# 16388726
-# 16333066
+
+if __name__ == '__main__':
+
+    def stack(sheets):
+        H = max(h for w, h in sheets)
+        return [(0, i * H, w, h) for i, (w, h) in enumerate(sheets)]
+
+
+    def count(pieces):
+        C = {}
+        for w, h, z, c in pieces:
+            k = (h, w, z) if z and w < h else (w, h, z)
+            if k in C:
+                C[k] += c
+            else:
+                C[k] = c
+        return [(w, h, z, c) for (w, h, z), c in C.items()]
+
+
+    sheets = [
+        [43, 334], [1034, 50], [324, 110], [324, 110], [324, 110], [334, 252], [334, 686], [84, 914], [26, 1720], [388, 1406], [84, 1450], [84, 1482], [284, 1720], [1944, 2054]
+    ]
+    pieces = [[572, 84, True, 1], [388, 324, True, 2], [604, 84, True, 1], [284, 334, True, 1]]
+
+    pieces = count(pieces)
+    sheets = stack(sheets)
+    print(main(sheets, pieces))
