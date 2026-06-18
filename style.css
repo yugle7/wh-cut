@@ -259,6 +259,10 @@ section div {
     stroke: var(--yellow);
 }
 
+.black {
+    stroke: black;
+}
+
 .red {
     stroke: var(--red);
 }

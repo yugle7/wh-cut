@@ -506,7 +506,7 @@ const loadTasks = async () => {
         tasks = await response.json();
     } else {
         const t = localStorage.getItem('tasks');
-        tasks = fakeTasks; // t ? JSON.parse(t) : [];
+        tasks = t ? JSON.parse(t) : [];
     }
 };
 
@@ -1675,7 +1675,7 @@ const headPdf = ({title, start, finish, material, thick}) => {
 
 // 4.2 Постановка задачи
 
-const linePdf = (line, color = 'yellow') => line !== null ? `<svg class="line ${color}">${spriteHtml(edgingLines[line])}</use></svg>` : '';
+const linePdf = (line, color = 'black') => line !== null ? `<svg class="line ${color}">${spriteHtml(edgingLines[line])}</use></svg>` : '';
 
 const flagPdf = (flag) => `<td style="color: green;">${flag ? `&#10003;` : ''}</td>`;
 
@@ -2127,6 +2127,7 @@ const setTake = (drag) => {
             if (!rotated) break;
         } else if (!take && rotated && width === drag.height && height === drag.width) {
             drag.take = i;
+            drag.rotated = true;
             take = takes[i];
         }
     }
@@ -2201,7 +2202,9 @@ const addCut = (drop, rects, create = true) => {
     const H = top + height - T
     const W = left + width - L
 
-    if (W > H) {
+    const cutDirection = W > H;
+
+    if (cutDirection) {
         addCut([left, top, width - W, height], rects.filter(([l, t, w, h]) => l < L), false)
         addCut([L, top, W, height], rects.filter(([l, t, w, h]) => l >= L))
     } else if (H) {
