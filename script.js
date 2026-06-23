@@ -852,6 +852,10 @@ const loadTask = async (id) => {
         task = await response.json();
     } else {
         task = tasks.find(q => q.id == id);
+
+        task.scraps = task.scraps.filter(Boolean);
+        task.edgings = task.edgings.filter(Boolean);
+        task.pieces = task.pieces.filter(Boolean);
     }
     console.assert(task);
 }
@@ -2235,10 +2239,9 @@ const addRects = (rects, drops) => {
 let saveTimeout = null;
 let abortController = null;
 
-
 async function editTask(update) {
     if (abortController) abortController.abort();
-    console.log('updateTask:', update);
+    console.log('editTask:', update);
 
     abortController = new AbortController();
     const signal = abortController.signal;
@@ -2261,10 +2264,10 @@ async function editTask(update) {
 
     } catch (error) {
         if (error.name === 'AbortError') {
-            console.log('updateTask cancelled');
+            console.log('editTask cancelled');
             return false;
         }
-        console.error('updateTask:', error);
+        console.error('editTask:', error);
         return false;
 
     } finally {
