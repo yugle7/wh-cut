@@ -507,6 +507,12 @@ const loadTasks = async () => {
     } else {
         const t = localStorage.getItem('tasks');
         tasks = t ? JSON.parse(t) : [];
+
+        tasks.forEach(q => {
+            q.scraps = q.scraps.filter(Boolean);
+            q.edgings = q.edgings.filter(Boolean);
+            q.pieces = q.pieces.filter(Boolean);
+        });
     }
 };
 
@@ -852,10 +858,6 @@ const loadTask = async (id) => {
         task = await response.json();
     } else {
         task = tasks.find(q => q.id == id);
-
-        task.scraps = task.scraps.filter(Boolean);
-        task.edgings = task.edgings.filter(Boolean);
-        task.pieces = task.pieces.filter(Boolean);
     }
     console.assert(task);
 }
