@@ -166,7 +166,7 @@
                         <input type="number" inputmode="numeric" id="piece-width" placeholder="длина"
                                autocomplete="off"/>
                     </label>
-                    <svg class="icon gray">
+                    <svg class="icon gray" id="piece-rotate">
                         <use href="sprite.svg#x"></use>
                     </svg>
                     <label>
@@ -205,60 +205,76 @@
 </article>
 
 <nav id="menu" class="hidden">
-    <button id="to-main" class="menu">
-        <svg class="blue">
+    <button id="to-main">
+        <svg class="menu blue">
             <use href="sprite.svg#main"></use>
         </svg>
+        <span>Задачи</span>
     </button>
-    <button id="to-setting" class="menu">
-        <svg class="yellow">
+    <button id="to-setting">
+        <svg class="menu yellow">
             <use href="sprite.svg#setting"></use>
         </svg>
+        <span>Параметры</span>
     </button>
-    <button id="to-cutting" class="menu">
-        <svg class="yellow">
+    <button id="to-cutting">
+        <svg class="menu yellow">
             <use href="sprite.svg#cutting"></use>
         </svg>
+        <span>Раскрой</span>
     </button>
-    <button id="remove-task" class="menu">
-        <svg class="red">
+    <button id="remove-task">
+        <svg class="menu red">
             <use href="sprite.svg#remove"></use>
         </svg>
+        <span>Удалить</span>
     </button>
-    <button id="download-cutting" class="menu hidden">
-        <svg class="green">
+    <button id="download-cutting" class="hidden">
+        <svg class="menu green">
             <use href="sprite.svg#download"></use>
         </svg>
+        <span>Скачать</span>
     </button>
     <div id="tools" class="hidden">
-        <button id="rotate-piece" class="menu">
-            <svg class="gray">
+        <button id="rotate-piece">
+            <svg class="menu gray">
                 <use href="sprite.svg#rotate"></use>
             </svg>
+            <span>Повернуть</span>
         </button>
-        <button id="cut-direction" class="menu">
-            <svg class="gray">
+        <button id="cut-direction">
+            <svg class="menu gray">
                 <use href="sprite.svg#direction"></use>
             </svg>
+            <span>Вдоль</span>
         </button>
 
-        <button id="fast-cut" class="menu">
-            <svg class="gray">
-                <use href="sprite.svg#fast-cut"></use>
+        <button id="cut">
+            <svg class="menu gray">
+                <use href="sprite.svg#cut"></use>
             </svg>
+            <span>Раскроить</span>
         </button>
-        <button id="slow-cut" class="menu">
-            <svg class="gray">
-                <use href="sprite.svg#slow-cut"></use>
-            </svg>
-        </button>
-        <button id="clear" class="menu">
-            <svg class="gray">
+        <button id="clear">
+            <svg class="menu gray">
                 <use href="sprite.svg#clear"></use>
             </svg>
+            <span>Очистить</span>
         </button>
     </div>
+
+    <button id="expand">
+        <svg class="menu blue">
+            <use href="sprite.svg#expand"></use>
+        </svg>
+        <span>Свернуть</span>
+    </button>
+
 </nav>
+
+<button id="do-cut" class="hidden">
+    Улучшить раскрой
+</button>
 
 <article id="cutting" class="hidden">
     <div id="drop" class="side left"></div>

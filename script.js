@@ -13,6 +13,7 @@ const tasksList = document.getElementById("tasks");
 // 2. Навигация
 
 const menuNav = document.getElementById("menu");
+const expandButton = document.getElementById("expand");
 
 const toMainButton = document.getElementById("to-main");
 const toSettingButton = document.getElementById("to-setting");
@@ -74,6 +75,8 @@ const toCreatePieceLink = document.getElementById("to-create-piece");
 
 const pieceWidthInput = document.getElementById('piece-width');
 const pieceHeightInput = document.getElementById('piece-height');
+const pieceRotateButton = document.getElementById('piece-rotate');
+
 const pieceRotatedInput = document.getElementById('piece-rotated');
 const pieceCountInput = document.getElementById('piece-count');
 
@@ -92,8 +95,8 @@ const formLabel = document.getElementById("form");
 // 4. Редактор раскроя
 
 const cuttingPage = document.getElementById("cutting");
-const fastCutButton = document.getElementById("fast-cut");
-const slowCutButton = document.getElementById("slow-cut");
+const cutButton = document.getElementById("cut");
+const doCutButton = document.getElementById("do-cut");
 
 const clearButton = document.getElementById("clear");
 
@@ -159,39 +162,33 @@ const lineHtml = (line) => {
     line = line === null ? "line" : edgingLines[line];
     return `<svg class="line ${color}">${spriteHtml(line)}</svg>`;
 }
+
+
 const valueHtml = (value, unit) => `<span class="value"><span>${value || 0}</span><span class="unit">${unit}</span></span>`
 
 const x = iconHtml('x');
 const v = iconHtml('v');
 const o = iconHtml('o');
 
+const oHtml = (i) => `<svg class="icon gray" onclick="rotatePiece(${i})">${spriteHtml("o")}</svg>`;
+
 // 3. PDF
 
 const A4 = {
-    width: 297,
-    height: 210
+    width: 297, height: 210
 }
 
 const D = 10;
 const H = {
-    top: D,
-    left: D,
-    right: D,
-    height: 20
+    top: D, left: D, right: D, height: 20
 }
 H.bottom = A4.height - 2 * D - H.height;
 const S = {
-    top: 2 * D + H.height,
-    right: D,
-    width: 70,
-    bottom: D
+    top: 2 * D + H.height, right: D, width: 70, bottom: D
 }
 S.left = A4.width - S.width - D;
 const A = {
-    top: S.top,
-    left: D - 1,
-    right: D + S.width + S.right + 1,
-    bottom: D,
+    top: S.top, left: D - 1, right: D + S.width + S.right + 1, bottom: D,
 }
 A.width = A4.width - A.left - A.right;
 A.height = A4.height - A.top - A.bottom;
@@ -270,83 +267,46 @@ A.height = A4.height - A.top - A.bottom;
 //     }
 // ];
 
-fakeTasks = [
-    {
-        id: 0,
-        title: 'Раскрой меня',
-        start: '2026-06-01',
-        finish: '2026-07-20',
-        material: 'Владимирский ржаной',
-        thick: 12,
-        kerf: 4,
-        sheet: {
-            width: 2800, height: 2070, edge: 10
-        },
-        scraps: [{width: 2800, height: 2070, edge: 10, count: 1}],
-        edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.2}],
-        pieces: [{
-            width: 568,
-            height: 80,
-            rotated: true,
-            count: 1,
-            edging: {left: 0, right: 1, up: null, down: null}
-        }, {
-            width: 384,
-            height: 320,
-            rotated: true,
-            count: 2,
-            edging: {left: null, right: 1, up: 1, down: null}
-        }, {
-            width: 801,
-            height: 320,
-            rotated: true,
-            count: 6,
-            edging: {left: 0, right: null, up: null, down: null}
-        }, {
-            width: 802,
-            height: 80,
-            rotated: true,
-            count: 1,
-            edging: {left: 1, right: 0, up: null, down: 1}
-        }, {
-            width: 600,
-            height: 80,
-            rotated: true,
-            count: 1,
-            edging: {left: null, right: 1, up: 0, down: null}
-        }, {
-            width: 385,
-            height: 330,
-            rotated: true,
-            count: 1,
-            edging: {left: 0, right: 1, up: 1, down: null}
-        }, {
-            width: 1030,
-            height: 330,
-            rotated: true,
-            count: 8,
-            edging: {left: 1, right: 0, up: null, down: null}
-        }, {
-            width: 730,
-            height: 330,
-            rotated: true,
-            count: 2,
-            edging: {left: 0, right: 0, up: 1, down: null}
-        }, {
-            width: 280,
-            height: 330,
-            rotated: true,
-            count: 2,
-            edging: {left: null, right: 1, up: null, down: 1}
-        }]
-    }
-];
+fakeTasks = [{
+    id: 0,
+    title: 'Раскрой меня',
+    start: '2026-06-01',
+    finish: '2026-07-20',
+    material: 'Владимирский ржаной',
+    thick: 12,
+    kerf: 4,
+    sheet: {
+        width: 2800, height: 2070, edge: 10
+    },
+    scraps: [{width: 2800, height: 2070, edge: 10, count: 1}],
+    edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.2}],
+    pieces: [{
+        width: 568, height: 80, rotated: true, count: 1, edging: {left: 0, right: 1, up: null, down: null}
+    }, {
+        width: 384, height: 320, rotated: true, count: 2, edging: {left: null, right: 1, up: 1, down: null}
+    }, {
+        width: 801, height: 320, rotated: true, count: 6, edging: {left: 0, right: null, up: null, down: null}
+    }, {
+        width: 802, height: 80, rotated: true, count: 1, edging: {left: 1, right: 0, up: null, down: 1}
+    }, {
+        width: 600, height: 80, rotated: true, count: 1, edging: {left: null, right: 1, up: 0, down: null}
+    }, {
+        width: 385, height: 330, rotated: true, count: 1, edging: {left: 0, right: 1, up: 1, down: null}
+    }, {
+        width: 1030, height: 330, rotated: true, count: 8, edging: {left: 1, right: 0, up: null, down: null}
+    }, {
+        width: 730, height: 330, rotated: true, count: 2, edging: {left: 0, right: 0, up: 1, down: null}
+    }, {
+        width: 280, height: 330, rotated: true, count: 2, edging: {left: null, right: 1, up: null, down: 1}
+    }]
+}];
 
 // Состояние
 
 // 1. Общее
 
 let page = mainPage;
+let expanded = false;
 
 let tasks = [];
 let task = null;
@@ -375,6 +335,22 @@ let pdfHead;
 let line;
 
 // Навигация
+
+expandButton.onclick = (e) => {
+    e.preventDefault();
+    expanded = !expanded;
+
+    expandButton.firstElementChild.style.transform = `rotate(${expanded ? 180 : 0}deg)`
+
+    const width = expanded ? 165 : 50;
+    menuNav.style.width = width + 'px';
+
+    dropArea.style.paddingLeft = width + 15 + 'px';
+    takeArea.style.paddingRight = width + 15 + 'px';
+    takeArea.style.width = dropArea.offsetWidth + 'px';
+
+    settingPage.firstElementChild.style.paddingLeft = width + 'px';
+}
 
 const changePage = (p) => {
     console.log('changePage')
@@ -432,14 +408,14 @@ function handlePointerMove(e) {
     console.log('handlePointerMove')
     e.preventDefault();
 
-    let leftWidth = startLeftWith + e.clientX - startX;
-    leftWidth = Math.min(maxWidth, Math.max(minWidth, leftWidth));
+    let width = startLeftWith + e.clientX - startX;
+    width = Math.min(maxWidth, Math.max(minWidth, width));
 
-    gutter.style.left = leftWidth + 'px';
-    page.style.gridTemplateColumns = `${leftWidth}px 1fr`;
+    gutter.style.left = width + 'px';
+    page.style.gridTemplateColumns = `${width}px 1fr`;
 
     if (gutter === cuttingGutter) {
-        takeArea.style.width = leftWidth + 'px';
+        takeArea.style.width = width + 'px';
     }
 }
 
@@ -530,20 +506,13 @@ const materialHtml = () => task.material ? `<div class="section"><span>${task.ma
 
 const kerfHtml = () => `<span>${valueHtml(task.kerf || 0, 'мм')}</span>`;
 
-const sheetHtml = (
-    {
-        width,
-        height,
-        edge
-    }) => `<div class="section"><span>${width}${x}${height}${v}${valueHtml(edge, 'мм')}</span>${kerfHtml()}</div>`;
+const sheetHtml = ({
+                       width, height, edge
+                   }) => `<div class="section"><span>${width}${x}${height}${v}${valueHtml(edge, 'мм')}</span>${kerfHtml()}</div>`;
 
-const scrapHtml = (
-    {
-        width,
-        height,
-        edge,
-        count
-    }) => `<div>${width}${x}${height}${v}${valueHtml(edge, 'мм')}</div>${valueHtml(count, 'шт')}`;
+const scrapHtml = ({
+                       width, height, edge, count
+                   }) => `<div>${width}${x}${height}${v}${valueHtml(edge, 'мм')}</div>${valueHtml(count, 'шт')}`;
 
 const edgingHtml = ({line, thick}) => `<div>${lineHtml(line)}</div>${valueHtml(thick, 'мм')}`;
 
@@ -658,16 +627,14 @@ const addEdging = (edging, i) => {
 const createEdging = () => {
     index = task.edgings.length;
     task.edgings.push({
-        line: edgingLine,
-        thick: edgingThickInput.value
+        line: edgingLine, thick: edgingThickInput.value
     });
     link = addEdging(task.edgings[index], index);
 }
 
 const updateEdging = () => {
     task.edgings[index] = {
-        line: edgingLine,
-        thick: edgingThickInput.value
+        line: edgingLine, thick: edgingThickInput.value
     };
     link.innerHTML = edgingHtml(task.edgings[index]);
 }
@@ -740,9 +707,7 @@ const updateTask = () => {
 
 const updateSheet = () => {
     task.sheet = {
-        width: +sheetWidthInput.value || 1,
-        height: +sheetHeightInput.value || 1,
-        edge: +sheetEdgeInput.value || 0
+        width: +sheetWidthInput.value || 1, height: +sheetHeightInput.value || 1, edge: +sheetEdgeInput.value || 0
     }
     toUpdateSheetLink.innerHTML = sheetHtml(task.sheet);
 }
@@ -942,6 +907,11 @@ pieceEdgingRightInput.onclick = (e) => {
     pieceEdgingRightInput.innerHTML = lineHtml(pieceEdging.right);
 }
 
+pieceRotateButton.onclick = (e) => {
+    e.preventDefault();
+    [pieceWidthInput.value, pieceHeightInput.value] = [pieceHeightInput.value, pieceWidthInput.value];
+}
+
 pieceRotatedInput.onclick = (e) => {
     e.preventDefault();
     pieceRotated = !pieceRotated;
@@ -1042,47 +1012,49 @@ let takes = [];
 
 // 3.3. Отображение деталей
 
-const widthHeightHtml = (width, height, rotated = false) => `${width}${rotated ? o : x}${height}`
+const widthHeightHtml = (width, height, rotated, i) => `${width}${rotated ? oHtml(i) : x}${height}`
 
 const getColors = n => [...Array(n)].map((_, i) => `hsl(${i / n * 360}, var(--saturation), var(--lightness))`);
 
-const takeTitleHtml = (width, height, rotated) => `<h4 class="center">${widthHeightHtml(width, height, rotated)}</h4>`;
-const takePieceHtml = (width, height, count, color) => `<div class="center"><div class="take" style="width: ${width * 100 / task.sheet.width}%; aspect-ratio: ${width} / ${height}; background-color: ${color};"></div>${valueHtml(count, 'шт')}</div>`;
-
-const takeHtml = (width, height, rotated, count, color) => `<div>
-    ${takeTitleHtml(width, height, rotated)}
-    ${takePieceHtml(width, height, count, color)}
+const takeTitleHtml = (width, height, rotated, i) => `<h4 class="center">${widthHeightHtml(width, height, rotated, i)}</h4>`;
+const takePieceHtml = (width, height, count, i) => `<div class="center">
+    <div class="take" style="width: ${width * 100 / task.sheet.width}%; aspect-ratio: ${width} / ${height}; background-color: ${colors[i]}" data-i="${i}"></div>
+    ${valueHtml(count, 'шт')}
 </div>`;
 
+const takeHtml = (width, height, rotated, count, i) => `<div>
+    ${takeTitleHtml(width, height, rotated, i)}
+    ${takePieceHtml(width, height, count, i)}
+</div>`;
+
+const onTakeUp = (i) => {
+    console.log('onTakeUp')
+    if (!down) return;
+    take = takes[i];
+    toSelect(take);
+}
+
+const onTakeDown = (e) => {
+    console.log('onTakeDown')
+    e.currentTarget.releasePointerCapture(e.pointerId);
+    onPointerDown(e, dragTake);
+}
+
 const setTakes = () => {
-    takes = task.pieces.map(({width, height, rotated, count}, i) => ({
-        width,
-        height,
-        rotated,
-        count,
-        color: colors[i]
+    takes = task.pieces.map(({width, height, rotated, count}) => ({
+        width, height, rotated, count
     }));
 
-    takeArea.innerHTML = takes.map((
-        {width, height, rotated, count, color}) => takeHtml(width, height, rotated, count, color)
-    ).join('');
+    takeArea.innerHTML = takes.map(
+        ({width, height, rotated, count}, i) => takeHtml(width, height, rotated, count, i)).join('');
 
     takeArea.childNodes.forEach((q, i) => {
         q = q.lastElementChild.firstElementChild;
-        q.dataset.i = i;
 
-        q.onpointerup = (e) => {
-            console.log('take.onpointerup')
-            if (!down) return;
-            take = takes[i];
-            toSelect(take);
-        };
-        q.onpointerdown = (e) => {
-            console.log('take.onpointerdown')
-            q.releasePointerCapture(e.pointerId);
-            onPointerDown(e, dragTake);
-        }
+        q.onpointerup = () => onTakeUp(i);
+        q.onpointerdown = onTakeDown;
         takes[i].html = q
+
     });
 }
 
@@ -1158,44 +1130,32 @@ const createDrag = (drag) => {
 // 3.5 Оценка количества зон
 
 const dropJson = (width, height, edge) => ({
-    left: edge,
-    top: edge,
-    width: width - 2 * edge,
-    height: height - 2 * edge,
-    busy: false
+    left: edge, top: edge, width: width - 2 * edge, height: height - 2 * edge, busy: false
 });
 
 const zoneJson = ({width, height, edge}) => ({width, height, drops: [dropJson(width, height, edge)], drags: []});
 
 const getDrops = () => {
-    const dst = task.scraps.filter(Boolean).flatMap(
-        ({width, height, edge, count}) => Array(count).fill({
-            width: width - 2 * edge + task.kerf,
-            height: height - 2 * edge + task.kerf
-        })
-    );
+    const dst = task.scraps.filter(Boolean).flatMap(({width, height, edge, count}) => Array(count).fill({
+        width: width - 2 * edge + task.kerf, height: height - 2 * edge + task.kerf
+    }));
     return dst.sort((a, b) => b.width + b.height - a.width - a.height);
 }
 
 const sheetJson = () => {
     const {width, height, edge} = task.sheet;
     return {
-        width: width - 2 * edge + task.kerf,
-        height: height - 2 * edge + task.kerf
+        width: width - 2 * edge + task.kerf, height: height - 2 * edge + task.kerf
     };
 }
 
 const getTakes = () => {
-    const dst = task.pieces.filter(Boolean).map(
-        ({width, height, rotated, count}) => ({width, height, rotated, count})
-    )
+    const dst = task.pieces.filter(Boolean).map(({width, height, rotated, count}) => ({width, height, rotated, count}))
     return dst.sort((a, b) => b.width + b.height - a.width - a.height || a.rotated - b.rotated)
 }
 
 const getZones = () => {
-    const dst = task.scraps.filter(Boolean).flatMap(
-        q => Array(q.count).fill(zoneJson(q))
-    );
+    const dst = task.scraps.filter(Boolean).flatMap(q => Array(q.count).fill(zoneJson(q)));
 
     const drops = getDrops();
     const takes = getTakes();
@@ -1262,6 +1222,10 @@ const clearCutting = () => {
 toCuttingButton.onclick = () => {
     clearCutting();
     changePage(cuttingPage);
+
+    const width = dropArea.offsetWidth;
+    page.style.gridTemplateColumns = `${width}px 1fr`;
+    takeArea.style.width = width + 'px';
 }
 
 // 3.7 Начало перетаскивания
@@ -1305,16 +1269,12 @@ const dragTake = (x, y, t) => {
     q.style.position = 'absolute';
     q.style.cursor = 'grabbing';
     q.style.pointerEvents = 'none';
-    q.style.backgroundColor = take.color;
+    q.style.backgroundColor = colors[i];
 
     cuttingPage.appendChild(q);
 
     drag = {
-        take: i, html: q,
-        width: take.width,
-        height: take.height,
-        rotated: take.rotated,
-        cutDirection
+        take: i, html: q, width: take.width, height: take.height, rotated: take.rotated, cutDirection
     };
     toSelect(drag);
     startMove(x, y, left, top);
@@ -1328,16 +1288,11 @@ const dragDrop = (x, y, t) => {
     take = takes[drag.take];
     drop = zone.drops[drag.drop];
 
-    toSelect(null);
     clearDrop();
 
     const {left, top, width} = t.getBoundingClientRect();
 
     const q = drag.html;
-    drag.html = null;
-    drag = {...drag, html: q};
-    toSelect(drag);
-
     q.style.width = width + 'px';
     q.style.left = left + 'px';
     q.style.top = top + 'px';
@@ -1521,6 +1476,14 @@ const toRotateTake = () => {
     take.html.style.aspectRatio = `${take.width} / ${take.height}`;
 }
 
+const rotatePiece = (i) => {
+    console.log('rotatePiece');
+
+    take = takes[i];
+    if (selected !== take) toSelect(take);
+    toRotateTake();
+}
+
 const changeCutDirection = () => {
     console.log('changeCutDirection');
     drop = zone.drops[drag.drop];
@@ -1545,7 +1508,8 @@ rotatePieceButton.onclick = () => {
 
 const setCutDirectionButton = () => {
     const d = selected && selected === drag ? drag.cutDirection : cutDirection
-    cutDirectionButton.firstElementChild.style.transform = `rotate(${d ? 0 : 90}deg)`
+    cutDirectionButton.firstElementChild.style.transform = `rotate(${d ? 0 : 90}deg)`;
+    cutDirectionButton.lastElementChild.innerText = d ? 'Вдоль' : 'Поперек';
 }
 
 cutDirectionButton.onclick = () => {
@@ -1584,6 +1548,7 @@ const clearDrop = () => {
 
     zone.html.appendChild(drop.html);
     drop.busy = false;
+
     zone.drags.forEach(q => {
         if (q.html && q !== drag && isOn(q, drop)) {
             q.html.remove();
@@ -1597,6 +1562,15 @@ const clearDrop = () => {
             q.html = q.busy = null;
         }
     });
+    takeDrag();
+}
+
+const takeDrag = () => {
+    const q = drag.html;
+    toSelect(null);
+    drag.html = null;
+    drag = {...drag, html: q};
+    toSelect(drag);
 }
 
 const cancelDrag = () => {
@@ -1804,25 +1778,29 @@ const cuttingPdf = ({w, h, drags, drops}) => {
 }
 
 const getCuttings = () => zones.map(({width, height, drops, drags}) => ({
-    w: width * scale, h: height * scale,
+    w: width * scale,
+    h: height * scale,
     drops: drops.filter(({html}) => html && html.isConnected).map(({top, left, width, height}) => ({
-        width, height,
-        l: left * scale, t: top * scale, w: width * scale, h: height * scale
+        width, height, l: left * scale, t: top * scale, w: width * scale, h: height * scale
     })),
     drags: drags.filter(({html}) => html && html.isConnected).map(({top, left, width, height, take}) => ({
-        width, height, i: take,
-        l: left * scale, t: top * scale, w: width * scale, h: height * scale
+        width, height, i: take, l: left * scale, t: top * scale, w: width * scale, h: height * scale
     }))
 })).filter(({drags}) => drags.length);
 
 // 5. Автоматический раскрой
 
-const takesRect = () => takes.filter(({count}) => count > 0).map(
-    ({width, height, rotated, count}) => [width + task.kerf, height + task.kerf, rotated, count]
-);
+const takesRect = () => takes.filter(({count}) => count > 0).map(({
+                                                                      width,
+                                                                      height,
+                                                                      rotated,
+                                                                      count
+                                                                  }) => [width + task.kerf, height + task.kerf, rotated, count]);
 
-const dropsRect = () => zones.flatMap(({drops}) => drops.filter(
-    ({busy}) => busy === false)).map(({width, height}) => [width + task.kerf, height + task.kerf]);
+const dropsRect = () => zones.flatMap(({drops}) => drops.filter(({busy}) => busy === false)).map(({
+                                                                                                      width,
+                                                                                                      height
+                                                                                                  }) => [width + task.kerf, height + task.kerf]);
 
 
 // 5.1 Раскрой на клиенте
@@ -1864,9 +1842,7 @@ const getStates = (packs, counts, fit) => {
         if (fit && pack.height < line.height) break;
 
         const s = {
-            busy: pack.busy,
-            counts: getCounts([pack], [...counts]),
-            k, left: 0
+            busy: pack.busy, counts: getCounts([pack], [...counts]), k, left: 0
         };
 
         const l = pack.width;
@@ -1895,9 +1871,7 @@ const cutHorizontalLine = (packs, counts, fit) => {
                 if (l > line.width) continue;
 
                 const s = {
-                    busy: busy + pack.busy,
-                    counts: getCounts([pack], [...counts]),
-                    k, n, left
+                    busy: busy + pack.busy, counts: getCounts([pack], [...counts]), k, n, left
                 };
                 if (s.counts.every(n => n >= 0)) {
                     states[l] ? states[l].push(s) : (states[l] = [s]);
@@ -1957,9 +1931,7 @@ const getLineRects = (packs, takes, top) => {
         pack.takes.forEach(i => {
             const [width, height, rotated] = takes[i];
 
-            const rotate = rotated && (
-                width > pack.width || (width < height && height <= pack.width)
-            );
+            const rotate = rotated && (width > pack.width || (width < height && height <= pack.width));
 
             const rect = rotate ? [left, t, height, width] : [left, t, width, height];
             dst.push(rect);
@@ -2020,7 +1992,8 @@ const cutHorizontalLines = (width, height, takes) => {
                     free: line.free,
                     packs: line.packs,
                     counts: getCounts(line.packs, [...counts]),
-                    top, n
+                    top,
+                    n
                 }
                 const t = top + h;
                 states[t] ? states[t].push(s) : (states[t] = [s]);
@@ -2058,9 +2031,7 @@ const toCut = (drops, takes, n = 7) => {
                     busy: q.busy + busy,
                     free: Math.max(q.free, free),
                     rects: [...q.rects, rects],
-                    takes: q.takes.map(
-                        ([width, height, rotated], i) => [width, height, rotated, counts[i]]
-                    ).filter(q => q[3] > 0)
+                    takes: q.takes.map(([width, height, rotated], i) => [width, height, rotated, counts[i]]).filter(q => q[3] > 0)
                 });
             });
         });
@@ -2075,19 +2046,14 @@ const toCut = (drops, takes, n = 7) => {
 
 // 5.2 Раскрой на сервере
 
-slowCutButton.onclick = (e) => {
+doCutButton.onclick = (e) => {
     e.preventDefault();
 
     const takes = takesRect();
     const drops = dropsRect();
 
-    const rects = toCut(drops, takes);
-    console.log('rects:', rects);
-
     fetch(ALGO_URL, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({drops, takes})
+        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({drops, takes})
     })
         .then(response => {
             if (!response.ok) {
@@ -2105,7 +2071,7 @@ slowCutButton.onclick = (e) => {
         });
 }
 
-fastCutButton.onclick = (e) => {
+cutButton.onclick = (e) => {
     e.preventDefault();
 
     const takes = takesRect();
@@ -2137,6 +2103,7 @@ const setTake = (drag) => {
             take = takes[i];
         }
     }
+    drag.rotated = take.rotated;
     decTakeCount(take);
 }
 
@@ -2149,27 +2116,16 @@ const findCut = (q) => {
     return Y;
 }
 
-const findVerticalCut = (rects) => findCut(
-    rects.map(([left, top, width, height]) => [left, left + width]).sort((a, b) => a[0] - b[0] || b[1] - a[1])
-);
+const findVerticalCut = (rects) => findCut(rects.map(([left, top, width, height]) => [left, left + width]).sort((a, b) => a[0] - b[0] || b[1] - a[1]));
 
-const findHorizontalCut = (rects) => findCut(
-    rects.map(([left, top, width, height]) => [top, top + height]).sort((a, b) => a[0] - b[0] || b[1] - a[1])
-);
+const findHorizontalCut = (rects) => findCut(rects.map(([left, top, width, height]) => [top, top + height]).sort((a, b) => a[0] - b[0] || b[1] - a[1]));
 
 const asDrop = ([left, top, width, height], busy = false) => ({
-    left: left + drop.left,
-    top: top + drop.top,
-    width: width - task.kerf,
-    height: height - task.kerf,
-    busy
+    left: left + drop.left, top: top + drop.top, width: width - task.kerf, height: height - task.kerf, busy
 });
 
 const asDrag = ([l, t, w, h]) => ({
-    left: l + drop.left,
-    top: t + drop.top,
-    width: w - task.kerf,
-    height: h - task.kerf
+    left: l + drop.left, top: t + drop.top, width: w - task.kerf, height: h - task.kerf
 });
 
 const findDrag = ([left, top, width, height], rects) => {
@@ -2222,6 +2178,7 @@ const addCut = (drop, rects, create = true) => {
 const addRects = (rects, drops) => {
     let i = 0;
 
+    toSelect(null);
     for (zone of zones) {
         zone.drops.filter(({busy}) => busy === false).forEach(q => {
             if (rects[i] && rects[i].length) {

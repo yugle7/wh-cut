@@ -108,7 +108,7 @@ a:hover {
     position: fixed;
     top: 0;
     bottom: 0;
-    left: calc(50% - 2px);
+    left: calc(66.6% - 2px);
     width: 5px;
     background-color: var(--bg-secondary);
     z-index: 1000;
@@ -133,13 +133,14 @@ a:hover {
     bottom: 0;
     left: 0;
     width: 50px;
-    z-index: 9999;
     user-select: none;
     display: flex;
     flex-direction: column;
     gap: 10px;
     box-shadow: 1px 0 0 0 var(--bg-secondary);
     background-color: var(--bg-header);
+    overflow: hidden;
+    z-index: 1;
 }
 
 
@@ -305,21 +306,17 @@ input[type="number"] {
 }
 
 .menu {
-    background: transparent;
     width: 50px;
+    min-width: 50px;
     height: 50px;
     padding: 13px;
-    cursor: pointer;
 }
 
 .icon {
-    background: transparent;
     width: 40px;
     min-width: 40px;
     height: 40px;
     padding: 8px;
-    cursor: pointer;
-    z-index: 1000;
 }
 
 .menu:hover,
@@ -327,10 +324,14 @@ input[type="number"] {
     transform: scale(1.1);
 }
 
-.menu svg,
-.icon svg {
-    width: auto;
-    height: 24px;
+.side {
+    background-color: var(--bg-primary);
+}
+
+.menu,
+.icon {
+    cursor: pointer;
+    background: transparent;
 }
 
 #erase {
@@ -339,7 +340,7 @@ input[type="number"] {
 
 article {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 2fr 1fr;
     gap: 5px;
     height: 100vh;
     width: 100%;
@@ -546,15 +547,15 @@ button:disabled svg {
     will-change: transform;
 }
 
-#cut {
-    display: flex;
-    gap: 10px;
-    position: absolute;
-    left: 65px;
-    top: 10px;
-    z-index: 9999;
-    opacity: 0.5;
+
+#do-cut {
+    position: fixed;
 }
+
+#expand {
+    margin-top: auto;
+}
+
 
 .take {
     cursor: grab;
