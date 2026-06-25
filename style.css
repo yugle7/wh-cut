@@ -108,7 +108,7 @@ a:hover {
     position: fixed;
     top: 0;
     bottom: 0;
-    left: calc(66.6% - 2px);
+    left: 0;
     width: 5px;
     background-color: var(--bg-secondary);
     z-index: 1000;

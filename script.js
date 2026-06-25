@@ -380,6 +380,16 @@ const changePage = (p) => {
     page.classList.add("hidden");
     page = p;
     page.classList.remove("hidden");
+
+    const width = page.firstElementChild.offsetWidth;
+    page.style.gridTemplateColumns = `${width}px 1fr`;
+
+    if (page === settingPage) {
+        settingGutter.style.left = width + 'px';
+    } else if (page === cuttingPage) {
+        cuttingGutter.style.left = takeArea.style.width = width + 'px';
+    }
+
     return true;
 }
 
@@ -494,7 +504,10 @@ const loadTasks = async () => {
 
 // 2. Настройки задачи раскроя
 
-toSettingButton.onclick = () => changePage(settingPage);
+toSettingButton.onclick = () => {
+    changePage(settingPage);
+}
+
 
 // 2.1 Отображение данных
 
@@ -1222,10 +1235,6 @@ const clearCutting = () => {
 toCuttingButton.onclick = () => {
     clearCutting();
     changePage(cuttingPage);
-
-    const width = dropArea.offsetWidth;
-    page.style.gridTemplateColumns = `${width}px 1fr`;
-    takeArea.style.width = width + 'px';
 }
 
 // 3.7 Начало перетаскивания
@@ -1545,6 +1554,7 @@ const decTakeCount = (take) => {
 
 const clearDrop = () => {
     console.log('clearDrop');
+    toSelect(null);
 
     zone.html.appendChild(drop.html);
     drop.busy = false;
@@ -1562,12 +1572,7 @@ const clearDrop = () => {
             q.html = q.busy = null;
         }
     });
-    takeDrag();
-}
-
-const takeDrag = () => {
     const q = drag.html;
-    toSelect(null);
     drag.html = null;
     drag = {...drag, html: q};
     toSelect(drag);
