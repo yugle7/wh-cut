@@ -12,8 +12,6 @@ const tasksList = document.getElementById("tasks");
 
 // 2. Навигация
 
-const menuNav = document.getElementById("menu");
-const expandButton = document.getElementById("expand");
 
 const toMainButton = document.getElementById("to-main");
 const toSettingButton = document.getElementById("to-setting");
@@ -22,7 +20,6 @@ const toCuttingButton = document.getElementById("to-cutting");
 // 3. Настройки задачи раскроя
 
 const settingPage = document.getElementById("setting");
-const settingGutter = document.getElementById("setting-gutter");
 
 const removeTaskButton = document.getElementById("remove-task");
 
@@ -101,7 +98,6 @@ const doCutButton = document.getElementById("do-cut");
 const clearButton = document.getElementById("clear");
 
 const downloadCuttingButton = document.getElementById("download-cutting");
-const cuttingGutter = document.getElementById("cutting-gutter");
 
 const takeArea = document.getElementById("take");
 const dropArea = document.getElementById("drop");
@@ -162,7 +158,6 @@ const lineHtml = (line) => {
     line = line === null ? "line" : edgingLines[line];
     return `<svg class="line ${color}">${spriteHtml(line)}</svg>`;
 }
-
 
 const valueHtml = (value, unit) => `<span class="value"><span>${value || 0}</span><span class="unit">${unit}</span></span>`
 
@@ -306,7 +301,6 @@ fakeTasks = [{
 // 1. Общее
 
 let page = mainPage;
-let expanded = false;
 
 let tasks = [];
 let task = null;
@@ -334,122 +328,29 @@ let pdfHead;
 
 let line;
 
-// Навигация
-
-expandButton.onclick = (e) => {
-    e.preventDefault();
-    expanded = !expanded;
-
-    expandButton.firstElementChild.style.transform = `rotate(${expanded ? 180 : 0}deg)`
-
-    const width = expanded ? 165 : 50;
-    menuNav.style.width = width + 'px';
-
-    dropArea.style.paddingLeft = width + 15 + 'px';
-    takeArea.style.paddingRight = width + 15 + 'px';
-    takeArea.style.width = dropArea.offsetWidth + 'px';
-
-    settingPage.firstElementChild.style.paddingLeft = width + 'px';
-}
-
 const changePage = (p) => {
     console.log('changePage')
     if (page === p) return false;
-    if (p === mainPage) {
-        menuNav.classList.add('hidden');
-    } else {
-        menuNav.classList.remove('hidden');
-        if (p === settingPage) {
-            removeTaskButton.classList.remove('hidden');
-            downloadCuttingButton.classList.add('hidden');
-
-            toSettingButton.classList.add('hidden');
-            toCuttingButton.classList.remove('hidden');
-
-            toolsBlock.classList.add('hidden');
-        } else {
-            removeTaskButton.classList.add('hidden');
-            downloadCuttingButton.classList.remove('hidden');
-
-            toSettingButton.classList.remove('hidden');
-            toCuttingButton.classList.add('hidden');
-
-            toolsBlock.classList.remove('hidden');
-        }
-    }
     page.classList.add("hidden");
     page = p;
     page.classList.remove("hidden");
 
-    const width = page.firstElementChild.offsetWidth;
-    page.style.gridTemplateColumns = `${width}px 1fr`;
-
-    if (page === settingPage) {
-        settingGutter.style.left = width + 'px';
-    } else if (page === cuttingPage) {
-        cuttingGutter.style.left = takeArea.style.width = width + 'px';
-    }
+    const height = page.firstElementChild.offsetHeight;
+    page.style.gridTemplateColumns = `${height}px 1fr`;
 
     return true;
 }
 
 // Разделитель
 
-let gutter = null;
-let startX = 0;
-let startLeftWith = 0;
 
-const minWidth = 150;
-const maxWidth = 100000;
-
-function handlePointerDown(e) {
-    console.log('handlePointerDown')
-    e.preventDefault();
-    gutter = e.currentTarget;
-    gutter.setPointerCapture(e.pointerId);
-    gutter.classList.add("dragging");
-    document.body.style.cursor = "col-resize";
-    startX = e.clientX;
-    startLeftWith = page.firstElementChild.getBoundingClientRect().width;
-}
-
-function handlePointerMove(e) {
-    if (!gutter) return;
-    console.log('handlePointerMove')
-    e.preventDefault();
-
-    let width = startLeftWith + e.clientX - startX;
-    width = Math.min(maxWidth, Math.max(minWidth, width));
-
-    gutter.style.left = width + 'px';
-    page.style.gridTemplateColumns = `${width}px 1fr`;
-
-    if (gutter === cuttingGutter) {
-        takeArea.style.width = width + 'px';
-    }
-}
-
-function handlePointerUp(e) {
-    if (!gutter) return;
-    console.log('handlePointerUp')
-    gutter.releasePointerCapture(e.pointerId);
-    gutter.classList.remove("dragging");
-    document.body.style.cursor = "";
-    gutter = null;
-}
-
-window.addEventListener('pointermove', handlePointerMove);
 window.addEventListener('pointerup', handlePointerUp);
 window.addEventListener('mouseleave', handlePointerUp);
 window.addEventListener('pointercancel', handlePointerUp);
 
-cuttingGutter.onpointerdown = handlePointerDown;
-settingGutter.onpointerdown = handlePointerDown;
-
 // 1. Выбор задачи
 
 toMainButton.onclick = () => {
-    menuNav.classList.add('hidden');
     changePage(mainPage);
 }
 
@@ -938,7 +839,7 @@ const clearForm = () => {
 
     if (form === edgingForm) {
         edgingLine = 0;
-        edgingLineInput.innerHTML = lineHtml(edgingLine);
+        edgingLineInput = lineHtml(edgingLine);
 
     } else if (form === pieceForm) {
         pieceRotated = false;
@@ -1017,6 +918,7 @@ let drop = null;
 let zone = null;
 
 let selected = null;
+let isDragging = false;
 let cutDirection = true;
 
 let zones = [];
@@ -1417,9 +1319,12 @@ const findDropCorner = () => {
     const x = r.left + r.width / 2;
     const y = r.top + r.height / 2;
 
+    console.log('drag:', r, x, y);
     r = drop.html.getBoundingClientRect();
+    console.log('drop:', r);
     drag.toLeft = x - r.left <= r.right - x;
     drag.toTop = y - r.top <= r.bottom - y;
+    console.log(drag)
 }
 
 const dropDrag = (e) => {

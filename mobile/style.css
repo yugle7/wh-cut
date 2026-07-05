@@ -1,0 +1,741 @@
+:root {
+    --bg-header: #1e1e1e;
+    --bg-primary: #222;
+    --bg-secondary: #444;
+    --bg-hover: #262626;
+    --white: #bbb;
+    --white-max: #fff;
+    --green: #3fa883;
+    --green-max: #359e79;
+    --blue: #6f77d6;
+    --blue-max: #5d68dc;
+    --red: #c37168;
+    --red-max: #dc685d;
+    --yellow: #d3b053;
+    --yellow-max: #f2ca4b;
+    --bg-selected: #202523;
+    --saturation: 40%;
+    --lightness: 40%;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    border: none;
+    line-height: 1.5;
+    font-weight: 400;
+    font-size: 18px;
+    font-family: monospace,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Open Sans Mono",
+    "Helvetica Neue",
+    sans-serif;
+    color: var(--white);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+select,
+textarea,
+body {
+    background-color: var(--bg-primary);
+}
+
+article {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 50px 20px;
+    width: 100%;
+    max-width: 700px;
+    height: 100vh;
+}
+
+a, li {
+    cursor: pointer;
+}
+
+li:hover,
+a:hover {
+    opacity: 0.8;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.hided {
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    align-items: center;
+}
+
+#to-update-task {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    width: 100%;
+}
+
+.area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    touch-action: none;
+    will-change: transform;
+}
+
+.gutter {
+    position: fixed;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background-color: var(--bg-secondary);
+    z-index: 1000;
+    cursor: col-resize;
+    user-select: none;
+    touch-action: none;
+    will-change: transform;
+}
+
+.left {
+    padding-left: 50px;
+}
+
+.right {
+    position: relative;
+    padding-right: 10px;
+}
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    user-select: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    box-shadow: 0 1px 0 0 var(--bg-secondary);
+    background-color: var(--bg-header);
+    overflow: hidden;
+    z-index: 1;
+}
+
+
+.title {
+    color: var(--green);
+    font-size: 26px;
+}
+
+h1, h2 {
+    color: var(--green);
+    outline: none;
+    border: none;
+    cursor: pointer;
+}
+
+h1 {
+    font-size: 30px;
+    padding: 10px 15px;
+}
+
+
+h1:hover,
+h2:hover {
+    opacity: 1;
+}
+
+
+#title:empty::before {
+    content: "Раскрой";
+    opacity: 0.5;
+    color: var(--white);
+}
+
+
+button {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+}
+
+
+svg {
+    background: transparent;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+
+.up {
+    position: sticky;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    left: 0;
+    right: 0;
+    top: 0;
+
+}
+
+nav h3 {
+    color: gray;
+}
+
+
+#to-left,
+#to-right {
+    display: none;
+}
+
+input {
+    background: transparent;
+}
+
+
+.section,
+section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    min-height: 50px;
+    padding: 5px 5px 5px 15px;
+}
+
+ol {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+
+#setting .selected {
+    background-color: #2c3532;
+}
+
+#cutting .selected {
+    --lightness: 50%;
+    z-index: 9999;
+}
+
+#cutting {
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.section span,
+.section div,
+section div {
+    display: flex;
+    align-items: center;
+}
+
+
+.yellow {
+    stroke: var(--yellow);
+}
+
+.black {
+    stroke: black;
+}
+
+.red {
+    stroke: var(--red);
+}
+
+.green {
+    stroke: var(--green);
+}
+
+.blue {
+    stroke: var(--blue);
+}
+
+.gray {
+    stroke: gray;
+}
+
+
+button {
+    background: transparent;
+}
+
+input {
+    font: inherit;
+    border: none;
+    outline: none;
+    width: auto;
+    field-sizing: content;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    appearance: textfield;
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.menu {
+    width: 50px;
+    min-width: 50px;
+    height: 50px;
+    padding: 13px;
+}
+
+.icon {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    padding: 8px;
+}
+
+.menu:hover,
+.icon:hover {
+    transform: scale(1.1);
+}
+
+.side {
+    background-color: var(--bg-primary);
+}
+
+.menu,
+.icon {
+    cursor: pointer;
+    background: transparent;
+}
+
+#erase {
+    display: none;
+}
+
+
+.side {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 10px;
+}
+
+form {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+textarea {
+    width: 100%;
+    border: none;
+    outline: none;
+    resize: none;
+    overflow: hidden;
+}
+
+
+.button {
+    display: block;
+    opacity: 1;
+    padding: 16px 32px;
+    font-size: 1.1rem;
+    text-align: center;
+    width: 100%;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+
+.button:hover {
+    background: var(--green-max);
+    transform: scale(1.01);
+}
+
+.section,
+button,
+h1, h2 {
+    opacity: 0.8;
+}
+
+*:hover {
+    opacity: 1;
+}
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+section button {
+    height: 100%;
+}
+
+input,
+select {
+    width: fit-content;
+    outline: none;
+    vertical-align: middle;
+}
+
+
+ol {
+    list-style: none;
+    counter-reset: item;
+    padding-left: 0;
+}
+
+#tasks li {
+    counter-increment: item;
+    margin-top: 12px;
+}
+
+#tasks li::before {
+    content: counter(item) " ";
+    color: var(--green-max);
+    font-size: 0.85em;
+    font-weight: normal;
+    display: inline-block;
+    text-align: right;
+    width: 2.5rem;
+    padding-right: 0.5rem;
+    margin-left: -0.5rem;
+}
+
+
+/* Кнопки */
+
+button:focus {
+    outline: none;
+}
+
+
+.line {
+    width: 60px;
+    height: 5px;
+}
+
+.how {
+    display: flex;
+    gap: 6px;
+    align-items: end;
+}
+
+.unit {
+    color: gray;
+    opacity: 0.5;
+    font-size: 16px;
+    padding-left: 5px;
+}
+
+
+.delete {
+    color: var(--red);
+    font-size: 16px;
+    transition: 0.5s;
+}
+
+.delete:hover {
+    color: var(--red-max);
+
+}
+
+button:disabled svg {
+    stroke: gray;
+}
+
+
+#cutting .side {
+    width: 100%;
+    gap: 20px;
+}
+
+#cutting .left {
+    padding: 15px 15px 15px 65px;
+    width: 100%;
+}
+
+#cutting .right {
+    padding: 15px 65px 15px 15px;
+    width: 100%;
+}
+
+.center {
+    display: flex;
+    align-items: center;
+}
+
+
+#tools {
+    padding-top: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+
+.place {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    touch-action: none;
+    will-change: transform;
+}
+
+.zone {
+    background: var(--bg-secondary);
+    position: relative;
+}
+
+.drop {
+    background-color: var(--bg-header);
+    position: absolute;
+    transition: all 0.2s ease;
+    touch-action: none;
+    will-change: transform;
+}
+
+
+#do-cut {
+    position: fixed;
+}
+
+#expand {
+    margin-top: auto;
+}
+
+
+.take {
+    cursor: grab;
+    touch-action: none;
+    will-change: transform;
+    z-index: 1000;
+    transition: transform 0.05s linear;
+}
+
+input[type="date"] {
+    margin-right: -20px;
+    opacity: 0.5;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-clear-button {
+    display: none;
+}
+
+input[type="text"] {
+    width: 100%;
+}
+
+.date {
+    padding: 10px;
+    opacity: 0.5;
+}
+
+/*печать*/
+
+#print * {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.2;
+    font-size: 4mm;
+}
+
+#print {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: white;
+    display: none;
+}
+
+.page {
+    page-break-after: always;
+    position: relative;
+    width: 297mm;
+    height: 210mm;
+    box-sizing: border-box;
+}
+
+
+.rect {
+    box-shadow: inset 0 0 0 1px gray;
+    position: absolute;
+    z-index: 9999;
+}
+
+.value {
+    padding: 10px;
+}
+
+.base {
+    position: absolute;
+    background: white;
+}
+
+.tape {
+    position: absolute;
+    stroke: lightgray;
+    stroke-width: 0.5;
+    z-index: 2;
+}
+
+.width {
+    transform: translateX(-50%);
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 9999;
+}
+
+.height {
+    transform: rotate(-90deg) translateX(-50%);
+    transform-origin: left top;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    z-index: 9999;
+}
+
+.index {
+    color: gray;
+    position: absolute;
+    right: 0;
+    padding: 2px;
+    bottom: 0;
+    z-index: 9999;
+}
+
+table {
+    position: absolute;
+    height: fit-content;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 1mm 2mm;
+    text-align: center;
+    vertical-align: center;
+}
+
+.top {
+    vertical-align: top;
+}
+
+th {
+    background-color: lightgray;
+    text-align: center;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+}
+
+.logo {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    right: 10mm;
+    top: 2mm;
+}
+
+@media print {
+    @page {
+        margin: 0;
+        size: A4 landscape;
+    }
+
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    body * {
+        visibility: hidden;
+    }
+
+    .area {
+        display: block;
+        position: absolute;
+        background-color: lightgray;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+        z-index: 0;
+    }
+
+    #print {
+        display: block;
+    }
+
+    #print, #print * {
+        color: black;
+        visibility: visible;
+    }
+
+    #print .gray,
+    #print .gray * {
+        color: gray;
+    }
+
+    .line {
+        width: 40px;
+        height: 4px;
+    }
+}
+
+.task {
+    position: absolute;
+}
+
+.signs {
+    display: flex;
+    align-items: end;
+    width: 100%;
+    height: 50%;
+    border-bottom: 1px solid gray;
+}
+
+.sign {
+    display: flex;
+    width: 100%;
+    gap: 15px;
+}
+

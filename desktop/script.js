@@ -938,7 +938,7 @@ const clearForm = () => {
 
     if (form === edgingForm) {
         edgingLine = 0;
-        edgingLineInput.innerHTML = lineHtml(edgingLine);
+        edgingLineInput = lineHtml(edgingLine);
 
     } else if (form === pieceForm) {
         pieceRotated = false;
@@ -1017,6 +1017,7 @@ let drop = null;
 let zone = null;
 
 let selected = null;
+let isDragging = false;
 let cutDirection = true;
 
 let zones = [];
@@ -1417,9 +1418,12 @@ const findDropCorner = () => {
     const x = r.left + r.width / 2;
     const y = r.top + r.height / 2;
 
+    console.log('drag:', r, x, y);
     r = drop.html.getBoundingClientRect();
+    console.log('drop:', r);
     drag.toLeft = x - r.left <= r.right - x;
     drag.toTop = y - r.top <= r.bottom - y;
+    console.log(drag)
 }
 
 const dropDrag = (e) => {
