@@ -350,7 +350,6 @@ ol {
     width: 100%;
     padding: 10px;
     max-width: 700px;
-    /*touch-action: none;*/
     will-change: transform;
 }
 
@@ -454,7 +453,7 @@ select {
 #gutter {
     background: var(--bg-secondary);
     width: 100%;
-    height: 5px;
+    height: 8px;
     cursor: row-resize;
     flex-shrink: 0;
     transition: background 0.2s;
@@ -470,7 +469,7 @@ select {
 
 #cutting {
     display: grid;
-    grid-template-rows: 2fr 5px 1fr;
+    grid-template-rows: 2fr 8px 1fr;
 }
 
 #take {
