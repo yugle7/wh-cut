@@ -1674,36 +1674,9 @@ function onDragEnd() {
     }
 }
 
-// События мыши
-
-gutter.addEventListener('mousedown', onDragStart);
-document.addEventListener('mousemove', onDragMove);
-document.addEventListener('mouseup', onDragEnd);
-
-gutter.addEventListener('touchstart', function (e) {
-    const touch = e.touches[0];
-    const mouseEvent = new MouseEvent('mousedown', {
-        clientX: touch.clientX,
-        clientY: touch.clientY,
-    });
-    gutter.dispatchEvent(mouseEvent);
-    e.preventDefault();
-});
-
-document.addEventListener('touchmove', function (e) {
-    if (!isDragging) return;
-    const {clientX, clientY} = e.touches[0];
-    const mouseEvent = new MouseEvent('mousemove', {clientX, clientY});
-    document.dispatchEvent(mouseEvent);
-    e.preventDefault();
-});
-
-document.addEventListener('touchend', function (e) {
-    if (isDragging) {
-        const mouseEvent = new MouseEvent('mouseup', {});
-        document.dispatchEvent(mouseEvent);
-    }
-});
+gutter.addEventListener('pointerdown', onDragStart);
+document.addEventListener('pointermove', onDragMove);
+document.addEventListener('pointerup', onDragEnd);
 
 
 // 4. Печать
