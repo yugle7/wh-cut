@@ -12,9 +12,6 @@ const tasksList = document.getElementById("tasks");
 
 // 2. Навигация
 
-const menuNav = document.getElementById("menu");
-const expandButton = document.getElementById("expand");
-
 const toMainButton = document.getElementById("to-main");
 const toSettingButton = document.getElementById("to-setting");
 const toCuttingButton = document.getElementById("to-cutting");
@@ -22,7 +19,8 @@ const toCuttingButton = document.getElementById("to-cutting");
 // 3. Настройки задачи раскроя
 
 const settingPage = document.getElementById("setting");
-const settingGutter = document.getElementById("setting-gutter");
+const inputPage = document.getElementById("input");
+const outputPage = document.getElementById("output");
 
 const removeTaskButton = document.getElementById("remove-task");
 
@@ -87,10 +85,13 @@ const pieceEdgingRightInput = document.getElementById('piece-edging-right');
 
 // 3.6 Формы добавления и изменения
 
-const createButton = document.getElementById("create");
 const removeButton = document.getElementById("remove");
+const recoverButton = document.getElementById("recover");
+
 const updateButton = document.getElementById("update");
-const formLabel = document.getElementById("form");
+const createButton = document.getElementById("create");
+const nextButton = document.getElementById("next");
+const prevButton = document.getElementById("prev");
 
 // 4. Редактор раскроя
 
@@ -101,14 +102,13 @@ const doCutButton = document.getElementById("do-cut");
 const clearButton = document.getElementById("clear");
 
 const downloadCuttingButton = document.getElementById("download-cutting");
-const cuttingGutter = document.getElementById("cutting-gutter");
 
-const takeArea = document.getElementById("take");
 const dropArea = document.getElementById("drop");
+const gutter = document.getElementById('gutter');
+const takeArea = document.getElementById("take");
 
 // 4.1 Управление
 
-const toolsBlock = document.getElementById("tools");
 const cutDirectionButton = document.getElementById("cut-direction");
 const rotatePieceButton = document.getElementById("rotate-piece");
 
@@ -151,6 +151,7 @@ const toDate = (isoDate) => {
 const isOn = (inner, outer) => inner.left >= outer.left && inner.top >= outer.top && inner.left + inner.width <= outer.left + outer.width && inner.top + inner.height <= outer.top + outer.height;
 
 const p = (value) => `${(100 * value).toFixed(3)}%`;
+const d = (value) => `calc(var(--drop-width) * ${value}px)`;
 
 // 2. HTML
 
@@ -163,8 +164,7 @@ const lineHtml = (line) => {
     return `<svg class="line ${color}">${spriteHtml(line)}</svg>`;
 }
 
-
-const valueHtml = (value, unit) => `<span class="value"><span>${value || 0}</span><span class="unit">${unit}</span></span>`
+const valueHtml = (value, unit) => `<span class="value"><span>${value || 0}</span> <span class="unit">${unit}</span></span>`
 
 const x = iconHtml('x');
 const v = iconHtml('v');
@@ -278,7 +278,7 @@ fakeTasks = [{
     sheet: {
         width: 2800, height: 2070, edge: 10
     },
-    scraps: [{width: 2800, height: 2070, edge: 10, count: 1}],
+    scraps: [{width: 1000, height: 2070, edge: 10, count: 1}],
     edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.2}],
     pieces: [{
         width: 568, height: 80, rotated: true, count: 1, edging: {left: 0, right: 1, up: null, down: null}
@@ -306,16 +306,20 @@ fakeTasks = [{
 // 1. Общее
 
 let page = mainPage;
-let expanded = false;
 
 let tasks = [];
 let task = null;
 
 // 2. Параметры задачи
 
-let form = taskForm;
+let form = null;
+let items = null;
+let links = null;
 let link = null;
+
 let index = null;
+let deleted = null;
+let created = null;
 
 let edgingLine = -1;
 let pieceRotated = false;
@@ -324,6 +328,7 @@ let pieceEdging = {left: null, up: null, right: null, down: null};
 // 3. Редактор раскроя
 
 let colors = [];
+let pieces = [];
 
 // 4. Печать
 
@@ -334,128 +339,23 @@ let pdfHead;
 
 let line;
 
-// Навигация
-
-expandButton.onclick = (e) => {
-    e.preventDefault();
-    expanded = !expanded;
-
-    expandButton.firstElementChild.style.transform = `rotate(${expanded ? 180 : 0}deg)`
-
-    const width = expanded ? 165 : 50;
-    menuNav.style.width = width + 'px';
-
-    dropArea.style.paddingLeft = width + 15 + 'px';
-    takeArea.style.paddingRight = width + 15 + 'px';
-    takeArea.style.width = dropArea.offsetWidth + 'px';
-
-    settingPage.firstElementChild.style.paddingLeft = width + 'px';
-}
-
 const changePage = (p) => {
     console.log('changePage')
     if (page === p) return false;
-    if (p === mainPage) {
-        menuNav.classList.add('hidden');
-    } else {
-        menuNav.classList.remove('hidden');
-        if (p === settingPage) {
-            removeTaskButton.classList.remove('hidden');
-            downloadCuttingButton.classList.add('hidden');
-
-            toSettingButton.classList.add('hidden');
-            toCuttingButton.classList.remove('hidden');
-
-            toolsBlock.classList.add('hidden');
-        } else {
-            removeTaskButton.classList.add('hidden');
-            downloadCuttingButton.classList.remove('hidden');
-
-            toSettingButton.classList.remove('hidden');
-            toCuttingButton.classList.add('hidden');
-
-            toolsBlock.classList.remove('hidden');
-        }
-    }
     page.classList.add("hidden");
     page = p;
     page.classList.remove("hidden");
 
-    const width = page.firstElementChild.offsetWidth;
-    page.style.gridTemplateColumns = `${width}px 1fr`;
-
-    if (page === settingPage) {
-        settingGutter.style.left = width + 'px';
-    } else if (page === cuttingPage) {
-        cuttingGutter.style.left = takeArea.style.width = width + 'px';
-    }
-
     return true;
 }
 
-// Разделитель
-
-let gutter = null;
-let startX = 0;
-let startLeftWith = 0;
-
-const minWidth = 150;
-const maxWidth = 100000;
-
-function handlePointerDown(e) {
-    console.log('handlePointerDown')
-    e.preventDefault();
-    gutter = e.currentTarget;
-    gutter.setPointerCapture(e.pointerId);
-    gutter.classList.add("dragging");
-    document.body.style.cursor = "col-resize";
-    startX = e.clientX;
-    startLeftWith = page.firstElementChild.getBoundingClientRect().width;
-}
-
-function handlePointerMove(e) {
-    if (!gutter) return;
-    console.log('handlePointerMove')
-    e.preventDefault();
-
-    let width = startLeftWith + e.clientX - startX;
-    width = Math.min(maxWidth, Math.max(minWidth, width));
-
-    gutter.style.left = width + 'px';
-    page.style.gridTemplateColumns = `${width}px 1fr`;
-
-    if (gutter === cuttingGutter) {
-        takeArea.style.width = width + 'px';
-    }
-}
-
-function handlePointerUp(e) {
-    if (!gutter) return;
-    console.log('handlePointerUp')
-    gutter.releasePointerCapture(e.pointerId);
-    gutter.classList.remove("dragging");
-    document.body.style.cursor = "";
-    gutter = null;
-}
-
-window.addEventListener('pointermove', handlePointerMove);
-window.addEventListener('pointerup', handlePointerUp);
-window.addEventListener('mouseleave', handlePointerUp);
-window.addEventListener('pointercancel', handlePointerUp);
-
-cuttingGutter.onpointerdown = handlePointerDown;
-settingGutter.onpointerdown = handlePointerDown;
-
 // 1. Выбор задачи
 
-toMainButton.onclick = () => {
-    menuNav.classList.add('hidden');
-    changePage(mainPage);
-}
+toMainButton.onclick = () => changePage(mainPage);
 
 createTaskButton.onclick = async () => {
     await createTask();
-    setTask(task);
+    setTask();
     changePage(settingPage);
     addTask(task);
 };
@@ -469,7 +369,7 @@ const toTask = async (e) => {
         piecesList.replaceChildren();
 
         await loadTask(e.currentTarget.id);
-        setTask(task);
+        setTask();
     }
 }
 
@@ -491,8 +391,9 @@ const loadTasks = async () => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         tasks = await response.json();
     } else {
-        const t = localStorage.getItem('tasks');
-        tasks = t ? JSON.parse(t) : [];
+        // const t = localStorage.getItem('tasks');
+        // tasks = t ? JSON.parse(t) : [];
+        tasks = fakeTasks;
 
         tasks.forEach(q => {
             q.scraps = q.scraps.filter(Boolean);
@@ -504,30 +405,27 @@ const loadTasks = async () => {
 
 // 2. Настройки задачи раскроя
 
-toSettingButton.onclick = () => {
-    changePage(settingPage);
-}
-
+toSettingButton.onclick = () => changePage(settingPage);
 
 // 2.1 Отображение данных
 
-const titleHtml = () => `<h1>${task.title}</h1>`
+const titleHtml = () => `<h1 class="output pad">${task.title}</h1>`
 
-const dateHtml = () => task.start || task.finish ? `<div class="section"><span>${toDate(task.start)}</span><span class="date">${toDate(task.finish)}</span></div>` : '';
+const dateHtml = () => task.start || task.finish ? `<div class="output"><span  class="pad">${toDate(task.start)}</span><span class="pad fade">${toDate(task.finish)}</span></div>` : '';
 
-const materialHtml = () => task.material ? `<div class="section"><span>${task.material}</span><span>${valueHtml(task.thick, 'мм')}</span></div>` : '';
+const materialHtml = () => task.material ? `<div class="output"><span  class="pad">${task.material}</span><span>${valueHtml(task.thick, 'мм')}</span></div>` : '';
 
 const kerfHtml = () => `<span>${valueHtml(task.kerf || 0, 'мм')}</span>`;
 
-const sheetHtml = ({
-                       width, height, edge
-                   }) => `<div class="section"><span>${width}${x}${height}${v}${valueHtml(edge, 'мм')}</span>${kerfHtml()}</div>`;
+const sheetHtml = (
+    {width, height, edge}
+) => `<span class="pad">${width}${x}${height}${v}${valueHtml(edge, 'мм')}</span>${kerfHtml()}`;
 
-const scrapHtml = ({
-                       width, height, edge, count
-                   }) => `<div>${width}${x}${height}${v}${valueHtml(edge, 'мм')}</div>${valueHtml(count, 'шт')}`;
+const scrapHtml = (
+    {width, height, edge, count}
+) => `<div class="pad">${width}${x}${height}${v}${valueHtml(edge, 'мм')}</div>${valueHtml(count, 'шт')}`;
 
-const edgingHtml = ({line, thick}) => `<div>${lineHtml(line)}</div>${valueHtml(thick, 'мм')}`;
+const edgingHtml = ({line, thick}) => `<div class="pad">${lineHtml(line)}</div>${valueHtml(thick, 'мм')}`;
 
 const pieceHtml = ({width, height, rotated, edging, count}) => {
     const {left, up, right, down} = edging;
@@ -535,37 +433,42 @@ const pieceHtml = ({width, height, rotated, edging, count}) => {
     const w = `<div class="col"><span>${width}</span>${lineHtml(up)}${lineHtml(down)}</div>`;
     const h = `<div class="col"><span>${height}</span>${lineHtml(left)}${lineHtml(right)}</div>`;
 
-    return `<div>${w}${rotated ? o : x}${h}</div>${valueHtml(count, 'шт')}`
+    return `<div class="pad">${w}${rotated ? o : x}${h}</div>${valueHtml(count, 'шт')}`
 }
 
 // 2.2 Заполнение полей задачи
 
-const setTask = ({title, start, finish, material, thick, kerf, sheet, scraps, edgings, pieces}) => {
-    taskTitleInput.value = title;
-
-    taskKerfInput.value = kerf || '';
-    taskStartInput.value = start;
-    taskFinishInput.value = finish;
-    taskMaterialInput.value = material || '';
-    taskThickInput.value = thick || '';
-
+const setTask = () => {
     toUpdateTaskLink.innerHTML = titleHtml() + dateHtml() + materialHtml();
-    toUpdateSheetLink.innerHTML = sheetHtml(sheet);
-    setSheet(sheet);
+    toUpdateSheetLink.innerHTML = sheetHtml(task.sheet);
+
+    task.scraps = task.scraps.filter(Boolean);
+    task.edgings = task.edgings.filter(Boolean);
+    task.pieces = task.pieces.filter(Boolean);
 
     scrapsList.replaceChildren();
-    scraps.forEach(addScrap);
+    task.scraps.forEach(addScrap);
     edgingsList.replaceChildren();
-    edgings.forEach(addEdging);
+    task.edgings.forEach(addEdging);
     piecesList.replaceChildren();
-    pieces.forEach(addPiece);
+    task.pieces.forEach(addPiece);
 }
 
-const setSheet = ({width, height, edge}) => {
-    sheetWidthInput.value = width;
-    sheetHeightInput.value = height;
-    sheetEdgeInput.value = edge;
-};
+const copyTaskToForm = () => {
+    taskTitleInput.value = task.title;
+
+    taskStartInput.value = task.start;
+    taskFinishInput.value = task.finish;
+    taskMaterialInput.value = task.material || '';
+    taskThickInput.value = task.thick || '0';
+}
+
+const copySheetToForm = () => {
+    sheetWidthInput.value = task.sheet.width;
+    sheetHeightInput.value = task.sheet.height;
+    sheetEdgeInput.value = task.sheet.edge;
+    taskKerfInput.value = task.kerf || '';
+}
 
 // 2.3 Добавление и обновление обрезка
 
@@ -580,37 +483,49 @@ const copyScrapToForm = ({width, height, edge, count}) => {
 const addScrap = (scrap, i) => {
     console.log('addScrap')
     let q = document.createElement('li');
-    q.innerHTML = `<button class="section">${scrapHtml(scrap)}</button>`
+    q.innerHTML = `<button class="output">${scrapHtml(scrap)}</button>`
     q.firstChild.onclick = (e) => {
+        e.stopPropagation();
         index = i;
-        copyScrapToForm(scrap);
-        changeForm(e, scrapForm);
-        formLabel.innerText = labels.scrap;
-        toUpdateForm();
+        items = task.scraps;
+        links = scrapsList;
+        changeForm(scrapForm)
+        showButtons();
+        copyScrapToForm(items[i]);
+        toInputPage();
+
     }
     scrapsList.appendChild(q);
-    return q.firstChild;
 };
 
-const createScrap = () => {
-    index = task.scraps.length;
-    task.scraps.push({
-        width: +scrapWidthInput.value,
-        height: +scrapHeightInput.value,
-        edge: +scrapEdgeInput.value,
-        count: +scrapCountInput.value
-    });
-    link = addScrap(task.scraps[index], index);
+const removeLink = () => links.children[index].classList.add('hidden');
+
+
+const updateLink = () => {
+    let html = null;
+    if (form === scrapForm) html = scrapHtml(items[index])
+    else if (form === edgingForm) html = edgingHtml(items[index])
+    else if (form === pieceForm) html = pieceHtml(items[index]);
+    if (html) links.children[index].firstChild.innerHTML = html;
+}
+
+const addLink = () => {
+    console.log('addLink')
+    if (form === scrapForm) addScrap(items[index], index)
+    else if (form === edgingForm) addEdging(items[index], index)
+    else if (form === pieceForm) addPiece(items[index], index)
+    else links = null;
+    created = false;
 }
 
 const updateScrap = () => {
-    task.scraps[index] = {
-        width: +scrapWidthInput.value,
-        height: +scrapHeightInput.value,
-        edge: +scrapEdgeInput.value,
-        count: +scrapCountInput.value,
-    }
-    link.innerHTML = scrapHtml(task.scraps[index]);
+    const width = +scrapWidthInput.value;
+    const height = +scrapHeightInput.value;
+    const count = +scrapCountInput.value;
+    const edge = +scrapEdgeInput.value;
+
+    deleted = deleted || !width || !height || !count;
+    items[index] = deleted ? null : {width, height, edge, count};
 }
 
 // 2.4 Добавление и обновление кромки
@@ -625,31 +540,26 @@ const copyEdgingToForm = ({line, thick}) => {
 const addEdging = (edging, i) => {
     console.log('addEdging')
     let q = document.createElement('li');
-    q.innerHTML = `<button class="section">${edgingHtml(edging)}</button>`;
+    q.innerHTML = `<button class="output">${edgingHtml(edging)}</button>`;
     q.firstChild.onclick = (e) => {
+        e.preventDefault();
         index = i;
-        copyEdgingToForm(edging);
-        changeForm(e, edgingForm);
-        formLabel.innerText = labels.edging;
-        toUpdateForm();
+        items = task.edgings;
+        links = edgingsList;
+        changeForm(edgingForm)
+        showButtons();
+        console.log(items[i], i, edging)
+        copyEdgingToForm(items[i]);
+        toInputPage();
     }
     edgingsList.appendChild(q);
-    return q.firstChild;
 };
 
-const createEdging = () => {
-    index = task.edgings.length;
-    task.edgings.push({
-        line: edgingLine, thick: edgingThickInput.value
-    });
-    link = addEdging(task.edgings[index], index);
-}
-
 const updateEdging = () => {
-    task.edgings[index] = {
-        line: edgingLine, thick: edgingThickInput.value
-    };
-    link.innerHTML = edgingHtml(task.edgings[index]);
+    const thick = +edgingThickInput.value;
+
+    deleted = deleted || !thick;
+    items[index] = deleted ? null : {thick, line: edgingLine};
 }
 
 // 2.5 Добавление и обновление детали
@@ -670,46 +580,38 @@ const copyPieceToForm = ({width, height, rotated, count, edging}) => {
 
 const addPiece = (piece, i) => {
     let q = document.createElement('li');
-    q.innerHTML = `<button class="section">${pieceHtml(piece)}</button>`
+    q.innerHTML = `<button class="output">${pieceHtml(piece)}</button>`
     q.firstChild.onclick = (e) => {
+        e.preventDefault();
         index = i;
-        copyPieceToForm(piece);
-        changeForm(e, pieceForm);
-        formLabel.innerText = labels.piece;
-        toUpdateForm();
+        items = task.pieces;
+        links = piecesList;
+        changeForm(pieceForm)
+        showButtons();
+        copyPieceToForm(items[i]);
+        toInputPage();
     }
     piecesList.appendChild(q);
-    return q.firstChild;
 };
 
-const createPiece = () => {
-    index = task.pieces.length;
-    task.pieces.push({
-        width: +pieceWidthInput.value,
-        height: +pieceHeightInput.value,
-        rotated: pieceRotated,
-        edging: pieceEdging,
-        count: +pieceCountInput.value
-    });
-    link = addPiece(task.pieces[index], index);
-}
-
 const updatePiece = () => {
-    task.pieces[index] = {
-        width: +pieceWidthInput.value,
-        height: +pieceHeightInput.value,
+    const width = +pieceWidthInput.value;
+    const height = +pieceHeightInput.value;
+    const count = +pieceCountInput.value;
+
+    deleted = deleted || !width || !height || !count;
+    items[index] = deleted ? null : {
+        width, height, count,
         rotated: pieceRotated,
         edging: pieceEdging,
-        count: +pieceCountInput.value
     };
-    link.innerHTML = pieceHtml(task.pieces[index]);
 }
 
 // 2.6 Обновление задачи и листа
 
 const updateTask = () => {
+    console.log('updateTask')
     task.title = taskTitleInput.value || labels.task;
-    task.kerf = +taskKerfInput.value || 0;
     task.material = taskMaterialInput.value;
     task.thick = +taskThickInput.value;
     task.start = taskStartInput.value;
@@ -722,6 +624,7 @@ const updateSheet = () => {
     task.sheet = {
         width: +sheetWidthInput.value || 1, height: +sheetHeightInput.value || 1, edge: +sheetEdgeInput.value || 0
     }
+    task.kerf = +taskKerfInput.value;
     toUpdateSheetLink.innerHTML = sheetHtml(task.sheet);
 }
 
@@ -737,32 +640,53 @@ removeTaskButton.onclick = async () => {
     changePage(mainPage);
 }
 
-// 2.8 Переключение между формами
+// 2.8 Навигация по форме
 
-const changeForm = (e, f) => {
-    e.stopPropagation();
+const getNextIndex = () => {
+    let i = index + 1;
+    while (i < items.length && !items[i]) i++;
+    return i < items.length ? i : null;
+}
 
+const getPrevIndex = () => {
+    let i = index === null ? items.length - 1 : index - 1;
+    while (i >= 0 && !items[i]) i--;
+    return i >= 0 ? i : null;
+}
+
+const showButtons = () => {
+    const prevIndex = getPrevIndex();
+    const nextIndex = getNextIndex();
+    prevIndex === null || nextIndex === null ? createButton.classList.remove('hidden') : createButton.classList.add('hidden');
+    prevIndex === null ? prevButton.classList.add('hidden') : prevButton.classList.remove('hidden');
+    nextIndex === null ? nextButton.classList.add('hidden') : nextButton.classList.remove('hidden');
+}
+
+const hideButtons = () => {
+    prevButton.classList.add('hidden')
+    nextButton.classList.add('hidden')
+    createButton.classList.add('hidden')
+}
+
+const toRemoveButton = () => {
+    console.log('toRemoveButton');
+    removeButton.classList.remove('hidden');
+    recoverButton.classList.add('hidden');
+    deleted = false;
+}
+
+const toRecoverButton = () => {
+    removeButton.classList.add('hidden');
+    recoverButton.classList.remove('hidden');
+    deleted = true;
+}
+
+// 2.9 Переключение между формами
+
+const changeForm = (f) => {
     if (form) form.classList.add('hidden');
-    if (link) link.classList.remove('selected');
     form = f;
-    const l = e.currentTarget;
-    if (l.parentElement.nodeName === 'LI') {
-        link = l;
-        link.classList.add('selected');
-    } else {
-        link = null;
-    }
     form.classList.remove('hidden');
-}
-
-const toCreateForm = () => {
-    createButton.classList.remove('hidden');
-    updateButton.classList.add('hidden');
-}
-
-const toUpdateForm = () => {
-    updateButton.classList.remove('hidden');
-    createButton.classList.add('hidden');
 }
 
 toUpdateTaskLink.onclick = (e) => {
@@ -773,9 +697,11 @@ toUpdateTaskLink.onclick = (e) => {
     taskMaterialInput.value = task.material || '';
     taskThickInput.value = task.thick || '';
 
-    changeForm(e, taskForm);
-    formLabel.innerText = labels.task;
-    toUpdateForm();
+    items = links = null;
+    changeForm(taskForm);
+    hideButtons();
+    copyTaskToForm();
+    toInputPage();
 }
 
 toUpdateSheetLink.onclick = (e) => {
@@ -785,47 +711,61 @@ toUpdateSheetLink.onclick = (e) => {
 
     taskKerfInput.value = task.kerf || '';
 
-    changeForm(e, sheetForm);
-    formLabel.innerText = labels.sheet;
-    toUpdateForm();
+    items = links = null;
+    changeForm(sheetForm);
+    hideButtons();
+    copySheetToForm();
+    toInputPage();
+}
+
+createButton.onclick = (e) => {
+    e.preventDefault();
+
+    toUpdateItem();
+    getCreateIndex();
+
+    clearForm();
+    showButtons();
+}
+
+const getCreateIndex = () => {
+    created = true;
+    index = items.length;
+    items.push(null);
 }
 
 toCreateScrapLink.onclick = (e) => {
-    scrapHeightInput.value = scrapWidthInput.value = scrapEdgeInput.value = '';
-    scrapCountInput.value = 1;
-
-    changeForm(e, scrapForm);
-    formLabel.innerText = labels.scrap;
-    toCreateForm();
+    e.preventDefault();
+    items = task.scraps;
+    links = scrapsList;
+    getCreateIndex();
+    changeForm(scrapForm);
+    clearForm();
+    showButtons();
+    toInputPage();
 }
-
 toCreateEdgingLink.onclick = (e) => {
-    edgingThickInput.value = '';
-
-    edgingLine = (edgingLine + 1) % edgingLines.length;
-    edgingLineInput.innerHTML = lineHtml(edgingLine);
-
-    changeForm(e, edgingForm);
-    formLabel.innerText = labels.edging;
-    toCreateForm();
+    e.preventDefault();
+    items = task.edgings;
+    links = edgingsList;
+    getCreateIndex();
+    changeForm(edgingForm);
+    clearForm();
+    showButtons();
+    toInputPage();
 }
-
 toCreatePieceLink.onclick = (e) => {
-    pieceHeightInput.value = pieceWidthInput.value = '';
-    pieceCountInput.value = 1;
-
-    pieceRotated = false;
-    pieceRotatedInput.innerText = labels.no;
-
-    pieceEdging = {left: null, up: null, right: null, down: null};
-    pieceEdgingUpInput.innerHTML = pieceEdgingDownInput.innerHTML = pieceEdgingLeftInput.innerHTML = pieceEdgingRightInput.innerHTML = lineHtml(null);
-
-    changeForm(e, pieceForm);
-    formLabel.innerText = labels.piece;
-    toCreateForm();
+    e.preventDefault();
+    items = task.pieces;
+    getCreateIndex();
+    links = piecesList;
+    changeForm(pieceForm);
+    clearForm();
+    showButtons();
+    toInputPage();
 }
 
-// 2.9 Отправка и получение данных
+// 2.10 Отправка и получение данных
 
 const loadTask = async (id) => {
     if (DATA_URL) {
@@ -835,12 +775,12 @@ const loadTask = async (id) => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         task = await response.json();
     } else {
-        task = tasks.find(q => q.id == id);
+        task = tasks.find(q => q.id === +id);
     }
-    console.assert(task);
 }
 
 const saveTask = async () => {
+    console.log('saveTask');
     console.assert(task);
     if (DATA_URL) {
         const url = new URL(DATA_URL);
@@ -852,7 +792,6 @@ const saveTask = async () => {
 }
 
 const deleteTask = async () => {
-    console.assert(task);
     if (DATA_URL) {
         const url = new URL(DATA_URL);
         url.searchParams.set("task_id", '-' + task.id)
@@ -931,73 +870,136 @@ pieceRotatedInput.onclick = (e) => {
     pieceRotatedInput.innerText = pieceRotated ? labels.yes : labels.no;
 }
 
-// 2.11 Работа со списками
+// 2.11 Очистка форм
+
+const clearEdgingForm = () => {
+    edgingLine = (edgingLine + 1) % edgingLines.length;
+    edgingLineInput.innerHTML = lineHtml(edgingLine);
+}
+
+const clearPieceForm = () => {
+    pieceRotated = false;
+    pieceRotatedInput.innerText = labels.no;
+
+    pieceEdging = {left: null, up: null, right: null, down: null};
+    pieceEdgingUpInput.innerHTML = pieceEdgingDownInput.innerHTML = pieceEdgingLeftInput.innerHTML = pieceEdgingRightInput.innerHTML = lineHtml(null);
+}
 
 const clearForm = () => {
     form.querySelectorAll('input').forEach(q => q.value = '');
-
-    if (form === edgingForm) {
-        edgingLine = 0;
-        edgingLineInput.innerHTML = lineHtml(edgingLine);
-
-    } else if (form === pieceForm) {
-        pieceRotated = false;
-        pieceRotatedInput.innerText = labels.no;
-
-        pieceEdging = {left: null, up: null, right: null, down: null};
-        pieceEdgingUpInput.innerHTML = pieceEdgingDownInput.innerHTML = pieceEdgingLeftInput.innerHTML = pieceEdgingRightInput.innerHTML = lineHtml(null);
-    }
+    if (form === edgingForm) clearEdgingForm()
+    else if (form === pieceForm) clearPieceForm();
 }
+
+// 2.12 Удаление элементов из списка
 
 removeButton.onclick = (e) => {
     e.preventDefault();
+
     clearForm();
-    if (link) {
-        link.remove();
-        toCreateForm();
-        console.assert(index !== null);
-        if (form === scrapForm) {
-            task.scraps[index] = null;
-        } else if (form === edgingForm) {
-            task.edgings[index] = null;
-        } else if (form === pieceForm) {
-            task.pieces[index] = null;
+    if (!created) toRecoverButton();
+}
+
+recoverButton.onclick = (e) => {
+    e.preventDefault();
+
+    if (form === scrapForm) copyScrapToForm(items[index])
+    else if (form === edgingForm) copyEdgingToForm(items[index])
+    else if (form === pieceForm) copyPieceToForm(items[index])
+    else if (form === taskForm) copyTaskToForm()
+    else if (form === sheetForm) copySheetToForm();
+
+    toRemoveButton();
+}
+
+// 2.13 Отображение списков
+
+const toOutputPage = () => {
+    console.log('toOutputPage');
+    inputPage.classList.add('hidden');
+    outputPage.classList.remove('hidden');
+    showLink();
+}
+
+const showLink = () => {
+    if (links) {
+        if (items[index]) {
+            link = links.children[index];
+            link.classList.add('edited');
+            link.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            });
+        } else {
+            link = null;
+            links.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            });
         }
-        saveTask();
-        index = null;
     }
 }
 
-createButton.onclick = (e) => {
-    e.preventDefault();
-    console.assert(form);
+const hideLink = () => link && link.classList.remove('edited');
 
-    if (form === scrapForm) {
-        createScrap();
-    } else if (form === edgingForm) {
-        createEdging();
-    } else if (form === pieceForm) {
-        createPiece();
+const toInputPage = () => {
+    console.log('toInputPage');
+    outputPage.classList.add('hidden');
+    inputPage.classList.remove('hidden');
+    hideLink();
+}
+
+// 2.14 Перемещение по спискам
+
+const toUpdateItem = () => {
+    console.log('toUpdateItem');
+
+    if (form === taskForm) updateTask()
+    else if (form === sheetForm) updateSheet()
+    else if (form === scrapForm) updateScrap()
+    else if (form === edgingForm) updateEdging()
+    else if (form === pieceForm) updatePiece();
+
+    if (created) {
+        if (deleted) {
+            items.pop();
+            index = items.length - 1;
+        } else addLink();
+    } else if (links) {
+        if (deleted) removeLink()
+        else updateLink();
     }
-    link.classList.add('selected');
-    toUpdateForm();
-    saveTask();
+    if (deleted) toRemoveButton();
+
+    saveTask().then();
 }
 
 updateButton.onclick = (e) => {
     e.preventDefault();
-    if (form === taskForm) {
-        updateTask();
-    } else if (form === scrapForm) {
-        updateScrap();
-    } else if (form === edgingForm) {
-        updateEdging();
-    } else if (form === pieceForm) {
-        updatePiece();
-    } else {
-        updateSheet();
-    }
-    saveTask();
+
+    toUpdateItem();
+    toOutputPage();
+}
+
+const copyToForm = () => {
+    if (form === scrapForm) copyScrapToForm(items[index])
+    else if (form === edgingForm) copyEdgingToForm(items[index])
+    else if (form === pieceForm) copyPieceToForm(items[index]);
+    showButtons();
+}
+
+nextButton.onclick = (e) => {
+    e.preventDefault();
+    toUpdateItem();
+    index = getNextIndex();
+    copyToForm();
+}
+
+prevButton.onclick = (e) => {
+    e.preventDefault();
+    toUpdateItem();
+    index = getPrevIndex();
+    copyToForm();
 }
 
 // 3. Редактор раскроя
@@ -1024,19 +1026,27 @@ let takes = [];
 
 // 3.3. Отображение деталей
 
+const observer = new ResizeObserver(() => {
+    const width = dropArea.firstElementChild.getBoundingClientRect().width - 20;
+    document.documentElement.style.setProperty('--drop-width', width.toString());
+});
+
+observer.observe(dropArea);
+
+// 3.3. Отображение деталей
+
 const widthHeightHtml = (width, height, rotated, i) => `${width}${rotated ? oHtml(i) : x}${height}`
 
 const getColors = n => [...Array(n)].map((_, i) => `hsl(${i / n * 360}, var(--saturation), var(--lightness))`);
 
-const takeTitleHtml = (width, height, rotated, i) => `<h4 class="center">${widthHeightHtml(width, height, rotated, i)}</h4>`;
-const takePieceHtml = (width, height, count, i) => `<div class="center">
-    <div class="take" style="width: ${p(width / task.sheet.width)}; aspect-ratio: ${width} / ${height}; background-color: ${colors[i]}" data-i="${i}"></div>
-    ${valueHtml(count, 'шт')}
-</div>`;
+const takeSizesHtml = (width, height, rotated, i) => `<button class="sizes">${widthHeightHtml(width, height, rotated, i)}</button>`;
+const takePieceHtml = (width, height, i) => `<div class="piece" style="width: ${d(width / task.sheet.width)}; aspect-ratio: ${width} / ${height}; background-color: ${colors[i]}" data-i="${i}"></div>`;
+const takeCountHtml = (count) => `${valueHtml(count, 'шт')}`;
 
-const takeHtml = (width, height, rotated, count, i) => `<div>
-    ${takeTitleHtml(width, height, rotated, i)}
-    ${takePieceHtml(width, height, count, i)}
+const takeHtml = (width, height, rotated, count, i) => `<div class="take">
+    ${takeCountHtml(count)}
+    ${takePieceHtml(width, height, i)}
+    ${takeSizesHtml(width, height, rotated, i)}
 </div>`;
 
 const onTakeUp = (i) => {
@@ -1053,7 +1063,7 @@ const onTakeDown = (e) => {
 }
 
 const setTakes = () => {
-    takes = task.pieces.map(({width, height, rotated, count}) => ({
+    takes = pieces.map(({width, height, rotated, count}) => ({
         width, height, rotated, count
     }));
 
@@ -1061,12 +1071,13 @@ const setTakes = () => {
         ({width, height, rotated, count}, i) => takeHtml(width, height, rotated, count, i)).join('');
 
     takeArea.childNodes.forEach((q, i) => {
-        q = q.lastElementChild.firstElementChild;
+        console.log(q)
+        q = q.children[1];
+        console.log(q)
 
         q.onpointerup = () => onTakeUp(i);
         q.onpointerdown = onTakeDown;
         takes[i].html = q
-
     });
 }
 
@@ -1099,7 +1110,7 @@ const createDrop = (drop) => {
     const q = drop.html = document.createElement('DIV');
     q.classList.add('drop');
 
-    q.dataset.i = zone.drops.length;
+    q.dataset.i = zone.drops.length.toString();
     zone.drops.push(drop);
 
     q.style.left = p(drop.left / zone.width);
@@ -1121,11 +1132,11 @@ const createDrag = (drag) => {
     setTake(drag);
     drag.drop = zone.drops.length;
 
-    q.dataset.i = zone.drags.length;
+    q.dataset.i = zone.drags.length.toString();
     zone.drags.push(drag);
 
     q.style.cursor = 'grab';
-    q.style.zIndex = 9999;
+    q.style.zIndex = '9999';
     q.style.left = p(drag.left / zone.width);
     q.style.top = p(drag.top / zone.height);
     q.style.width = p(drag.width / zone.width);
@@ -1162,7 +1173,7 @@ const sheetJson = () => {
 }
 
 const getTakes = () => {
-    const dst = task.pieces.filter(Boolean).map(({width, height, rotated, count}) => ({width, height, rotated, count}))
+    const dst = pieces.map(({width, height, rotated, count}) => ({width, height, rotated, count}))
     return dst.sort((a, b) => b.width + b.height - a.width - a.height || a.rotated - b.rotated)
 }
 
@@ -1225,7 +1236,8 @@ const setZones = () => {
 const clearCutting = () => {
     toSelect(null);
 
-    colors = getColors(task.pieces.length);
+    pieces = task.pieces.filter(Boolean);
+    colors = getColors(pieces.length);
 
     setTakes();
     setZones();
@@ -1417,9 +1429,12 @@ const findDropCorner = () => {
     const x = r.left + r.width / 2;
     const y = r.top + r.height / 2;
 
+    console.log('drag:', r, x, y);
     r = drop.html.getBoundingClientRect();
+    console.log('drop:', r);
     drag.toLeft = x - r.left <= r.right - x;
     drag.toTop = y - r.top <= r.bottom - y;
+    console.log(drag)
 }
 
 const dropDrag = (e) => {
@@ -1480,7 +1495,7 @@ const rotateTake = () => take.rotated && toRotateTake();
 const toRotateTake = () => {
     console.log('toRotateTake');
     [take.width, take.height] = [take.height, take.width];
-    take.html.style.width = p(take.width / task.sheet.width);
+    take.html.style.width = d(take.width / task.sheet.width);
     take.html.style.aspectRatio = `${take.width} / ${take.height}`;
 }
 
@@ -1536,19 +1551,19 @@ cutDirectionButton.onclick = () => {
 const incTakeCount = (take) => {
     console.log('incTakeCount')
     if (take.count === 0) {
-        take.html.parentElement.parentElement.classList.remove('hidden');
+        take.html.parentElement.classList.remove('hidden');
     }
     take.count++;
-    take.html.nextElementSibling.firstChild.innerText = take.count;
+    take.html.parentElement.firstElementChild.firstChild.innerText = take.count;
 }
 
 const decTakeCount = (take) => {
     console.log('decTakeCount')
     take.count--;
     if (take.count === 0) {
-        take.html.parentElement.parentElement.classList.add('hidden');
+        take.html.parentElement.classList.add('hidden');
     }
-    take.html.nextElementSibling.firstChild.innerText = take.count;
+    take.html.parentElement.firstElementChild.firstChild.innerText = take.count;
 }
 
 const clearDrop = () => {
@@ -1626,6 +1641,67 @@ const tryStartDrag = (e) => {
 window.addEventListener('pointerup', endClick);
 window.addEventListener('pointermove', tryStartDrag);
 
+// 3.12 Разделитель
+
+let start = null;
+
+function onDragStart(e) {
+    gutter.classList.add('active');
+    start = {
+        y: e.clientY,
+        height: takeArea.getBoundingClientRect().height
+    }
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+}
+
+function onDragMove(e) {
+    if (start) {
+        const height = Math.max(start.height + start.y - e.clientY, 50);
+        cuttingPage.style.gridTemplateRows = `1fr 5px ${height}px`;
+    }
+}
+
+function onDragEnd() {
+    if (start) {
+        start = null;
+        gutter.classList.remove('active');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+    }
+}
+
+// События мыши
+gutter.addEventListener('mousedown', onDragStart);
+document.addEventListener('mousemove', onDragMove);
+document.addEventListener('mouseup', onDragEnd);
+
+gutter.addEventListener('touchstart', function (e) {
+    const touch = e.touches[0];
+    const mouseEvent = new MouseEvent('mousedown', {
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+    });
+    gutter.dispatchEvent(mouseEvent);
+    e.preventDefault();
+});
+
+document.addEventListener('touchmove', function (e) {
+    if (!isDragging) return;
+    const {clientX, clientY} = e.touches[0];
+    const mouseEvent = new MouseEvent('mousemove', {clientX, clientY});
+    document.dispatchEvent(mouseEvent);
+    e.preventDefault();
+});
+
+document.addEventListener('touchend', function (e) {
+    if (isDragging) {
+        const mouseEvent = new MouseEvent('mouseup', {});
+        document.dispatchEvent(mouseEvent);
+    }
+});
+
 
 // 4. Печать
 
@@ -1696,7 +1772,7 @@ const piecesItemPdf = ({width, height, count, rotated, name, extra, edging}, i) 
     ${flagPdf(extra)}
 </tr>`;
 
-const piecesListPdf = () => task.pieces.map(piecesItemPdf).join('\n');
+const piecesListPdf = () => pieces.map(piecesItemPdf).join('\n');
 
 // 4.3 Раскрой
 
@@ -1754,7 +1830,7 @@ const rectPdf = (style) => `<div class="rect" style="${style}"></div>`;
 
 const takesHeadPdf = `<tr><th>#</th><th>Длина</th><th>Ширина</th><th>Кол-во</th></tr>`;
 const takesItemPdf = (i, count) => {
-    const {width, height, edging} = task.pieces[i];
+    const {width, height, edging} = pieces[i];
     return `<tr><td>${i + 1}</td>${whPdf(width, height, edging)}<td>${count}</td></tr>`
 }
 const takesListPdf = (drags) => {

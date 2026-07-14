@@ -13,9 +13,10 @@
     --red-max: #dc685d;
     --yellow: #d3b053;
     --yellow-max: #f2ca4b;
-    --bg-selected: #202523;
+    --bg-edited: #1e1e1e;
     --saturation: 40%;
     --lightness: 40%;
+    --drop-width: 0;
 }
 
 * {
@@ -48,20 +49,142 @@
     box-sizing: border-box;
 }
 
+*:hover {
+    opacity: 1;
+}
+
 select,
 textarea,
 body {
     background-color: var(--bg-primary);
 }
 
-#main {
-    margin: 0 auto;
+article {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    padding: 50px 20px;
-    max-width: 700px;
+    width: 100%;
+    height: 100vh;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
 }
+
+article > div {
+    display: flex;
+    flex-direction: column;
+}
+
+button {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    background: transparent;
+}
+
+.content {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px 10px;
+}
+
+button:focus {
+    outline: none;
+}
+
+button,
+h1, h2 {
+    opacity: 0.8;
+}
+
+#form {
+    opacity: 0.7;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+.space {
+    width: 100%;
+}
+
+form {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+textarea {
+    width: 100%;
+    border: none;
+    outline: none;
+    resize: none;
+    overflow: hidden;
+}
+
+input {
+    font: inherit;
+    border: none;
+    outline: none;
+    width: auto;
+    field-sizing: content;
+    background: transparent;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    appearance: textfield;
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+svg {
+    background: transparent;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke: gray;
+}
+
+ol {
+    list-style-type: none;
+    padding-left: 0;
+    width: 100%;
+}
+
+button div {
+    display: flex;
+    flex-direction: row;
+}
+
+
+#cutting,
+#setting {
+    padding-top: 50px;
+}
+
+
+.output {
+    min-height: 60px;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
 
 a, li {
     cursor: pointer;
@@ -81,180 +204,7 @@ a:hover {
     visibility: hidden !important;
 }
 
-.col {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    width: 100%;
-    align-items: center;
-}
-
-#to-update-task {
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    width: 100%;
-}
-
-.area {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    touch-action: none;
-    will-change: transform;
-}
-
-.gutter {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 5px;
-    background-color: var(--bg-secondary);
-    z-index: 1000;
-    cursor: col-resize;
-    user-select: none;
-    touch-action: none;
-    will-change: transform;
-}
-
-.left {
-    padding-left: 50px;
-}
-
-.right {
-    position: relative;
-    padding-right: 10px;
-}
-
-#menu {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 50px;
-    user-select: none;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    box-shadow: 1px 0 0 0 var(--bg-secondary);
-    background-color: var(--bg-header);
-    overflow: hidden;
-    z-index: 1;
-}
-
-
-.title {
-    color: var(--green);
-    font-size: 26px;
-}
-
-h1, h2 {
-    color: var(--green);
-    outline: none;
-    border: none;
-    cursor: pointer;
-}
-
-h1 {
-    font-size: 30px;
-    padding: 10px 15px;
-}
-
-
-h1:hover,
-h2:hover {
-    opacity: 1;
-}
-
-
-#title:empty::before {
-    content: "Раскрой";
-    opacity: 0.5;
-    color: var(--white);
-}
-
-
-button {
-    display: flex;
-    cursor: pointer;
-    align-items: center;
-}
-
-
-svg {
-    background: transparent;
-    stroke-width: 2;
-    fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-
-.up {
-    position: sticky;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    left: 0;
-    right: 0;
-    top: 0;
-
-}
-
-nav h3 {
-    color: gray;
-}
-
-
-#to-left,
-#to-right {
-    display: none;
-}
-
-input {
-    background: transparent;
-}
-
-
-.section,
-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    min-height: 50px;
-    padding: 5px 5px 5px 15px;
-}
-
-ol {
-    list-style-type: none;
-    padding-left: 0;
-}
-
-
-#setting .selected {
-    background-color: #2c3532;
-}
-
-#cutting .selected {
-    --lightness: 50%;
-    z-index: 9999;
-}
-
-#cutting {
-    overflow-x: hidden;
-    margin: 0;
-    padding: 0;
-}
-
-.section span,
-.section div,
-section div {
-    display: flex;
-    align-items: center;
-}
-
+/* Цвета */
 
 .yellow {
     stroke: var(--yellow);
@@ -276,155 +226,80 @@ section div {
     stroke: var(--blue);
 }
 
-.gray {
-    stroke: gray;
+/* Навигация */
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    user-select: none;
+    display: flex;
+    flex-direction: row;
+    box-shadow: 0 1px 0 0 var(--bg-secondary);
+    background-color: var(--bg-header);
+    overflow: hidden;
+    z-index: 1;
 }
 
 
-button {
-    background: transparent;
+#rotate-piece,
+#remove-task {
+    margin-left: auto;
 }
 
-input {
-    font: inherit;
-    border: none;
-    outline: none;
-    width: auto;
-    field-sizing: content;
+
+/* Заголовки */
+
+nav h3 {
+    color: gray;
 }
 
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-input[type="number"] {
-    appearance: textfield;
-    -webkit-appearance: textfield;
-    -moz-appearance: textfield;
-}
-
-.menu {
+svg {
     width: 50px;
     min-width: 50px;
     height: 50px;
     padding: 13px;
 }
 
-.icon {
-    width: 40px;
-    min-width: 40px;
-    height: 40px;
-    padding: 8px;
+.line {
+    width: 60px;
+    height: 5px;
+    padding: 0;
 }
 
-.menu:hover,
-.icon:hover {
-    transform: scale(1.1);
+.big {
+    color: var(--green);
+    font-size: 26px;
 }
 
-.side {
-    background-color: var(--bg-primary);
+.pad {
+    padding: 10px;
 }
 
-.menu,
-.icon {
-    cursor: pointer;
-    background: transparent;
-}
-
-#erase {
-    display: none;
-}
-
-article {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 5px;
-    height: 100vh;
-    width: 100%;
-}
-
-.side {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    padding-bottom: 10px;
-}
-
-form {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-}
-
-textarea {
-    width: 100%;
-    border: none;
-    outline: none;
-    resize: none;
-    overflow: hidden;
-}
-
-
-.button {
-    display: block;
-    opacity: 1;
-    padding: 16px 32px;
-    font-size: 1.1rem;
-    text-align: center;
-    width: 100%;
-    background: var(--green);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    transition: all 0.3s;
-}
-
-
-.button:hover {
-    background: var(--green-max);
-    transform: scale(1.01);
-}
-
-.section,
-button,
 h1, h2 {
-    opacity: 0.8;
+    color: var(--green);
+    outline: none;
+    border: none;
+    cursor: pointer;
 }
 
-*:hover {
+h1 {
+    font-size: 30px;
+}
+
+h1:hover,
+h2:hover {
     opacity: 1;
 }
-
-select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-}
-
-section button {
-    height: 100%;
-}
-
-input,
-select {
-    width: fit-content;
-    outline: none;
-    vertical-align: middle;
-}
-
 
 ol {
     list-style: none;
     counter-reset: item;
     padding-left: 0;
 }
+
+/* Список задач */
 
 #tasks li {
     counter-increment: item;
@@ -443,35 +318,132 @@ ol {
     margin-left: -0.5rem;
 }
 
+/* Настройки раскроя */
 
-@media (max-width: 500px) {
-    #to-left,
-    #to-right {
-        display: inherit;
-    }
+.col {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    align-items: center;
+}
 
-    .gutter {
-        display: none;
-    }
+
+#to-update-task {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    width: 100%;
+}
+
+
+.edited {
+    background-color: var(--bg-edited);
+}
+
+
+/* Редактор раскроя */
+
+.area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    touch-action: none;
+    will-change: transform;
+    width: 100%;
+    padding: 10px;
+    max-width: 700px;
+}
+
+.selected {
+    --lightness: 50%;
+    z-index: 9999;
+}
+
+
+span,
+div {
+    display: flex;
+    align-items: center;
+}
+
+
+.menu {
+    width: 50px;
+    min-width: 50px;
+    height: 50px;
+    padding: 13px;
+}
+
+.icon {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    padding: 8px;
+}
+
+svg:hover,
+svg:hover {
+    transform: scale(1.1);
+}
+
+svg {
+    cursor: pointer;
+    background: transparent;
+}
+
+.side {
+    background-color: var(--bg-primary);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 10px;
+}
+
+
+#create-task {
+    display: block;
+    opacity: 1;
+    padding: 16px 32px;
+    font-size: 1.1rem;
+    text-align: center;
+    width: 100%;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+
+#create-task:hover {
+    background: var(--green-max);
+    transform: scale(1.01);
+}
+
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+section button {
+    height: 100%;
+}
+
+input,
+select {
+    width: fit-content;
+    outline: none;
+    vertical-align: middle;
 }
 
 /* Кнопки */
-
-button:focus {
-    outline: none;
-}
-
-
-.line {
-    width: 60px;
-    height: 5px;
-}
-
-.how {
-    display: flex;
-    gap: 6px;
-    align-items: end;
-}
 
 .unit {
     color: gray;
@@ -480,51 +452,48 @@ button:focus {
     padding-left: 5px;
 }
 
-
-.delete {
-    color: var(--red);
-    font-size: 16px;
-    transition: 0.5s;
-}
-
-.delete:hover {
-    color: var(--red-max);
-
-}
-
-button:disabled svg {
-    stroke: gray;
-}
-
-
-#cutting .side {
+#gutter {
+    background: var(--bg-secondary);
     width: 100%;
-    gap: 20px;
+    height: 5px;
+    cursor: row-resize;
+    flex-shrink: 0;
+    transition: background 0.2s;
+    opacity: 0.7;
 }
 
-#cutting .left {
-    padding: 15px 15px 15px 65px;
+
+#gutter:hover,
+#gutter .active {
+    opacity: 1;
+}
+
+#cutting {
+    display: grid;
+    grid-template-rows: 2fr 5px 1fr;
+}
+
+#take {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    padding: 10px;
+    align-items: start;
+    justify-content: center;
+    overflow-x: auto;
+    overflow-y: hidden;
     width: 100%;
 }
 
-#cutting .right {
-    padding: 15px 65px 15px 15px;
-    width: 100%;
+#drop {
+    overflow: auto;
 }
 
 .center {
     display: flex;
     align-items: center;
+    width: 100%;
 }
-
-
-#tools {
-    padding-top: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
 
 .place {
     display: flex;
@@ -547,22 +516,21 @@ button:disabled svg {
     will-change: transform;
 }
 
+/* Деталь */
 
-#do-cut {
-    position: fixed;
-}
-
-#expand {
-    margin-top: auto;
-}
-
-
-.take {
+.piece {
     cursor: grab;
     touch-action: none;
     will-change: transform;
     z-index: 1000;
     transition: transform 0.05s linear;
+}
+
+.take {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    position: relative;
 }
 
 input[type="date"] {
@@ -579,12 +547,11 @@ input[type="text"] {
     width: 100%;
 }
 
-.date {
-    padding: 10px;
+.fade {
     opacity: 0.5;
 }
 
-/*печать*/
+/* Печать */
 
 #print * {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -620,7 +587,7 @@ input[type="text"] {
 }
 
 .value {
-    padding: 10px;
+    padding-right: 10px;
 }
 
 .base {

@@ -28,9 +28,13 @@
     </symbol>
 
     <!--Меню-->
-    <symbol id="expand" viewBox="0 0 24 24">
+    <symbol id="right" viewBox="0 0 24 24">
         <line x1="3" y1="12" x2="21" y2="12"/>
         <polyline points="14 19 21 12 14 5"/>
+    </symbol>
+    <symbol id="left" viewBox="0 0 24 24">
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <polyline points="10 19 3 12 10 5"/>
     </symbol>
 
     <!--Кнопки-->
@@ -46,12 +50,20 @@
 
     <!--Формы-->
     <symbol id="cancel" viewBox="0 0 24 24">
-        <path d="M6 6L18 18M18 6L6 18"/>
+        <path d="M4 4L20 20M20 4L4 20"/>
+    </symbol>
+    <symbol id="recover" viewBox="0 0 24 24">
+        <path d="M12 5a8 8 0 1 0 8 8"/>
+        <path d="M9 1.5L14 4.5L11.5 9.5"/>
     </symbol>
     <symbol id="save" viewBox="0 0 24 24">
-        <path d="M5 12L10 17L19 8"/>
+        <path d="M4 12L10 20L20 4"/>
     </symbol>
     <symbol id="plus" viewBox="0 0 24 24">
+        <line x1="12" y1="2" x2="12" y2="22"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+    </symbol>
+    <symbol id="create" viewBox="0 0 24 24">
         <line x1="12" y1="4" x2="12" y2="20"/>
         <line x1="4" y1="12" x2="20" y2="12"/>
     </symbol>
