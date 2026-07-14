@@ -590,7 +590,7 @@ input[type="text"] {
     padding-right: 10px;
 }
 
-.base {
+.back {
     position: absolute;
     background: white;
 }
@@ -600,6 +600,9 @@ input[type="text"] {
     stroke: lightgray;
     stroke-width: 0.5;
     z-index: 2;
+    width: auto;
+    height: auto;
+    padding: 0;
 }
 
 .width {
@@ -677,7 +680,7 @@ th {
         visibility: hidden;
     }
 
-    .area {
+    .base {
         display: block;
         position: absolute;
         background-color: lightgray;
@@ -708,6 +711,8 @@ th {
 
 .task {
     position: absolute;
+    display: flex;
+    flex-direction: column;
 }
 
 .signs {

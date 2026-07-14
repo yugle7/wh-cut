@@ -1027,8 +1027,10 @@ let takes = [];
 // 3.3. Отображение деталей
 
 const observer = new ResizeObserver(() => {
-    const width = dropArea.firstElementChild.getBoundingClientRect().width - 20;
-    document.documentElement.style.setProperty('--drop-width', width.toString());
+    if (page === cuttingPage) {
+        const width = dropArea.firstElementChild.getBoundingClientRect().width - 20;
+        document.documentElement.style.setProperty('--drop-width', width.toString());
+    }
 });
 
 observer.observe(dropArea);
@@ -1760,7 +1762,7 @@ const pdfPiecesHead = `<tr>
     <th>Кол-во</th>
     <th>Пов-от</th>
     <th>Наименование</th>
-    <th>ДО</th>
+    <th>Доп.об.</th>
 </tr>`;
 
 const piecesItemPdf = ({width, height, count, rotated, name, extra, edging}, i) => `<tr>
@@ -1780,9 +1782,9 @@ const getRectStyle = (left, top, width, height) => `left: ${left}mm;top: ${top}m
 const getAreaStyle = (width, height) => `right: ${A.right}mm;top: ${A.top}mm;width: ${width}mm;height: ${height}mm;`;
 const getHeadStyle = () => `left: ${H.left}mm;top: ${H.top}mm;right: ${H.right}mm;height: ${H.height}mm;`;
 
-const backPdf = (style, zIndex) => `<div class="base" style="${style};z-index: ${zIndex}"></div>`
+const backPdf = (style, zIndex) => `<div class="back" style="${style};z-index: ${zIndex}"></div>`
 
-const zonePdf = (style, tape, drags, drops) => `<div class="area" style="${style}">${tape}${drags}${drops}</div>`
+const zonePdf = (style, tape, drags, drops) => `<div class="base" style="${style}">${tape}${drags}${drops}</div>`
 const dragPdf = (style, size, index) => `<div class="rect" style="${style}">${size}${index}</div>`
 const dropPdf = (style, size) => `<div class="rect gray" style="${style}">${size}</div>`
 
