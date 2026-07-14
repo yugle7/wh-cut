@@ -329,6 +329,7 @@ let pieceEdging = {left: null, up: null, right: null, down: null};
 
 let colors = [];
 let pieces = [];
+let scraps = [];
 
 // 4. Печать
 
@@ -1073,9 +1074,7 @@ const setTakes = () => {
         ({width, height, rotated, count}, i) => takeHtml(width, height, rotated, count, i)).join('');
 
     takeArea.childNodes.forEach((q, i) => {
-        console.log(q)
         q = q.children[1];
-        console.log(q)
 
         q.onpointerup = () => onTakeUp(i);
         q.onpointerdown = onTakeDown;
@@ -1161,7 +1160,7 @@ const dropJson = (width, height, edge) => ({
 const zoneJson = ({width, height, edge}) => ({width, height, drops: [dropJson(width, height, edge)], drags: []});
 
 const getDrops = () => {
-    const dst = task.scraps.filter(Boolean).flatMap(({width, height, edge, count}) => Array(count).fill({
+    const dst = scraps.map(({width, height, edge, count}) => Array(count).fill({
         width: width - 2 * edge + task.kerf, height: height - 2 * edge + task.kerf
     }));
     return dst.sort((a, b) => b.width + b.height - a.width - a.height);
@@ -1180,7 +1179,7 @@ const getTakes = () => {
 }
 
 const getZones = () => {
-    const dst = task.scraps.filter(Boolean).flatMap(q => Array(q.count).fill(zoneJson(q)));
+    const dst = scraps.map(zoneJson);
 
     const drops = getDrops();
     const takes = getTakes();
@@ -1240,6 +1239,7 @@ const clearCutting = () => {
 
     pieces = task.pieces.filter(Boolean);
     colors = getColors(pieces.length);
+    scraps = task.scraps.filter(Boolean).flatMap(q => Array(q.count).fill(q));
 
     setTakes();
     setZones();
@@ -1675,6 +1675,7 @@ function onDragEnd() {
 }
 
 // События мыши
+
 gutter.addEventListener('mousedown', onDragStart);
 document.addEventListener('mousemove', onDragMove);
 document.addEventListener('mouseup', onDragEnd);
