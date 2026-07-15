@@ -10,6 +10,10 @@ const mainPage = document.getElementById("main");
 const createTaskButton = document.getElementById("create-task");
 const tasksList = document.getElementById("tasks");
 
+const changeThemeButton = document.getElementById("change-theme");
+const moon = changeThemeButton.lastElementChild;
+const sun = changeThemeButton.firstElementChild;
+
 // 2. Навигация
 
 const toMainButton = document.getElementById("to-main");
@@ -173,7 +177,7 @@ const x = iconHtml('x');
 const v = iconHtml('v');
 const o = iconHtml('o');
 
-const oHtml = (i) => `<svg class="icon gray" onclick="rotatePiece(${i})">${spriteHtml("o")}</svg>`;
+const oHtml = (i) => `<svg class="icon" onclick="rotatePiece(${i})">${spriteHtml("o")}</svg>`;
 
 // 3. PDF
 
@@ -408,17 +412,53 @@ const loadTasks = async () => {
     }
 };
 
+// 1.3 Изменение темы
+
+let dark;
+
+const loadTheme = () => {
+    const q = localStorage.getItem('dark');
+    if (!q) {
+        dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    } else {
+        dark = q === 'true';
+    }
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    if (dark) {
+        moon.classList.remove('hidden');
+    } else {
+        sun.classList.remove('hidden');
+    }
+}
+
+const saveTheme = () => {
+    if (dark) {
+        moon.classList.remove('hidden');
+        sun.classList.add('hidden');
+    } else {
+        moon.classList.add('hidden');
+        sun.classList.remove('hidden');
+    }
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    localStorage.setItem('dark', dark);
+}
+
+changeThemeButton.onclick = () => {
+    dark = !dark;
+    saveTheme();
+}
+
 // 2. Настройки задачи раскроя
 
 toSettingButton.onclick = () => changePage(settingPage);
 
 // 2.1 Отображение данных
 
-const titleHtml = () => `<h1 class="output pad">${task.title}</h1>`
+const titleHtml = () => `<h1 class="out pad">${task.title}</h1>`
 
-const dateHtml = () => task.start || task.finish ? `<div class="output"><span  class="pad">${toDate(task.start)}</span><span class="pad fade">${toDate(task.finish)}</span></div>` : '';
+const dateHtml = () => task.start || task.finish ? `<div class="out"><span  class="pad">${toDate(task.start)}</span><span class="pad fade">${toDate(task.finish)}</span></div>` : '';
 
-const materialHtml = () => task.material ? `<div class="output"><span  class="pad">${task.material}</span><span>${valueHtml(task.thick, 'мм')}</span></div>` : '';
+const materialHtml = () => task.material ? `<div class="out"><span  class="pad">${task.material}</span><span>${valueHtml(task.thick, 'мм')}</span></div>` : '';
 
 const kerfHtml = () => `<span>${valueHtml(task.kerf || 0, 'мм')}</span>`;
 
@@ -488,7 +528,7 @@ const copyScrapToForm = ({width, height, edge, count}) => {
 const addScrap = (scrap, i) => {
     console.log('addScrap')
     let q = document.createElement('li');
-    q.innerHTML = `<button class="output">${scrapHtml(scrap)}</button>`
+    q.innerHTML = `<button class="out">${scrapHtml(scrap)}</button>`
     q.firstChild.onclick = (e) => {
         e.stopPropagation();
         index = i;
@@ -544,7 +584,7 @@ const copyEdgingToForm = ({line, thick}) => {
 const addEdging = (edging, i) => {
     console.log('addEdging')
     let q = document.createElement('li');
-    q.innerHTML = `<button class="output">${edgingHtml(edging)}</button>`;
+    q.innerHTML = `<button class="out">${edgingHtml(edging)}</button>`;
     q.firstChild.onclick = (e) => {
         e.preventDefault();
         index = i;
@@ -583,7 +623,7 @@ const copyPieceToForm = ({width, height, rotated, count, edging}) => {
 
 const addPiece = (piece, i) => {
     let q = document.createElement('li');
-    q.innerHTML = `<button class="output">${pieceHtml(piece)}</button>`
+    q.innerHTML = `<button class="out">${pieceHtml(piece)}</button>`
     q.firstChild.onclick = (e) => {
         e.preventDefault();
         index = i;
@@ -1546,7 +1586,6 @@ rotatePieceButton.onclick = () => {
 const setCutDirectionButton = () => {
     const d = selected && selected === drag ? drag.cutDirection : cutDirection
     cutDirectionButton.firstElementChild.style.transform = `rotate(${d ? 0 : 90}deg)`;
-    cutDirectionButton.lastElementChild.innerText = d ? 'Вдоль' : 'Поперек';
 }
 
 cutDirectionButton.onclick = () => {
@@ -2312,6 +2351,7 @@ const blurAutoSave = async (update) => {
 // Начальная загрузка
 
 (function () {
+    loadTheme();
     loadTasks();
     tasks.forEach(addTask);
 })();

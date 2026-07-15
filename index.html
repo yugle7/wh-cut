@@ -26,10 +26,10 @@
     </div>
     <div id="output">
         <div id="to-update-task"></div>
-        <button class="output" id="to-update-sheet"></button>
+        <button class="out" id="to-update-sheet"></button>
 
         <br>
-        <button class="output" id="to-create-scrap">
+        <button class="out" id="to-create-scrap">
             <span class="big pad">Обрезки</span>
             <svg class="yellow">
                 <use href="sprite.svg#plus"></use>
@@ -38,7 +38,7 @@
         <ol id="scraps"></ol>
 
         <br>
-        <button class="output" id="to-create-edging">
+        <button class="out" id="to-create-edging">
             <span class="big pad">Кромки</span>
             <svg class="yellow">
                 <use href="sprite.svg#plus"></use>
@@ -47,7 +47,7 @@
         <ol id="edgings"></ol>
 
         <br>
-        <button class="output" id="to-create-piece">
+        <button class="out" id="to-create-piece">
             <span class="big pad">Детали</span>
             <svg class="yellow">
                 <use href="sprite.svg#plus"></use>
@@ -55,7 +55,7 @@
         </button>
         <ol id="pieces"></ol>
         <br>
-        <button id="remove-task">
+        <button id="remove-task" class="eye">
             Удалить задание
         </button>
 
@@ -70,35 +70,43 @@
                     <use href="sprite.svg#cutting"></use>
                 </svg>
             </button>
+            <button id="change-theme">
+                <svg class="hidden">
+                    <use href="sprite.svg#sun"></use>
+                </svg>
+                <svg class="hidden">
+                    <use href="sprite.svg#moon"></use>
+                </svg>
+            </button>
         </nav>
     </div>
 
     <div id="input" class="hidden">
         <form id="task" class="hidden">
-            <section class="output">
+            <section class="out">
                 <label for="task-title" class="hidden">Название задачи</label>
                 <input type="text" id="task-title" placeholder="Название задачи"/>
             </section>
-            <section class="output">
+            <section class="out">
                 <label for="task-start">Дата</label>
                 <input type="date" id="task-start"/>
             </section>
-            <section class="output">
+            <section class="out">
                 <label for="task-finish">Дата готовности</label>
                 <input type="date" id="task-finish"/>
             </section>
-            <section class="output">
+            <section class="out">
                 <label for="task-material" class="hidden">Материал листа</label>
                 <input type="text" id="task-material" placeholder="Материал листа"/>
             </section>
-            <section class="output">
+            <section class="out">
                 <label for="task-thick">Толщина листа</label>
                 <input type="number" inputmode="numeric" id="task-thick" placeholder="мм"/>
             </section>
         </form>
 
         <form id="sheet" class="hidden">
-            <section class="output">
+            <section class="out">
                 <span>Размеры листа</span>
                 <div class="center">
                     <label>
@@ -114,18 +122,18 @@
                     </label>
                 </div>
             </section>
-            <section class="output">
+            <section class="out">
                 <label for="sheet-edge">Отступ от края</label>
                 <input type="number" inputmode="numeric" id="sheet-edge" placeholder="мм" autocomplete="off"/>
             </section>
-            <section class="output">
+            <section class="out">
                 <label for="task-kerf">Ширина реза</label>
                 <input type="number" inputmode="numeric" id="task-kerf" placeholder="мм"/>
             </section>
         </form>
 
         <form id="scrap" class="hidden">
-            <section class="output">
+            <section class="out">
                 <span>Размеры</span>
                 <div>
                     <label>
@@ -141,22 +149,22 @@
                     </label>
                 </div>
             </section>
-            <section class="output">
+            <section class="out">
                 <label for="scrap-edge">Отступ от края</label>
                 <input type="number" inputmode="numeric" id="scrap-edge" placeholder="мм" autocomplete="off"/>
             </section>
-            <section class="output">
+            <section class="out">
                 <label for="scrap-count">Количество</label>
                 <input type="number" inputmode="numeric" id="scrap-count" placeholder="шт" autocomplete="off"/>
             </section>
         </form>
 
         <form id="edging" class="hidden">
-            <section class="output">
+            <section class="out">
                 <label for="edging-line">Линия</label>
                 <button id="edging-line"></button>
             </section>
-            <section class="output">
+            <section class="out">
                 <label for="edging-thick">Толщина</label>
                 <input type="number" inputmode="numeric" step="0.1" id="edging-thick" placeholder="мм"
                        autocomplete="off"/>
@@ -164,7 +172,7 @@
         </form>
 
         <form id="piece" class="hidden">
-            <section class="output">
+            <section class="out">
                 <span>Размеры</span>
                 <div>
                     <label>
@@ -180,27 +188,27 @@
                     </label>
                 </div>
             </section>
-            <section class="output">
+            <section class="out">
                 <label for="piece-rotated">Можно вращать</label>
                 <button id="piece-rotated"></button>
             </section>
-            <section class="output">
+            <section class="out">
                 <label for="piece-count">Количество</label>
                 <input type="number" inputmode="numeric" id="piece-count" placeholder="шт" autocomplete="off"/>
             </section>
-            <section class="output">
+            <section class="out">
                 <label for="piece-edging-up">Кромка сверху</label>
                 <button id="piece-edging-up"></button>
             </section>
-            <section class="output">
+            <section class="out">
                 <label for="piece-edging-down">Кромка снизу</label>
                 <button id="piece-edging-down"></button>
             </section>
-            <section class="output">
+            <section class="out">
                 <label for="piece-edging-left">Кромка слева</label>
                 <button id="piece-edging-left"></button>
             </section>
-            <section class="output">
+            <section class="out">
                 <label for="piece-edging-right">Кромка справа</label>
                 <button id="piece-edging-right"></button>
             </section>
@@ -251,7 +259,9 @@
 <article id="cutting" class="hidden">
     <div id="drop"></div>
     <div id="gutter"></div>
-    <div id="take"></div>
+    <div class="wrapper">
+        <div id="take"></div>
+    </div>
 
     <nav>
         <button id="to-setting">
