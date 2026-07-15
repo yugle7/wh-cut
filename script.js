@@ -1130,6 +1130,7 @@ const setTakes = () => {
         q = q.children[1];
 
         q.onpointerup = (e) => onTakeUp(e, i);
+        q.onpointercancel = (e) => onTakeUp(e, i);
         q.onpointerdown = onTakeDown;
         takes[i].html = q
     });
@@ -1174,6 +1175,7 @@ const createDrop = (drop) => {
     q.style.height = p(drop.height / zone.height);
 
     q.onpointerup = dropDrag;
+    q.onpointercancel = dropDrag;
     if (drop.busy === false) zone.html.appendChild(q);
 }
 
@@ -1200,6 +1202,7 @@ const createDrag = (drag) => {
 
     q.onpointerdown = (e) => onPointerDown(e, dragDrop);
     q.onpointerup = onDragClick;
+    q.onpointercancel = onDragClick;
 
     zone.html.appendChild(q);
 }
@@ -1310,6 +1313,7 @@ const startMove = (x, y, left, top) => {
 
     window.addEventListener('pointermove', toDrag);
     window.addEventListener('pointerup', stopDrag);
+    window.addEventListener('pointercancel', stopDrag);
 }
 
 const endMove = () => {
@@ -1317,6 +1321,7 @@ const endMove = () => {
 
     window.removeEventListener('pointermove', toDrag);
     window.removeEventListener('pointerup', stopDrag);
+    window.removeEventListener('pointercancel', stopDrag);
 }
 
 const stopDrag = (e) => {
@@ -1346,6 +1351,7 @@ const dragTake = (x, y, t) => {
     q.style.cursor = 'grabbing';
     q.style.pointerEvents = 'none';
     q.style.backgroundColor = colors[i];
+    q.style.touchAction = 'none';
 
     cuttingPage.appendChild(q);
 
@@ -1408,6 +1414,7 @@ const addDrop = (drop) => {
     q.style.height = p(drop.height / zone.height);
 
     q.onpointerup = dropDrag;
+    q.onpointercancel = dropDrag;
     zone.html.appendChild(q);
 }
 
@@ -1450,6 +1457,7 @@ const addDrag = () => {
 
     q.onpointerdown = (e) => onPointerDown(e, dragDrop);
     q.onpointerup = onDragClick;
+    q.onpointercancel = onDragClick;
 
     zone.html.appendChild(q);
 
@@ -1695,6 +1703,7 @@ const tryStartDrag = (e) => {
 }
 
 window.addEventListener('pointerup', endClick);
+window.addEventListener('pointercancel', endClick);
 window.addEventListener('pointermove', tryStartDrag);
 
 // 3.12 Разделитель
@@ -1733,7 +1742,7 @@ function onDragEnd(e) {
 gutter.addEventListener('pointerdown', onDragStart);
 document.addEventListener('pointermove', onDragMove);
 document.addEventListener('pointerup', onDragEnd);
-
+document.addEventListener('pointercancel', onDragEnd);
 
 // 4. Печать
 
