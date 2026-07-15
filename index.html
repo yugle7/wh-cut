@@ -15,6 +15,15 @@
 </article>
 
 <article id="setting" class="hidden">
+    <div id="to-remove-task" class="hidden">
+        <div>Вы действительно</div>
+        <div>хотите удалить задание?</div>
+        <h1></h1>
+        <div>
+            <button id="yes-remove-task">Да</button>
+            <button id="no-remove-task">Нет</button>
+        </div>
+    </div>
     <div id="output">
         <div id="to-update-task"></div>
         <button class="output" id="to-update-sheet"></button>
@@ -45,6 +54,10 @@
             </svg>
         </button>
         <ol id="pieces"></ol>
+        <br>
+        <button id="remove-task">
+            Удалить задание
+        </button>
 
         <nav>
             <button id="to-main">
@@ -55,11 +68,6 @@
             <button id="to-cutting">
                 <svg class="yellow">
                     <use href="sprite.svg#cutting"></use>
-                </svg>
-            </button>
-            <button id="remove-task">
-                <svg class="red">
-                    <use href="sprite.svg#remove"></use>
                 </svg>
             </button>
         </nav>
@@ -199,9 +207,14 @@
         </form>
 
         <nav>
-            <button id="update">
-                <svg class="green">
-                    <use href="sprite.svg#save"></use>
+            <button id="remove">
+                <svg class="red">
+                    <use href="sprite.svg#cancel"></use>
+                </svg>
+            </button>
+            <button id="recover" class="hidden">
+                <svg class="gray">
+                    <use href="sprite.svg#recover"></use>
                 </svg>
             </button>
 
@@ -225,14 +238,9 @@
 
             <div class="space"></div>
 
-            <button id="remove">
-                <svg class="red">
-                    <use href="sprite.svg#cancel"></use>
-                </svg>
-            </button>
-            <button id="recover" class="hidden">
-                <svg class="gray">
-                    <use href="sprite.svg#recover"></use>
+            <button id="update">
+                <svg class="green">
+                    <use href="sprite.svg#save"></use>
                 </svg>
             </button>
         </nav>

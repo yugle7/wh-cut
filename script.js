@@ -23,6 +23,9 @@ const inputPage = document.getElementById("input");
 const outputPage = document.getElementById("output");
 
 const removeTaskButton = document.getElementById("remove-task");
+const yesRemoveTaskButton = document.getElementById("yes-remove-task");
+const noRemoveTaskButton = document.getElementById("no-remove-task");
+const toRemoveTaskPage = document.getElementById("to-remove-task");
 
 // 3.1 Задача
 
@@ -320,6 +323,7 @@ let link = null;
 let index = null;
 let deleted = null;
 let created = null;
+let blank = null;
 
 let edgingLine = -1;
 let pieceRotated = false;
@@ -458,8 +462,8 @@ const setTask = () => {
 const copyTaskToForm = () => {
     taskTitleInput.value = task.title;
 
-    taskStartInput.value = task.start;
-    taskFinishInput.value = task.finish;
+    taskStartInput.value = task.start || '';
+    taskFinishInput.value = task.finish || '';
     taskMaterialInput.value = task.material || '';
     taskThickInput.value = task.thick || '0';
 }
@@ -516,7 +520,6 @@ const addLink = () => {
     else if (form === edgingForm) addEdging(items[index], index)
     else if (form === pieceForm) addPiece(items[index], index)
     else links = null;
-    created = false;
 }
 
 const updateScrap = () => {
@@ -525,8 +528,8 @@ const updateScrap = () => {
     const count = +scrapCountInput.value;
     const edge = +scrapEdgeInput.value;
 
-    deleted = deleted || !width || !height || !count;
-    items[index] = deleted ? null : {width, height, edge, count};
+    blank = !width || !height || !count;
+    items[index] = deleted || blank ? null : {width, height, edge, count};
 }
 
 // 2.4 Добавление и обновление кромки
@@ -549,7 +552,6 @@ const addEdging = (edging, i) => {
         links = edgingsList;
         changeForm(edgingForm)
         showButtons();
-        console.log(items[i], i, edging)
         copyEdgingToForm(items[i]);
         toInputPage();
     }
@@ -559,8 +561,8 @@ const addEdging = (edging, i) => {
 const updateEdging = () => {
     const thick = +edgingThickInput.value;
 
-    deleted = deleted || !thick;
-    items[index] = deleted ? null : {thick, line: edgingLine};
+    blank = !thick
+    items[index] = deleted || blank ? null : {thick, line: edgingLine};
 }
 
 // 2.5 Добавление и обновление детали
@@ -600,8 +602,8 @@ const updatePiece = () => {
     const height = +pieceHeightInput.value;
     const count = +pieceCountInput.value;
 
-    deleted = deleted || !width || !height || !count;
-    items[index] = deleted ? null : {
+    blank = !width || !height || !count;
+    items[index] = deleted || blank ? null : {
         width, height, count,
         rotated: pieceRotated,
         edging: pieceEdging,
@@ -632,6 +634,13 @@ const updateSheet = () => {
 // 2.7 Управление задачей
 
 removeTaskButton.onclick = async () => {
+    toRemoveTaskPage.children[2].innerText = task.title;
+    toRemoveTaskPage.classList.remove('hidden');
+}
+
+
+yesRemoveTaskButton.onclick = async () => {
+    toRemoveTaskPage.classList.add('hidden');
     if (task) {
         document.getElementById(task.id).remove()
         tasks = tasks.filter(({id}) => id !== task.id);
@@ -640,6 +649,8 @@ removeTaskButton.onclick = async () => {
     }
     changePage(mainPage);
 }
+
+noRemoveTaskButton.onclick = () => toRemoveTaskPage.classList.add('hidden');
 
 // 2.8 Навигация по форме
 
@@ -723,13 +734,13 @@ createButton.onclick = (e) => {
     e.preventDefault();
 
     toUpdateItem();
-    getCreateIndex();
+    toCreateItem();
 
     clearForm();
     showButtons();
 }
 
-const getCreateIndex = () => {
+const toCreateItem = () => {
     created = true;
     index = items.length;
     items.push(null);
@@ -737,9 +748,9 @@ const getCreateIndex = () => {
 
 toCreateScrapLink.onclick = (e) => {
     e.preventDefault();
-    items = task.scraps;
     links = scrapsList;
-    getCreateIndex();
+    items = task.scraps;
+    toCreateItem();
     changeForm(scrapForm);
     clearForm();
     showButtons();
@@ -747,9 +758,9 @@ toCreateScrapLink.onclick = (e) => {
 }
 toCreateEdgingLink.onclick = (e) => {
     e.preventDefault();
-    items = task.edgings;
     links = edgingsList;
-    getCreateIndex();
+    items = task.edgings;
+    toCreateItem();
     changeForm(edgingForm);
     clearForm();
     showButtons();
@@ -757,9 +768,9 @@ toCreateEdgingLink.onclick = (e) => {
 }
 toCreatePieceLink.onclick = (e) => {
     e.preventDefault();
-    items = task.pieces;
-    getCreateIndex();
     links = piecesList;
+    items = task.pieces;
+    toCreateItem();
     changeForm(pieceForm);
     clearForm();
     showButtons();
@@ -898,7 +909,10 @@ removeButton.onclick = (e) => {
     e.preventDefault();
 
     clearForm();
-    if (!created) toRecoverButton();
+    if (created) {
+        items.pop();
+        toOutputPage();
+    } else toRecoverButton();
 }
 
 recoverButton.onclick = (e) => {
@@ -920,6 +934,7 @@ const toOutputPage = () => {
     inputPage.classList.add('hidden');
     outputPage.classList.remove('hidden');
     showLink();
+    created = false;
 }
 
 const showLink = () => {
@@ -962,13 +977,10 @@ const toUpdateItem = () => {
     else if (form === pieceForm) updatePiece();
 
     if (created) {
-        if (deleted) {
-            items.pop();
-            index = items.length - 1;
-        } else addLink();
+        items[index] ? addLink() : items.pop();
+        created = false;
     } else if (links) {
-        if (deleted) removeLink()
-        else updateLink();
+        items[index] ? updateLink() : removeLink();
     }
     if (deleted) toRemoveButton();
 
