@@ -1725,7 +1725,7 @@ function onDragMove(e) {
     if (start) {
         e.preventDefault();
         const height = Math.max(start.height + start.y - e.clientY, 50);
-        cuttingPage.style.gridTemplateRows = `1fr 8px ${height}px`;
+        cuttingPage.style.gridTemplateRows = `1fr 6px ${height}px`;
     }
 }
 
