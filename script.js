@@ -1104,7 +1104,8 @@ const takeHtml = (width, height, rotated, count, i) => `<div class="take">
     ${takeSizesHtml(width, height, rotated, i)}
 </div>`;
 
-const onTakeUp = (i) => {
+const onTakeUp = (e, i) => {
+    e.preventDefault();
     console.log('onTakeUp')
     if (!down) return;
     take = takes[i];
@@ -1128,7 +1129,7 @@ const setTakes = () => {
     takeArea.childNodes.forEach((q, i) => {
         q = q.children[1];
 
-        q.onpointerup = () => onTakeUp(i);
+        q.onpointerup = (e) => onTakeUp(e, i);
         q.onpointerdown = onTakeDown;
         takes[i].html = q
     });
@@ -1318,8 +1319,9 @@ const endMove = () => {
     window.removeEventListener('pointerup', stopDrag);
 }
 
-const stopDrag = () => {
+const stopDrag = (e) => {
     if (!move) return;
+    e.preventDefault();
     endMove();
     cancelDrag();
 }
@@ -1492,12 +1494,13 @@ const findDropCorner = () => {
 }
 
 const dropDrag = (e) => {
-    console.log('dropDrag')
     if (!move) return;
-    endMove();
+    console.log('dropDrag')
 
     e.preventDefault();
     e.stopPropagation();
+
+    endMove();
 
     const q = e.currentTarget;
     zone = zones[q.parentElement.dataset.i];
@@ -1681,13 +1684,13 @@ const endClick = () => (down = null);
 const isDrag = (e) => (Math.abs(down.x - e.clientX) > minDrag || Math.abs(down.y - e.clientY) > minDrag);
 
 const tryStartDrag = (e) => {
-    if (down) {
-        console.log('tryStartDrag');
-        if (isDrag(e)) {
-            const {x, y, t, f} = down;
-            down = null;
-            f(x, y, t);
-        }
+    if (!down) return;
+    console.log('tryStartDrag');
+    e.preventDefault();
+    if (isDrag(e)) {
+        const {x, y, t, f} = down;
+        down = null;
+        f(x, y, t);
     }
 }
 
@@ -1699,6 +1702,7 @@ window.addEventListener('pointermove', tryStartDrag);
 let start = null;
 
 function onDragStart(e) {
+    e.preventDefault();
     gutter.classList.add('active');
     start = {
         y: e.clientY,
@@ -1706,18 +1710,19 @@ function onDragStart(e) {
     }
     document.body.style.cursor = 'row-resize';
     document.body.style.userSelect = 'none';
-    e.preventDefault();
 }
 
 function onDragMove(e) {
     if (start) {
+        e.preventDefault();
         const height = Math.max(start.height + start.y - e.clientY, 50);
         cuttingPage.style.gridTemplateRows = `1fr 8px ${height}px`;
     }
 }
 
-function onDragEnd() {
+function onDragEnd(e) {
     if (start) {
+        e.preventDefault();
         start = null;
         gutter.classList.remove('active');
         document.body.style.cursor = '';
