@@ -10,6 +10,14 @@
 
 <body>
 <article id="main" class="content">
+    <button id="change-theme">
+        <svg class="hidden">
+            <use href="sprite.svg#sun"></use>
+        </svg>
+        <svg class="hidden">
+            <use href="sprite.svg#moon"></use>
+        </svg>
+    </button>
     <button id="create-task">Создать раскрой</button>
     <ol id="tasks"></ol>
 </article>
@@ -68,14 +76,6 @@
             <button id="to-cutting">
                 <svg class="yellow">
                     <use href="sprite.svg#cutting"></use>
-                </svg>
-            </button>
-            <button id="change-theme">
-                <svg class="hidden">
-                    <use href="sprite.svg#sun"></use>
-                </svg>
-                <svg class="hidden">
-                    <use href="sprite.svg#moon"></use>
                 </svg>
             </button>
         </nav>
@@ -169,6 +169,10 @@
                 <input type="number" inputmode="numeric" step="0.1" id="edging-thick" placeholder="мм"
                        autocomplete="off"/>
             </section>
+            <section class="out">
+                <label for="edging-text" class="hidden">Кромка</label>
+                <input type="text" id="edging-text" placeholder="Кромка"/>
+            </section>
         </form>
 
         <form id="piece" class="hidden">
@@ -211,6 +215,14 @@
             <section class="out">
                 <label for="piece-edging-right">Кромка справа</label>
                 <button id="piece-edging-right"></button>
+            </section>
+            <section class="out">
+                <label for="piece-text" class="hidden">Деталь</label>
+                <input type="text" id="piece-text" placeholder="Деталь"/>
+            </section>
+            <section class="out">
+                <label for="piece-extra">Доп. обработка</label>
+                <button id="piece-extra"></button>
             </section>
         </form>
 

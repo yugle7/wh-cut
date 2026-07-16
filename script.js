@@ -70,6 +70,7 @@ const edgingsList = document.getElementById("edgings");
 const toCreateEdgingLink = document.getElementById("to-create-edging");
 
 const edgingLineInput = document.getElementById('edging-line');
+const edgingTextInput = document.getElementById('edging-text');
 const edgingThickInput = document.getElementById('edging-thick');
 
 // 3.5 Детали
@@ -84,6 +85,9 @@ const pieceRotateButton = document.getElementById('piece-rotate');
 
 const pieceRotatedInput = document.getElementById('piece-rotated');
 const pieceCountInput = document.getElementById('piece-count');
+
+const pieceTextInput = document.getElementById('piece-text');
+const pieceExtraInput = document.getElementById('piece-extra');
 
 const pieceEdgingUpInput = document.getElementById('piece-edging-up');
 const pieceEdgingDownInput = document.getElementById('piece-edging-down');
@@ -331,6 +335,7 @@ let blank = null;
 
 let edgingLine = -1;
 let pieceRotated = false;
+let pieceExtra = false;
 let pieceEdging = {left: null, up: null, right: null, down: null};
 
 // 3. Редактор раскроя
@@ -470,15 +475,19 @@ const scrapHtml = (
     {width, height, edge, count}
 ) => `<div class="pad">${width}${x}${height}${v}${valueHtml(edge, 'мм')}</div>${valueHtml(count, 'шт')}`;
 
-const edgingHtml = ({line, thick}) => `<div class="pad">${lineHtml(line)}</div>${valueHtml(thick, 'мм')}`;
+const textHtml = (text) => `<div class="text">${text || ''}</div>`;
+const edgingHtml = (
+    {line, thick, text}
+) => `<div class="pad">${lineHtml(line)}</div>${textHtml(text)}${valueHtml(thick, 'мм')}`;
 
-const pieceHtml = ({width, height, rotated, edging, count}) => {
+const pieceHtml = ({width, height, rotated, edging, count, text, extra}) => {
     const {left, up, right, down} = edging;
 
     const w = `<div class="col"><span>${width}</span>${lineHtml(up)}${lineHtml(down)}</div>`;
     const h = `<div class="col"><span>${height}</span>${lineHtml(left)}${lineHtml(right)}</div>`;
+    const e = extra ? iconHtml('save', 'green') : '';
 
-    return `<div class="pad">${w}${rotated ? o : x}${h}</div>${valueHtml(count, 'шт')}`
+    return `<div class="pad">${w}${rotated ? o : x}${h}</div>${textHtml(text)}${e}${valueHtml(count, 'шт')}`
 }
 
 // 2.2 Заполнение полей задачи
@@ -574,11 +583,14 @@ const updateScrap = () => {
 
 // 2.4 Добавление и обновление кромки
 
-const copyEdgingToForm = ({line, thick}) => {
+const copyEdgingToForm = ({line, thick, text}) => {
     console.log('copyEdgingToForm')
-    edgingThickInput.value = thick;
+
     edgingLine = line;
     edgingLineInput.innerHTML = lineHtml(line);
+
+    edgingThickInput.value = thick;
+    edgingTextInput.value = text || '';
 }
 
 const addEdging = (edging, i) => {
@@ -602,16 +614,27 @@ const updateEdging = () => {
     const thick = +edgingThickInput.value;
 
     blank = !thick
-    items[index] = deleted || blank ? null : {thick, line: edgingLine};
+    items[index] = deleted || blank ? null : {
+        thick,
+        line: edgingLine,
+        text: edgingTextInput.value
+    };
 }
 
 // 2.5 Добавление и обновление детали
 
-const copyPieceToForm = ({width, height, rotated, count, edging}) => {
+const copyPieceToForm = ({width, height, rotated, count, edging, text, extra}) => {
+    console.log('copyPieceToForm');
     pieceWidthInput.value = width;
     pieceHeightInput.value = height;
+
     pieceRotated = rotated;
     pieceRotatedInput.innerText = rotated ? labels.yes : labels.no;
+
+    pieceExtra = extra;
+    pieceExtraInput.innerText = extra ? labels.yes : labels.no;
+    pieceTextInput.value = text || '';
+
     pieceCountInput.value = count;
 
     pieceEdging = edging;
@@ -647,6 +670,8 @@ const updatePiece = () => {
         width, height, count,
         rotated: pieceRotated,
         edging: pieceEdging,
+        text: pieceTextInput.value,
+        extra: pieceExtra
     };
 }
 
@@ -920,6 +945,12 @@ pieceRotatedInput.onclick = (e) => {
     e.preventDefault();
     pieceRotated = !pieceRotated;
     pieceRotatedInput.innerText = pieceRotated ? labels.yes : labels.no;
+}
+
+pieceExtraInput.onclick = (e) => {
+    e.preventDefault();
+    pieceExtra = !pieceExtra;
+    pieceExtraInput.innerText = pieceExtra ? labels.yes : labels.no;
 }
 
 // 2.11 Очистка форм
@@ -1303,7 +1334,7 @@ const clearCutting = () => {
 
 toCuttingButton.onclick = () => {
     clearCutting();
-    changePage(cuttingPage);
+    if (pieces.length) changePage(cuttingPage);
 }
 
 // 3.7 Начало перетаскивания
