@@ -10,14 +10,22 @@
 
 <body>
 <article id="main" class="content">
-    <button id="change-theme">
-        <svg class="hidden">
-            <use href="sprite.svg#sun"></use>
-        </svg>
-        <svg class="hidden">
-            <use href="sprite.svg#moon"></use>
-        </svg>
-    </button>
+    <div id="icons">
+        <button id="change-theme">
+            <svg class="menu hidden">
+                <use href="sprite.svg#sun"></use>
+            </svg>
+            <svg class="menu hidden">
+                <use href="sprite.svg#moon"></use>
+            </svg>
+        </button>
+        <a href="https://www.tbank.ru/cf/3sEawgoGUDe" target="_blank" id="say-thank">
+            <svg class="menu" >
+                <use href="sprite.svg#coins"></use>
+            </svg>
+        </a>
+    </div>
+
     <button id="create-task">Создать раскрой</button>
     <ol id="tasks"></ol>
 </article>

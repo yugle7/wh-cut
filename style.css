@@ -270,10 +270,17 @@ nav {
 }
 
 
-#change-theme {
+#icons {
+    display: flex;
+    flex-direction: row;
+    height: fit-content;
     position: fixed;
     top: 0;
     right: 0;
+}
+
+#say-thank {
+    line-height: 0;
 }
 
 #rotate-piece {
