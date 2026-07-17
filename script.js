@@ -190,7 +190,7 @@ const A4 = {
 }
 
 const A = {
-    width: A4.width - 90, height: A4.height - 40
+    width: A4.width - 80, height: A4.height - 40
 }
 
 // 4. Отладка
@@ -2071,6 +2071,7 @@ const cuttingPdf = ({w, h, drops, drags}) => {
         ${takesPdf(drags)}
     </div>`;
 }
+
 
 const getCuts = () => zones.filter(({drags}) => drags.length);
 

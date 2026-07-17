@@ -746,6 +746,7 @@ th {
 .cutting {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
+    /*background: #3fa883;*/
 
     position: absolute;
     top: 0;
@@ -757,9 +758,9 @@ th {
 
     display: flex;
     flex-direction: row;
+    gap: 1cm;
     justify-content: flex-end;
     align-items: flex-start;
-    gap: 1cm;
 }
 
 .whole {
