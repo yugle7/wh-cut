@@ -317,69 +317,13 @@
             </svg>
         </button>
     </nav>
-
+    <button id="do-cut" class="eye hidden">
+        Улучшить раскрой
+    </button>
 </article>
 
-<div id="print">
-    <div class="task">
-        <div class="signs">
-            <div class="sign"><span>Заказ:</span><span id="title"></span></div>
-            <div class="sign"><span>Дата:</span><span id="start"></span></div>
-            <div class="sign"><span>Дата готовности:</span><span id="finish"></span></div>
-        </div>
-        <div class="signs">
-            <div class="sign"><span>Материал:</span><span id="material"></span></div>
-            <div class="sign"><span>Толщина:</span><span id="thick"></span></div>
-        </div>
-    </div>
-    <div class="logo">
-        <svg class="green">
-            <use href="sprite.svg#cutting"></use>
-        </svg>
-        <span>whCut</span>
-    </div>
+<div id="print"></div>
 
-    <table class="whole">
-        <thead>
-        <tr>
-            <th>Длина</th>
-            <th>Ширина</th>
-            <th>Отступ</th>
-            <th>Кол-во</th>
-            <th>Лист</th>
-        </tr>
-        </thead>
-        <tbody id="task-scraps"></tbody>
-    </table>
-    <table class="whole">
-        <thead>
-        <tr>
-            <th>Линия</th>
-            <th>Толщина</th>
-            <th>Кромка</th>
-        </tr>
-        </thead>
-        <tbody id="task-edgings"></tbody>
-    </table>
-    <table>
-        <thead>
-        <tr>
-            <th>#</th>
-            <th>Длина</th>
-            <th>Ширина</th>
-            <th>Кол-во</th>
-            <th>Пов-от</th>
-            <th>Деталь</th>
-            <th>Доп.об.</th>
-        </tr>
-        </thead>
-        <tbody id="task-pieces"></tbody>
-    </table>
-</div>
-
-<button id="do-cut" class="hidden">
-    Улучшить раскрой
-</button>
 
 <script src="script.js"></script>
 

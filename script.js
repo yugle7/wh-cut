@@ -125,16 +125,6 @@ const rotatePieceButton = document.getElementById("rotate-piece");
 
 // 5. Печать
 
-const titleSpan = document.getElementById('title');
-const startSpan = document.getElementById('start');
-const finishSpan = document.getElementById('finish');
-const materialSpan = document.getElementById('material');
-const thickSpan = document.getElementById('thick');
-
-const taskPiecesTable = document.getElementById('task-pieces');
-const taskEdgingsTable = document.getElementById('task-edgings');
-const taskScrapsTable = document.getElementById('task-scraps');
-
 const printPage = document.getElementById('print');
 
 // Константы
@@ -199,20 +189,9 @@ const A4 = {
     width: 297, height: 210
 }
 
-const D = 10;
-const H = {
-    top: D, left: D, right: D, height: 20
-}
-H.bottom = A4.height - 2 * D - H.height;
-const S = {
-    top: 2 * D + H.height, right: D, width: 70, bottom: D
-}
-S.left = A4.width - S.width - D;
 const A = {
-    top: S.top, left: D - 1, right: D + S.width + S.right + 1, bottom: D,
+    width: A4.width - 90, height: A4.height - 40
 }
-A.width = A4.width - A.left - A.right;
-A.height = A4.height - A.top - A.bottom;
 
 // 4. Отладка
 
@@ -429,7 +408,6 @@ let scraps = [];
 // 4. Печать
 
 let scale;
-let pdfHead;
 
 // 5. Автоматический раскрой
 
@@ -1216,7 +1194,7 @@ const widthHeightHtml = (width, height, rotated, i) => `${width}${rotated ? oHtm
 const getColors = n => [...Array(n)].map((_, i) => `hsl(${i / n * 360}, var(--saturation), var(--lightness))`);
 
 const takeSizesHtml = (width, height, rotated, i) => `<button class="sizes">${widthHeightHtml(width, height, rotated, i)}</button>`;
-const takePieceHtml = (width, height, i) => `<div class="piece" style="width: ${d(width / task.sheet.width)}; aspect-ratio: ${width} / ${height}; background-color: ${colors[i]}" data-i="${i}"></div>`;
+const takePieceHtml = (width, height, i) => `<div class="piece" style="width: ${d(width / task.width)}; aspect-ratio: ${width} / ${height}; background-color: ${colors[i]}" data-i="${i}"></div>`;
 const takeCountHtml = (count) => `${valueHtml(count, 'шт')}`;
 
 const takeHtml = (width, height, rotated, count, i) => `<div class="take">
@@ -1273,7 +1251,7 @@ const createZone = (zone, i) => {
     const q = zone.html = document.createElement('DIV');
     q.classList.add('zone');
     q.dataset.i = i;
-    q.style.width = p(zone.width / task.sheet.width);
+    q.style.width = p(zone.width / task.width);
     q.style.aspectRatio = `${zone.width} / ${zone.height}`;
     area.appendChild(q);
 
@@ -1320,6 +1298,8 @@ const createDrag = (drag) => {
     q.style.aspectRatio = `${drag.width} / ${drag.height}`;
     q.style.position = 'absolute';
     q.style.backgroundColor = colors[drag.take]
+    q.style.pointerEvents = 'auto';
+    q.style.touchAction = 'none';
 
     q.onpointerdown = (e) => onPointerDown(e, dragDrop);
     q.onpointerup = onDragClick;
@@ -1334,7 +1314,13 @@ const dropJson = (width, height, edge) => ({
     left: edge, top: edge, width: width - 2 * edge, height: height - 2 * edge, busy: false
 });
 
-const zoneJson = ({width, height, edge}) => ({width, height, drops: [dropJson(width, height, edge)], drags: []});
+const zoneJson = ({width, height, edge}, i = -1) => ({
+    width,
+    height,
+    i,
+    drops: [dropJson(width, height, edge)],
+    drags: []
+});
 
 const getDrops = () => {
     const dst = scraps.map(({width, height, edge, count}) => Array(count).fill({
@@ -1411,15 +1397,29 @@ const setZones = () => {
 
 // 3.6 Отображение страницы
 
+const setTaskSize = () => {
+    task.width = task.sheet.width;
+    task.height = task.sheet.height;
+    task.scraps.forEach(({width, height}) => {
+        if (width > task.width) task.width = width;
+        if (height > task.height) task.height = height;
+    });
+}
+
+const toScraps = () => task.scraps.filter(Boolean).flatMap(q => Array(q.count).fill(q));
+
 const clearCutting = () => {
     toSelect(null);
+    setTaskSize();
 
     pieces = task.pieces.filter(Boolean);
     colors = getColors(pieces.length);
-    scraps = task.scraps.filter(Boolean).flatMap(q => Array(q.count).fill(q));
+    scraps = toScraps();
 
     setTakes();
     setZones();
+
+    doCutButton.classList.add('hidden');
 }
 
 toCuttingButton.onclick = () => {
@@ -1471,8 +1471,8 @@ const dragTake = (x, y, t) => {
     q.style.position = 'absolute';
     q.style.cursor = 'grabbing';
     q.style.pointerEvents = 'none';
-    q.style.backgroundColor = colors[i];
     q.style.touchAction = 'none';
+    q.style.backgroundColor = colors[i];
 
     cuttingPage.appendChild(q);
 
@@ -1501,6 +1501,7 @@ const dragDrop = (x, y, t) => {
     q.style.top = top + 'px';
     q.style.cursor = 'grabbing';
     q.style.pointerEvents = 'none';
+    q.style.touchAction = 'none';
 
     cuttingPage.appendChild(q);
     startMove(x, y, left, top);
@@ -1575,6 +1576,7 @@ const addDrag = () => {
     q.style.top = p(drag.top / zone.height);
     q.style.width = p(drag.width / zone.width);
     q.style.pointerEvents = 'auto';
+    q.style.touchAction = 'none';
 
     q.onpointerdown = (e) => onPointerDown(e, dragDrop);
     q.onpointerup = onDragClick;
@@ -1678,7 +1680,7 @@ const rotateTake = () => take.rotated && toRotateTake();
 const toRotateTake = () => {
     console.log('toRotateTake');
     [take.width, take.height] = [take.height, take.width];
-    take.html.style.width = d(take.width / task.sheet.width);
+    take.html.style.width = d(take.width / task.width);
     take.html.style.aspectRatio = `${take.width} / ${take.height}`;
 }
 
@@ -1737,6 +1739,8 @@ const incTakeCount = (take) => {
     }
     take.count++;
     take.html.parentElement.firstElementChild.firstChild.innerText = take.count;
+
+    doCutButton.classList.add('hidden');
 }
 
 const decTakeCount = (take) => {
@@ -1842,7 +1846,7 @@ function onDragStart(e) {
 function onDragMove(e) {
     if (start) {
         e.preventDefault();
-        const height = Math.max(start.height + start.y - e.clientY, 50);
+        const height = Math.max(start.height + start.y - e.clientY, 40);
         cuttingPage.style.gridTemplateRows = `1fr 6px ${height}px`;
     }
 }
@@ -1866,28 +1870,83 @@ document.addEventListener('pointercancel', onDragEnd);
 
 // 4.1. Загрузка
 
-const getScale = () => Math.min(A.width / task.sheet.width, A.height / task.sheet.height);
+const cuttingsPdf = () => getCuts().map(toScale).map(
+    q => `<div class="page">${cuttingPdf(q)}</div>`
+).join('\n');
+
+const getScale = () => Math.min(A.width / task.width, A.height / task.height);
+
+const scrapsPdf = () => {
+    const scraps = toCount(getCuts()).map(([i, count]) => {
+        const q = i < 0 ? task.sheet : task.scraps[i];
+        return {...q, count};
+    }).map(scrapPdf).join('\n')
+
+    return scraps && `<table class="whole">
+    <thead><tr>
+        <th>Длина</th>
+        <th>Ширина</th>
+        <th>Отступ</th>
+        <th>Кол-во</th>
+        <th>Лист</th>
+    </tr></thead>
+    <tbody>${scraps}</tbody>
+</table>`;
+}
+
+const edgingsPdf = () => {
+    const edgings = task.edgings.filter(Boolean).map(edgingPdf).join('\n');
+
+    return edgings && `<table class="whole">
+    <thead><tr>
+        <th>Линия</th>
+        <th>Толщина</th>
+        <th>Кромка</th>
+    </tr></thead>
+    <tbody>${edgings}</tbody>
+</table>`;
+}
+
+const piecesPdf = () => {
+    const pieces = task.pieces.filter(Boolean).map((q, i) => (
+        {...q, count: q.count - takes[i].count, i})
+    ).filter(({count}) => count > 0).map(piecePdf).join('\n');
+
+    return pieces && `<table>
+    <thead><tr>
+        <th>#</th>
+        <th>Длина</th>
+        <th>Ширина</th>
+        <th>Кол-во</th>
+        <th>Пов-от</th>
+        <th>Деталь</th>
+        <th>Доп.об.</th>
+    </tr></thead>
+    <tbody>${pieces}</tbody>
+</table>`;
+}
+
+const getLogo = () => `<div class="logo">
+    ${iconHtml('cutting', 'green')}
+    <span>whCut</span>
+</div>`;
+
+const getSigns = () => `<div class="task">
+    <div class="signs">
+        <div class="sign"><span>Заказ:</span><span>${task.title}</span></div>
+        <div class="sign"><span>Дата:</span><span>${toDate(task.start)}</span></div>
+        <div class="sign"><span>Дата готовности:</span><span>${toDate(task.finish)}</span></div>
+        </div>
+    <div class="signs">
+        <div class="sign"><span>Материал:</span>${task.material}<span id="material"></span></div>
+        <div class="sign"><span>Толщина:</span><span>${task.thick} мм</span></div>
+    </div>
+</div>`
 
 downloadCuttingButton.onclick = () => {
     scale = getScale();
-
-    titleSpan.innerText = task.title;
-    startSpan.innerText = toDate(task.start);
-    finishSpan.innerText = toDate(task.finish);
-    materialSpan.innerText = task.material;
-    thickSpan.innerText = task.thick ? task.thick + ' мм' : '';
-
-    taskScrapsTable.innerHTML = task.scraps.filter(Boolean).map(scrapPdf).join('\n');
-    taskEdgingsTable.innerHTML = task.edgings.filter(Boolean).map(edgingPdf).join('\n');
-    taskPiecesTable.innerHTML = pieces.map(piecePdf).join('\n');
-
-    getCuttings().forEach(({w, h, drops, drags}) => {
-        console.log(w, h, drops, drags)
-        const q = document.createElement('DIV');
-        q.classList.add('page');
-        q.innerHTML = cuttingPdf(w, h, drops, drags);
-        printPage.appendChild(q);
-    });
+    printPage.innerHTML = getSigns() + getLogo() + scrapsPdf() + edgingsPdf() + piecesPdf() + cuttingsPdf();
+    console.log(printPage);
     window.print();
 }
 
@@ -1903,7 +1962,7 @@ const whPdf = (width, height, {left, right, up, down}) => {
     return `<td>${w}</td><td>${h}</td>`
 }
 
-const piecePdf = ({width, height, count, rotated, text, extra, edging}, i) => `<tr>
+const piecePdf = ({width, height, count, rotated, text, extra, edging, i}) => `<tr>
     <td>${i + 1}</td>
     ${whPdf(width, height, edging)}
     <td>${count}</td>
@@ -1929,7 +1988,9 @@ const scrapPdf = ({width, height, edge, count, text}) => `<tr>
 // 4.3 Раскрой
 
 const getRectStyle = (left, top, width, height) => `left: ${left}mm;top: ${top}mm;width: ${width}mm;height: ${height}mm;`;
-const getSizeStyle = (width, height) => `width: ${width}mm;height: ${height}mm;`;
+// const getSizeStyle = (width, height) => `max-width: ${width};min-width: ${width}mm;min-height: ${height}mm;position: relative;`;
+const getSizeStyle = (width, height) => `width: ${width}mm;aspect-ratio: ${width} / ${height};position: relative;`;
+// const getSizeStyle = (width, height) => `width: 100%;aspect-ratio: ${width} / ${height};position: relative;`;
 
 const backPdf = (style, zIndex) => `<div class="back" style="${style};z-index: ${zIndex}"></div>`
 
@@ -1977,28 +2038,33 @@ const dropsPdf = (places) => places.map(({l, t, w, h, width, height}) => {
     return dropPdf(s, sizePdf(width, height, w, h)) + backPdf(s, 1);
 }).join('\n');
 
-
 const rectPdf = (style) => `<div class="rect" style="${style}"></div>`;
 
-const takesItemPdf = (i, count) => {
+const takePdf = (i, count) => {
     const {width, height, edging} = pieces[i];
     return `<tr><td>${i + 1}</td>${whPdf(width, height, edging)}<td>${count}</td></tr>`
 }
-const takesListPdf = (drags) => {
-    const counts = drags.reduce((acc, {i}) => {
+
+const toCount = (t) => {
+    const counts = t.reduce((acc, {i}) => {
         acc[i] = (acc[i] || 0) + 1;
         return acc;
     }, {});
-    return Object.entries(counts).map(([i, count]) => takesItemPdf(+i, count)).join('\n');
+    return Object.entries(counts);
 }
-const takesPdf = (drags) => `<table style="top: ${S.top}mm;right: ${S.right}mm; width: ${S.width}mm;">
-    <thead><tr><th>#</th><th>Длина</th><th>Ширина</th><th>Кол-во</th></tr></thead>
-    <tbody>${takesListPdf(drags)}</tbody>
-</table>`;
 
-const cuttingPdf = (w, h, drops, drags) => {
+const takesPdf = (drags) => {
+    const takes = toCount(drags).map(([i, count]) => takePdf(+i, count)).join('\n');
+
+    return `<table style="max-width: 5cm">
+    <thead><tr><th>#</th><th>Длина</th><th>Ширина</th><th>Кол-во</th></tr></thead>
+    <tbody>${takes}</tbody>
+</table>`;
+}
+
+const cuttingPdf = ({w, h, drops, drags}) => {
     return `<div class="cutting">
-        <div style="${getSizeStyle(w, h)}; position: relative;">
+        <div style="${getSizeStyle(w, h)}">
             <div class="base"></div>
             ${tapePdf(w, h)}
             ${dragsPdf(drags)}
@@ -2008,7 +2074,9 @@ const cuttingPdf = (w, h, drops, drags) => {
     </div>`;
 }
 
-const getCuttings = () => zones.map(({width, height, drops, drags}) => ({
+const getCuts = () => zones.filter(({drags}) => drags.length);
+
+const toScale = ({width, height, drops, drags}) => ({
     w: width * scale,
     h: height * scale,
     drops: drops.filter(({html}) => html && html.isConnected).map(({top, left, width, height}) => ({
@@ -2017,7 +2085,7 @@ const getCuttings = () => zones.map(({width, height, drops, drags}) => ({
     drags: drags.filter(({html}) => html && html.isConnected).map(({top, left, width, height, take}) => ({
         width, height, i: take, l: left * scale, t: top * scale, w: width * scale, h: height * scale
     }))
-})).filter(({drags}) => drags.length);
+});
 
 // 5. Автоматический раскрой
 
@@ -2304,8 +2372,10 @@ cutButton.onclick = (e) => {
     const drops = dropsRect();
 
     const rects = toCut(drops, takes);
-    console.log('rects:', rects);
     addRects(rects, drops);
+
+    cuttingPage.style.gridTemplateRows = '1fr 6px auto';
+    doCutButton.classList.remove('hidden');
 }
 
 clearButton.onclick = () => clearCutting();
