@@ -125,7 +125,17 @@ const rotatePieceButton = document.getElementById("rotate-piece");
 
 // 5. Печать
 
-const printPages = document.getElementById('print');
+const titleSpan = document.getElementById('title');
+const startSpan = document.getElementById('start');
+const finishSpan = document.getElementById('finish');
+const materialSpan = document.getElementById('material');
+const thickSpan = document.getElementById('thick');
+
+const taskPiecesTable = document.getElementById('task-pieces');
+const taskEdgingsTable = document.getElementById('task-edgings');
+const taskScrapsTable = document.getElementById('task-scraps');
+
+const printPage = document.getElementById('print');
 
 // Константы
 
@@ -309,6 +319,78 @@ fakeTasks = [{
         width: 730, height: 330, rotated: true, count: 2, edging: {left: 0, right: 0, up: 1, down: null}
     }, {
         width: 280, height: 330, rotated: true, count: 2, edging: {left: null, right: 1, up: null, down: 1}
+        // }, /**/ {
+        //     width: 568, height: 80, rotated: true, count: 1, edging: {left: 0, right: 1, up: null, down: null}
+        // }, {
+        //     width: 384, height: 320, rotated: true, count: 2, edging: {left: null, right: 1, up: 1, down: null}
+        // }, {
+        //     width: 801, height: 320, rotated: true, count: 6, edging: {left: 0, right: null, up: null, down: null}
+        // }, {
+        //     width: 802, height: 80, rotated: true, count: 1, edging: {left: 1, right: 0, up: null, down: 1}
+        // }, {
+        //     width: 600, height: 80, rotated: true, count: 1, edging: {left: null, right: 1, up: 0, down: null}
+        // }, {
+        //     width: 385, height: 330, rotated: true, count: 1, edging: {left: 0, right: 1, up: 1, down: null}
+        // }, {
+        //     width: 1030, height: 330, rotated: true, count: 8, edging: {left: 1, right: 0, up: null, down: null}
+        // }, {
+        //     width: 730, height: 330, rotated: true, count: 2, edging: {left: 0, right: 0, up: 1, down: null}
+        // }, {
+        //     width: 280, height: 330, rotated: true, count: 2, edging: {left: null, right: 1, up: null, down: 1}
+        // }, {
+        //     width: 568, height: 80, rotated: true, count: 1, edging: {left: 0, right: 1, up: null, down: null}
+        // }, {
+        //     width: 384, height: 320, rotated: true, count: 2, edging: {left: null, right: 1, up: 1, down: null}
+        // }, {
+        //     width: 801, height: 320, rotated: true, count: 6, edging: {left: 0, right: null, up: null, down: null}
+        // }, {
+        //     width: 802, height: 80, rotated: true, count: 1, edging: {left: 1, right: 0, up: null, down: 1}
+        // }, {
+        //     width: 600, height: 80, rotated: true, count: 1, edging: {left: null, right: 1, up: 0, down: null}
+        // }, {
+        //     width: 385, height: 330, rotated: true, count: 1, edging: {left: 0, right: 1, up: 1, down: null}
+        // }, {
+        //     width: 1030, height: 330, rotated: true, count: 8, edging: {left: 1, right: 0, up: null, down: null}
+        // }, {
+        //     width: 730, height: 330, rotated: true, count: 2, edging: {left: 0, right: 0, up: 1, down: null}
+        // }, {
+        //     width: 280, height: 330, rotated: true, count: 2, edging: {left: null, right: 1, up: null, down: 1}
+        // },{
+        //     width: 568, height: 80, rotated: true, count: 1, edging: {left: 0, right: 1, up: null, down: null}
+        // }, {
+        //     width: 384, height: 320, rotated: true, count: 2, edging: {left: null, right: 1, up: 1, down: null}
+        // }, {
+        //     width: 801, height: 320, rotated: true, count: 6, edging: {left: 0, right: null, up: null, down: null}
+        // }, {
+        //     width: 802, height: 80, rotated: true, count: 1, edging: {left: 1, right: 0, up: null, down: 1}
+        // }, {
+        //     width: 600, height: 80, rotated: true, count: 1, edging: {left: null, right: 1, up: 0, down: null}
+        // }, {
+        //     width: 385, height: 330, rotated: true, count: 1, edging: {left: 0, right: 1, up: 1, down: null}
+        // }, {
+        //     width: 1030, height: 330, rotated: true, count: 8, edging: {left: 1, right: 0, up: null, down: null}
+        // }, {
+        //     width: 730, height: 330, rotated: true, count: 2, edging: {left: 0, right: 0, up: 1, down: null}
+        // }, {
+        //     width: 280, height: 330, rotated: true, count: 2, edging: {left: null, right: 1, up: null, down: 1}
+        // }, {
+        //     width: 568, height: 80, rotated: true, count: 1, edging: {left: 0, right: 1, up: null, down: null}
+        // }, {
+        //     width: 384, height: 320, rotated: true, count: 2, edging: {left: null, right: 1, up: 1, down: null}
+        // }, {
+        //     width: 801, height: 320, rotated: true, count: 6, edging: {left: 0, right: null, up: null, down: null}
+        // }, {
+        //     width: 802, height: 80, rotated: true, count: 1, edging: {left: 1, right: 0, up: null, down: 1}
+        // }, {
+        //     width: 600, height: 80, rotated: true, count: 1, edging: {left: null, right: 1, up: 0, down: null}
+        // }, {
+        //     width: 385, height: 330, rotated: true, count: 1, edging: {left: 0, right: 1, up: 1, down: null}
+        // }, {
+        //     width: 1030, height: 330, rotated: true, count: 8, edging: {left: 1, right: 0, up: null, down: null}
+        // }, {
+        //     width: 730, height: 330, rotated: true, count: 2, edging: {left: 0, right: 0, up: 1, down: null}
+        // }, {
+        //     width: 280, height: 330, rotated: true, count: 2, edging: {left: null, right: 1, up: null, down: 1}
     }]
 }];
 
@@ -698,20 +780,28 @@ const updateSheet = () => {
 
 // 2.7 Управление задачей
 
-removeTaskButton.onclick = async () => {
-    toRemoveTaskPage.children[2].innerText = task.title;
-    toRemoveTaskPage.classList.remove('hidden');
+const removeTask = async () => {
+    document.getElementById(task.id).remove();
+    tasks = tasks.filter(({id}) => id !== task.id);
+    await deleteTask();
+    task = null;
 }
 
+removeTaskButton.onclick = () => {
+    if (!task) return;
 
-yesRemoveTaskButton.onclick = async () => {
-    toRemoveTaskPage.classList.add('hidden');
-    if (task) {
-        document.getElementById(task.id).remove()
-        tasks = tasks.filter(({id}) => id !== task.id);
-        await deleteTask();
-        task = null;
+    if (task.pieces.some(Boolean) || task.scraps.some(Boolean)) {
+        toRemoveTaskPage.children[2].innerText = task.title;
+        toRemoveTaskPage.classList.remove('hidden');
+    } else {
+        removeTask();
+        changePage(mainPage);
     }
+}
+
+yesRemoveTaskButton.onclick = () => {
+    toRemoveTaskPage.classList.add('hidden');
+    if (task) removeLink();
     changePage(mainPage);
 }
 
@@ -1524,12 +1614,9 @@ const findDropCorner = () => {
     const x = r.left + r.width / 2;
     const y = r.top + r.height / 2;
 
-    console.log('drag:', r, x, y);
     r = drop.html.getBoundingClientRect();
-    console.log('drop:', r);
     drag.toLeft = x - r.left <= r.right - x;
     drag.toTop = y - r.top <= r.bottom - y;
-    console.log(drag)
 }
 
 const dropDrag = (e) => {
@@ -1783,26 +1870,25 @@ const getScale = () => Math.min(A.width / task.sheet.width, A.height / task.shee
 
 downloadCuttingButton.onclick = () => {
     scale = getScale();
-    pdfHead = headPdf(task);
-    printPages.innerHTML = settingPdf() + getCuttings().map(cuttingPdf).join('\n')
+
+    titleSpan.innerText = task.title;
+    startSpan.innerText = toDate(task.start);
+    finishSpan.innerText = toDate(task.finish);
+    materialSpan.innerText = task.material;
+    thickSpan.innerText = task.thick ? task.thick + ' мм' : '';
+
+    taskScrapsTable.innerHTML = task.scraps.filter(Boolean).map(scrapPdf).join('\n');
+    taskEdgingsTable.innerHTML = task.edgings.filter(Boolean).map(edgingPdf).join('\n');
+    taskPiecesTable.innerHTML = pieces.map(piecePdf).join('\n');
+
+    getCuttings().forEach(({w, h, drops, drags}) => {
+        console.log(w, h, drops, drags)
+        const q = document.createElement('DIV');
+        q.classList.add('page');
+        q.innerHTML = cuttingPdf(w, h, drops, drags);
+        printPage.appendChild(q);
+    });
     window.print();
-}
-
-const valuePdf = (key, value) => `<div class="sign"><span>${key}:</span><span>${value}</span></div>`
-
-const headPdf = ({title, start, finish, material, thick}) => {
-    const s = getHeadStyle();
-    return `<div class="task" style="${s}">
-    <div class="signs">
-        ${valuePdf('Заказ', title)}
-        ${valuePdf('Дата', toDate(start))}
-        ${valuePdf('Дата готовности', toDate(finish))}
-    </div>
-    <div class="signs">
-        ${valuePdf('Материал', material)}
-        ${valuePdf('Толщина', thick ? thick + ' мм' : '')}
-    </div>
-</div>`;
 }
 
 // 4.2 Постановка задачи
@@ -1815,46 +1901,39 @@ const whPdf = (width, height, {left, right, up, down}) => {
     const w = `<div class="col"><span>${width}</span>${linePdf(up)}${linePdf(down)}</div>`;
     const h = `<div class="col"><span>${height}</span>${linePdf(left)}${linePdf(right)}</div>`;
     return `<td>${w}</td><td>${h}</td>`
-
 }
-const settingPdf = () => `<div class="page">
-    ${pdfHead}${pdfLogo}
-    <table style="left: ${D}mm;top: ${A.top}mm;">
-        <thead>${pdfPiecesHead}</thead>
-        <tbody>${piecesListPdf()}</tbody>
-    </table>
-</div>`;
 
-const pdfPiecesHead = `<tr>
-    <th>#</th>
-    <th>Длина</th>
-    <th>Ширина</th>
-    <th>Кол-во</th>
-    <th>Пов-от</th>
-    <th>Наименование</th>
-    <th>Доп.об.</th>
-</tr>`;
-
-const piecesItemPdf = ({width, height, count, rotated, name, extra, edging}, i) => `<tr>
+const piecePdf = ({width, height, count, rotated, text, extra, edging}, i) => `<tr>
     <td>${i + 1}</td>
     ${whPdf(width, height, edging)}
     <td>${count}</td>
     ${flagPdf(rotated)}
-    <td>${name || ""}</td>
+    <td class="name">${text || ""}</td>
     ${flagPdf(extra)}
 </tr>`;
 
-const piecesListPdf = () => pieces.map(piecesItemPdf).join('\n');
+const edgingPdf = ({line, thick, text}) => `<tr>
+    <td>${linePdf(line)}</td>
+    <td>${thick}</td>
+    <td class="name">${text || ""}</td>
+</tr>`;
+
+const scrapPdf = ({width, height, edge, count, text}) => `<tr>
+    <td>${width}</td>
+    <td>${height}</td>
+    <td>${edge}</td>
+    <td>${count}</td>
+    <td class="name">${text || ""}</td>
+</tr>`;
 
 // 4.3 Раскрой
 
 const getRectStyle = (left, top, width, height) => `left: ${left}mm;top: ${top}mm;width: ${width}mm;height: ${height}mm;`;
-const getAreaStyle = (width, height) => `right: ${A.right}mm;top: ${A.top}mm;width: ${width}mm;height: ${height}mm;`;
-const getHeadStyle = () => `left: ${H.left}mm;top: ${H.top}mm;right: ${H.right}mm;height: ${H.height}mm;`;
+const getSizeStyle = (width, height) => `width: ${width}mm;height: ${height}mm;`;
 
 const backPdf = (style, zIndex) => `<div class="back" style="${style};z-index: ${zIndex}"></div>`
 
-const zonePdf = (style, tape, drags, drops) => `<div class="base" style="${style}">${tape}${drags}${drops}</div>`
+const zonePdf = (style, tape, drags, drops) => `<div class="base">${tape}${drags}${drops}</div>`
 const dragPdf = (style, size, index) => `<div class="rect" style="${style}">${size}${index}</div>`
 const dropPdf = (style, size) => `<div class="rect gray" style="${style}">${size}</div>`
 
@@ -1893,6 +1972,7 @@ const dragsPdf = (drags) => drags.map(({l, t, w, h, width, height, i}) => {
 }).join('\n');
 
 const dropsPdf = (places) => places.map(({l, t, w, h, width, height}) => {
+    if (Math.min(w, h) <= 2 * task.kerf * scale) return '';
     const s = getRectStyle(l, t, w, h);
     return dropPdf(s, sizePdf(width, height, w, h)) + backPdf(s, 1);
 }).join('\n');
@@ -1900,7 +1980,6 @@ const dropsPdf = (places) => places.map(({l, t, w, h, width, height}) => {
 
 const rectPdf = (style) => `<div class="rect" style="${style}"></div>`;
 
-const takesHeadPdf = `<tr><th>#</th><th>Длина</th><th>Ширина</th><th>Кол-во</th></tr>`;
 const takesItemPdf = (i, count) => {
     const {width, height, edging} = pieces[i];
     return `<tr><td>${i + 1}</td>${whPdf(width, height, edging)}<td>${count}</td></tr>`
@@ -1912,21 +1991,21 @@ const takesListPdf = (drags) => {
     }, {});
     return Object.entries(counts).map(([i, count]) => takesItemPdf(+i, count)).join('\n');
 }
-const pdfLogo = `<div class="logo">${iconHtml('cutting', 'green')} <span>whCut</span></div>`;
-
 const takesPdf = (drags) => `<table style="top: ${S.top}mm;right: ${S.right}mm; width: ${S.width}mm;">
-    <thead>${takesHeadPdf}</thead>
+    <thead><tr><th>#</th><th>Длина</th><th>Ширина</th><th>Кол-во</th></tr></thead>
     <tbody>${takesListPdf(drags)}</tbody>
 </table>`;
 
-const cuttingPdf = ({w, h, drags, drops}) => {
-    const style = getAreaStyle(w, h);
-    return `<div class="page">
-    ${pdfHead}${pdfLogo}
-    ${zonePdf(style, tapePdf(w, h), dragsPdf(drags), dropsPdf(drops))}
-    ${rectPdf(style)}
-    ${takesPdf(drags)}
-</div>`;
+const cuttingPdf = (w, h, drops, drags) => {
+    return `<div class="cutting">
+        <div style="${getSizeStyle(w, h)}; position: relative;">
+            <div class="base"></div>
+            ${tapePdf(w, h)}
+            ${dragsPdf(drags)}
+            ${dropsPdf(drops)}
+        </div>
+        ${takesPdf(drags)}
+    </div>`;
 }
 
 const getCuttings = () => zones.map(({width, height, drops, drags}) => ({

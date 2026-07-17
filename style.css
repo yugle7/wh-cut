@@ -98,10 +98,27 @@ button {
     background: transparent;
 }
 
+#hello {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#hello a {
+    padding: 25px;
+    color: gray;
+}
+
+#hello a:hover {
+    color: var(--green);
+    transform: scale(1.1);
+}
+
 .content {
+    width: 100%;
     max-width: 700px;
     margin: 0 auto;
-    padding: 60px 10px;
+    padding: 10px;
 }
 
 button:focus {
@@ -213,6 +230,16 @@ button div {
     opacity: 0.6;
 }
 
+.name {
+    text-align: left;
+    width: 100%;
+}
+
+a {
+    outline: none;
+    text-decoration: none;
+}
+
 a, li {
     cursor: pointer;
 }
@@ -270,19 +297,11 @@ nav {
 }
 
 
-#icons {
-    display: flex;
-    flex-direction: row;
-    height: fit-content;
-    position: fixed;
-    top: 0;
-    right: 0;
-}
-
 #say-thank {
     line-height: 0;
 }
 
+#change-theme,
 #rotate-piece {
     margin-left: auto;
 }
@@ -624,9 +643,6 @@ input[type="text"] {
 }
 
 #print {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     margin: 0;
@@ -634,15 +650,6 @@ input[type="text"] {
     background: white;
     display: none;
 }
-
-.page {
-    page-break-after: always;
-    position: relative;
-    width: 297mm;
-    height: 210mm;
-    box-sizing: border-box;
-}
-
 
 .rect {
     box-shadow: inset 0 0 0 1px gray;
@@ -696,9 +703,11 @@ input[type="text"] {
 }
 
 table {
-    position: absolute;
-    height: fit-content;
     border-collapse: collapse;
+}
+
+th {
+    white-space: nowrap;
 }
 
 th, td {
@@ -719,34 +728,66 @@ th {
     -webkit-print-color-adjust: exact;
 }
 
-.logo {
+.page {
+    page-break-before: always;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.cutting {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+
     position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: left bottom;
+    transform: translateY(-100%) rotate(90deg);
+    width: 100vh;
+    height: calc(100vw - 3cm);
+
     display: flex;
     flex-direction: row;
-    align-items: center;
-    right: 10mm;
-    top: 2mm;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 1cm;
+}
+
+.whole {
+    page-break-inside: avoid;
 }
 
 @media print {
     @page {
-        margin: 0;
-        size: A4 landscape;
+        margin: 1cm 0 1cm 1cm;
+        size: A4;
     }
 
-    html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
+    @page {
+        @top-center {
+            content: none;
+        }
+        @bottom-center {
+            content: none;
+        }
+    }
+
+    body {
+        margin-right: 3cm;
     }
 
     body * {
         visibility: hidden;
     }
 
+    body > *:not(#print) {
+        display: none;
+    }
+
     .base {
-        display: block;
-        position: absolute;
+        width: 100%;
+        height: 100%;
         background-color: lightgray;
         print-color-adjust: exact;
         -webkit-print-color-adjust: exact;
@@ -754,7 +795,9 @@ th {
     }
 
     #print {
-        display: block;
+        display: flex;
+        flex-direction: column;
+        gap: 1cm;
     }
 
     #print, #print * {
@@ -774,9 +817,14 @@ th {
 }
 
 .task {
-    position: absolute;
     display: flex;
     flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: 0;
+    transform-origin: right top;
+    transform: rotate(90deg) translateX(100%) translateY(1cm);
+    width: 100vh;
 }
 
 .signs {
@@ -793,3 +841,13 @@ th {
     gap: 15px;
 }
 
+.logo {
+    display: flex;
+    flex-direction: row;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    transform-origin: right bottom;
+    transform: rotate(90deg) translateY(1.5cm);
+}

@@ -9,25 +9,26 @@
 </head>
 
 <body>
-<article id="main" class="content">
-    <div id="icons">
+<article id="main">
+    <div id="hello">
+        <a href="https://www.tbank.ru/cf/3sEawgoGUDe" target="_blank" id="say-thank">
+            Сказать спасибо
+        </a>
         <button id="change-theme">
-            <svg class="menu hidden">
+            <svg class="menu hidden yellow">
                 <use href="sprite.svg#sun"></use>
             </svg>
-            <svg class="menu hidden">
+            <svg class="menu hidden blue">
                 <use href="sprite.svg#moon"></use>
             </svg>
         </button>
-        <a href="https://www.tbank.ru/cf/3sEawgoGUDe" target="_blank" id="say-thank">
-            <svg class="menu" >
-                <use href="sprite.svg#coins"></use>
-            </svg>
-        </a>
     </div>
 
-    <button id="create-task">Создать раскрой</button>
-    <ol id="tasks"></ol>
+    <div class="content">
+        <button id="create-task">Создать раскрой</button>
+        <ol id="tasks"></ol>
+    </div>
+
 </article>
 
 <article id="setting" class="hidden">
@@ -36,8 +37,8 @@
         <div>хотите удалить задание?</div>
         <h1></h1>
         <div>
-            <button id="yes-remove-task">Да</button>
-            <button id="no-remove-task">Нет</button>
+            <button id="yes-remove-task" class="eye">Да</button>
+            <button id="no-remove-task" class="eye">Нет</button>
         </div>
     </div>
     <div id="output">
@@ -319,7 +320,62 @@
 
 </article>
 
-<div id="print"></div>
+<div id="print">
+    <div class="task">
+        <div class="signs">
+            <div class="sign"><span>Заказ:</span><span id="title"></span></div>
+            <div class="sign"><span>Дата:</span><span id="start"></span></div>
+            <div class="sign"><span>Дата готовности:</span><span id="finish"></span></div>
+        </div>
+        <div class="signs">
+            <div class="sign"><span>Материал:</span><span id="material"></span></div>
+            <div class="sign"><span>Толщина:</span><span id="thick"></span></div>
+        </div>
+    </div>
+    <div class="logo">
+        <svg class="green">
+            <use href="sprite.svg#cutting"></use>
+        </svg>
+        <span>whCut</span>
+    </div>
+
+    <table class="whole">
+        <thead>
+        <tr>
+            <th>Длина</th>
+            <th>Ширина</th>
+            <th>Отступ</th>
+            <th>Кол-во</th>
+            <th>Лист</th>
+        </tr>
+        </thead>
+        <tbody id="task-scraps"></tbody>
+    </table>
+    <table class="whole">
+        <thead>
+        <tr>
+            <th>Линия</th>
+            <th>Толщина</th>
+            <th>Кромка</th>
+        </tr>
+        </thead>
+        <tbody id="task-edgings"></tbody>
+    </table>
+    <table>
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Длина</th>
+            <th>Ширина</th>
+            <th>Кол-во</th>
+            <th>Пов-от</th>
+            <th>Деталь</th>
+            <th>Доп.об.</th>
+        </tr>
+        </thead>
+        <tbody id="task-pieces"></tbody>
+    </table>
+</div>
 
 <button id="do-cut" class="hidden">
     Улучшить раскрой
