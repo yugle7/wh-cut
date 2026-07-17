@@ -737,6 +737,7 @@ th {
 }
 
 .page {
+    break-before: page;
     page-break-before: always;
     position: relative;
     width: 100%;
@@ -744,10 +745,6 @@ th {
 }
 
 .cutting {
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
-    /*background: #3fa883;*/
-
     position: absolute;
     top: 0;
     left: 0;
