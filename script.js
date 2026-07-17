@@ -1988,9 +1988,7 @@ const scrapPdf = ({width, height, edge, count, text}) => `<tr>
 // 4.3 Раскрой
 
 const getRectStyle = (left, top, width, height) => `left: ${left}mm;top: ${top}mm;width: ${width}mm;height: ${height}mm;`;
-// const getSizeStyle = (width, height) => `max-width: ${width};min-width: ${width}mm;min-height: ${height}mm;position: relative;`;
-const getSizeStyle = (width, height) => `width: ${width}mm;aspect-ratio: ${width} / ${height};position: relative;`;
-// const getSizeStyle = (width, height) => `width: 100%;aspect-ratio: ${width} / ${height};position: relative;`;
+const getSizeStyle = (width, height) => `width: ${width}mm;height: ${height}mm;position: relative;`;
 
 const backPdf = (style, zIndex) => `<div class="back" style="${style};z-index: ${zIndex}"></div>`
 
