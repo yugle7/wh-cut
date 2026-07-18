@@ -190,7 +190,7 @@ const A4 = {
 }
 
 const A = {
-    width: A4.width - 80, height: A4.height - 40
+    width: A4.width - 90, height: A4.height - 40
 }
 
 // 4. Отладка
@@ -1871,7 +1871,7 @@ document.addEventListener('pointercancel', onDragEnd);
 // 4.1. Загрузка
 
 const cuttingsPdf = () => getCuts().map(toScale).map(
-    q => `<div class="page">${cuttingPdf(q)}</div>`
+    ({w, h, drops, drags}) => `<div class="page">${cuttingPdf(w, h, drops, drags)}${takesPdf(drags)}</div>`
 ).join('\n');
 
 const getScale = () => Math.min(A.width / task.width, A.height / task.height);
@@ -1988,7 +1988,7 @@ const scrapPdf = ({width, height, edge, count, text}) => `<tr>
 // 4.3 Раскрой
 
 const getRectStyle = (left, top, width, height) => `left: ${left}mm;top: ${top}mm;width: ${width}mm;height: ${height}mm;`;
-const getSizeStyle = (width, height) => `width: ${width}mm;height: ${height}mm;position: relative;`;
+const getSizeStyle = (width, height) => `width: ${width}mm;height: ${height}mm;`;
 
 const backPdf = (style, zIndex) => `<div class="back" style="${style};z-index: ${zIndex}"></div>`
 
@@ -2054,24 +2054,18 @@ const toCount = (t) => {
 const takesPdf = (drags) => {
     const takes = toCount(drags).map(([i, count]) => takePdf(+i, count)).join('\n');
 
-    return `<table style="max-width: 5cm">
+    return `<table class="takes">
     <thead><tr><th>#</th><th>Длина</th><th>Ширина</th><th>Кол-во</th></tr></thead>
     <tbody>${takes}</tbody>
 </table>`;
 }
 
-const cuttingPdf = ({w, h, drops, drags}) => {
-    return `<div class="cutting">
-        <div style="${getSizeStyle(w, h)}">
-            <div class="base"></div>
-            ${tapePdf(w, h)}
-            ${dragsPdf(drags)}
-            ${dropsPdf(drops)}
-        </div>
-        ${takesPdf(drags)}
-    </div>`;
-}
-
+const cuttingPdf = (w, h, drops, drags) => `<div class="cutting" style="${getSizeStyle(w, h)}">
+     <div class="base"></div>
+     ${tapePdf(w, h)}
+     ${dragsPdf(drags)}
+     ${dropsPdf(drops)}
+</div>`;
 
 const getCuts = () => zones.filter(({drags}) => drags.length);
 

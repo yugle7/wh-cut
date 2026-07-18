@@ -740,24 +740,28 @@ th {
     break-before: page;
     page-break-before: always;
     position: relative;
-    width: 100%;
-    height: 100%;
+    width: 190mm;
+    height: 277mm;
+    margin: 0 auto;
+    /*width: 100%;*/
+    /*height: 100%;*/
 }
 
 .cutting {
     position: absolute;
-    top: 0;
-    left: 0;
-    transform-origin: left bottom;
-    transform: translateY(-100%) rotate(90deg);
-    width: 100vh;
-    height: calc(100vw - 3cm);
+    bottom: 0;
+    right: 0;
+    transform-origin: right bottom;
+    transform: rotate(90deg) translateY(100%) translateY(2cm) translateX(-7cm);
+}
 
-    display: flex;
-    flex-direction: row;
-    gap: 1cm;
-    justify-content: flex-end;
-    align-items: flex-start;
+.takes {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    transform-origin: right bottom;
+    transform: rotate(90deg) translateY(100%) translateY(2cm);
+    width: 5cm;
 }
 
 .whole {

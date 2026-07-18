@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Тест</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            border: none;
+        }
+
+        .page {
+            page-break-before: always;
+            position: relative;
+
+            background: #3fa883;
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
+
+            width: 100%;
+            height: 100%;
+        }
+
+        .drop {
+            position: absolute;
+            top: 0;
+            right: 0;
+            transform-origin: right top;
+            transform: rotate(90deg) translateX(67mm) translateX(100%) translateY(2cm);
+            width: 150mm;
+            height: 50mm;
+        }
+
+        .take {
+            position: absolute;
+            top: 0;
+            right: 0;
+            transform-origin: right top;
+            transform: rotate(90deg) translateX(227mm) translateX(100%) translateY(2cm);
+            width: 50mm;
+            height: 100mm;
+        }
+
+        .sign {
+            position: fixed;
+            top: 0;
+            right: 0;
+            transform-origin: right top;
+            transform: rotate(90deg) translateX(100%) translateY(2cm);
+            width: 277mm;
+            height: 1px;
+            border-bottom: 1px solid gray;
+        }
+
+        @media print {
+            @page {
+                margin: 1cm 0 1cm 1cm;
+                size: A4;
+            }
+
+            @page {
+                @top-center {
+                    content: none;
+                }
+                @bottom-center {
+                    content: none;
+                }
+            }
+
+            body {
+                margin-right: 3cm;
+            }
+
+            body * {
+                visibility: hidden;
+            }
+
+            body > *:not(#print) {
+                display: none;
+            }
+
+            #print {
+                display: flex;
+                flex-direction: column;
+                gap: 1cm;
+            }
+
+            #print, #print * {
+                color: black;
+                visibility: visible;
+            }
+        }
+
+        .drop {
+            box-shadow: inset 0 0 0 1px red;
+        }
+
+        .take {
+            box-shadow: inset 0 0 0 1px green;
+        }
+    </style>
+</head>
+<body>
+
+<div id="print">
+    <div class="sign"></div>
+
+    <div class="page">
+        <div class="cutting">
+            <div class="drop"></div>
+            <div class="take"></div>
+        </div>
+    </div>
+    <div class="page">
+        <div class="drop"></div>
+        <div class="take"></div>
+    </div>
+</div>
+
+</body>
+</html>
