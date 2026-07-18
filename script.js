@@ -1400,7 +1400,7 @@ const setZones = () => {
 const setTaskSize = () => {
     task.width = task.sheet.width;
     task.height = task.sheet.height;
-    task.scraps.forEach(({width, height}) => {
+    task.scraps.filter(Boolean).forEach(({width, height}) => {
         if (width > task.width) task.width = width;
         if (height > task.height) task.height = height;
     });
@@ -2454,15 +2454,68 @@ const addCut = (drop, rects, create = true) => {
     const H = top + height - T
     const W = left + width - L
 
-    const cutDirection = W > H;
+    const l = {
+        drop: [left, top, width - W, height],
+        rects: rects.filter(q => q[0] < L)
+    };
+    const r = {
+        drop: [L, top, W, height],
+        rects: rects.filter(q => q[0] >= L)
+    };
+    const t = {
+        drop: [left, top, width, height - H],
+        rects: rects.filter(q => q[1] < T)
+    };
+    const b = {
+        drop: [left, T, width, H],
+        rects: rects.filter(q => q[1] >= T)
+    };
 
-    if (cutDirection) {
-        addCut([left, top, width - W, height], rects.filter(([l, t, w, h]) => l < L), false)
-        addCut([L, top, W, height], rects.filter(([l, t, w, h]) => l >= L))
+    if (W && H) {
+        [l, r, t, b].forEach(q => q.score = getScore(q.drop, q.rects));
+
+        const cutDirection = Math.max(l.score, r.score) >= Math.max(t.score, b.score);
+
+        if (cutDirection) {
+            addCut(l.drop, l.rects, false);
+            addCut(r.drop, r.rects);
+        } else {
+            addCut(t.drop, t.rects, false);
+            addCut(b.drop, b.rects);
+        }
+    } else if (W) {
+        addCut(l.drop, l.rects, false);
+        addCut(r.drop, r.rects);
     } else if (H) {
-        addCut([left, top, width, height - H], rects.filter(([l, t, w, h]) => t < T), false)
-        addCut([left, T, width, H], rects.filter(([l, t, w, h]) => t >= T))
+        addCut(t.drop, t.rects, false);
+        addCut(b.drop, b.rects);
     }
+}
+
+const getScore = ([L, T, W, H], rects) => {
+    if (rects.length === 0) return W * H;
+
+    const R = L + W;
+    const B = T + H;
+
+    let l = R;
+    let t = B;
+
+    let r = L;
+    let b = T;
+
+    for (const [left, top, width, height] of rects) {
+        const right = left + width;
+        const bottom = top + height;
+        if (left < l) l = left;
+        if (top < t) t = top;
+        if (right > r) r = right;
+        if (bottom > b) b = bottom;
+    }
+    return Math.max(
+        W * Math.max(t - T, B - b),
+        H * Math.max(l - L, R - r)
+    )
 }
 
 const addRects = (rects, drops) => {
@@ -2476,6 +2529,7 @@ const addRects = (rects, drops) => {
                 q.busy = null;
 
                 drop = q;
+                console.log([0, 0, ...drops[i]], rects[i])
                 addCut([0, 0, ...drops[i]], rects[i]);
             }
             i++;
