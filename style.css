@@ -685,20 +685,22 @@ input[type="text"] {
 }
 
 .width {
-    transform: translateX(-50%);
     position: absolute;
     top: 0;
     left: 50%;
+    transform: translateX(-50%);
     z-index: 9999;
+    line-height: 1;
 }
 
 .height {
-    transform: rotate(-90deg) translateX(-50%);
-    transform-origin: left top;
     position: absolute;
     left: 0;
     top: 50%;
+    transform: rotate(-90deg) translateX(-50%);
+    transform-origin: left top;
     z-index: 9999;
+    line-height: 1;
 }
 
 .index {
