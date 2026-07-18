@@ -1936,7 +1936,8 @@ const getSigns = () => `<div class="task">
         <div class="sign"><span>Заказ:</span><span>${task.title}</span></div>
         <div class="sign"><span>Дата:</span><span>${toDate(task.start)}</span></div>
         <div class="sign"><span>Срок:</span><span>${toDate(task.finish)}</span></div>
-        </div>
+        <div style="width: 2cm"></div>
+    </div>
     <div class="signs">
         <div class="sign"><span>Материал:</span>${task.material}<span id="material"></span></div>
         <div class="sign"><span>Толщина:</span><span>${task.thick} мм</span></div>
