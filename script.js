@@ -420,6 +420,7 @@ const changePage = (p) => {
     page = p;
     page.classList.remove("hidden");
 
+    window.scrollTo(0, 1);
     return true;
 }
 
@@ -2597,8 +2598,6 @@ const blurAutoSave = async (update) => {
 // Начальная загрузка
 
 (function () {
-    window.addEventListener("load", () => window.scrollTo(0, 1));
-
     loadTheme();
     loadTasks();
 
