@@ -1030,7 +1030,7 @@ const clearEdgingForm = () => {
 
 const clearPieceForm = () => {
     pieceRotated = false;
-    pieceRotatedInput.innerText = labels.no;
+    pieceRotatedInput.innerText = pieceExtraInput.innerText = labels.no;
 
     pieceEdging = {left: null, up: null, right: null, down: null};
     pieceEdgingUpInput.innerHTML = pieceEdgingDownInput.innerHTML = pieceEdgingLeftInput.innerHTML = pieceEdgingRightInput.innerHTML = lineHtml(null);
