@@ -515,10 +515,7 @@ changeThemeButton.onclick = () => {
 
 // 2. Настройки задачи раскроя
 
-toSettingButton.onclick = () => {
-    document.exitFullscreen();
-    changePage(settingPage);
-}
+toSettingButton.onclick = () => changePage(settingPage);
 
 // 2.1 Отображение данных
 
@@ -1426,7 +1423,6 @@ const clearCutting = () => {
 }
 
 toCuttingButton.onclick = () => {
-    document.documentElement.requestFullscreen();
     clearCutting();
     if (pieces.length) changePage(cuttingPage);
 }
