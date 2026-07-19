@@ -2597,8 +2597,11 @@ const blurAutoSave = async (update) => {
 // Начальная загрузка
 
 (function () {
+    window.addEventListener("load", () => window.scrollTo(0, 1));
+
     loadTheme();
     loadTasks();
+
     tasks.forEach(addTask);
 })();
 
