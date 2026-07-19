@@ -420,7 +420,6 @@ const changePage = (p) => {
     page = p;
     page.classList.remove("hidden");
 
-    window.scrollTo(0, 1);
     return true;
 }
 
@@ -516,7 +515,10 @@ changeThemeButton.onclick = () => {
 
 // 2. Настройки задачи раскроя
 
-toSettingButton.onclick = () => changePage(settingPage);
+toSettingButton.onclick = () => {
+    document.exitFullscreen();
+    changePage(settingPage);
+}
 
 // 2.1 Отображение данных
 
@@ -1424,6 +1426,7 @@ const clearCutting = () => {
 }
 
 toCuttingButton.onclick = () => {
+    document.documentElement.requestFullscreen();
     clearCutting();
     if (pieces.length) changePage(cuttingPage);
 }

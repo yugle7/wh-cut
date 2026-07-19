@@ -4,7 +4,9 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="mobile-web-app-capable" content="yes">
+
     <title>Раскрой</title>
+    <link rel="manifest" href="/wh-cut/manifest.json">
     <link rel="stylesheet" href="style.css"/>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 </head>
@@ -325,6 +327,20 @@
 
 <div id="print"></div>
 
+
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/wh-cut/sw.js', {
+            scope: '/wh-cut/'
+        })
+            .then(function (registration) {
+                console.log('Service Worker registered:', registration);
+            })
+            .catch(function (error) {
+                console.log('Service Worker registration error:', error);
+            });
+    }
+</script>
 
 <script src="script.js"></script>
 
