@@ -1,6 +1,6 @@
 {
   "name": "Раскрой",
-  "short_name": "WhCut",
+  "short_name": "whCut",
   "description": "Приложения для раскроя",
   "scope": "/wh-cut/",
   "start_url": "/wh-cut/",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "icons": [
       {
-      "src": "/wh-cut/icon.svg",
+      "src": "/wh-cut/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
