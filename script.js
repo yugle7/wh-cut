@@ -1717,9 +1717,9 @@ rotatePieceButton.onclick = () => {
 const setCutDirectionButton = () => {
     const q = cutDirectionButton.firstElementChild;
     if (selected && selected === drag ? drag.cutDirection : cutDirection) {
-        q.classList.add('rotated');
-    } else {
         q.classList.remove('rotated');
+    } else {
+        q.classList.add('rotated');
     }
 }
 
