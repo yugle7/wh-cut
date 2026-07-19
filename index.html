@@ -6,7 +6,8 @@
     <meta name="mobile-web-app-capable" content="yes">
 
     <title>Раскрой</title>
-    <link rel="manifest" href="/wh-cut/manifest.json">
+    <link rel="canonical" href="https://yugle7.github.io/wh-cut/"/>
+    <link rel="manifest" href="/wh-cut/manifest.webmanifest">
     <link rel="stylesheet" href="style.css"/>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 </head>
@@ -327,18 +328,12 @@
 
 <div id="print"></div>
 
-
 <script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/wh-cut/sw.js', {
-            scope: '/wh-cut/'
-        })
-            .then(function (registration) {
-                console.log('Service Worker registered:', registration);
-            })
-            .catch(function (error) {
-                console.log('Service Worker registration error:', error);
-            });
+    if (navigator.serviceWorker) {
+        navigator.serviceWorker.register(
+            '/wh-cut/sw.js',
+            {scope: '/wh-cut/'}
+        )
     }
 </script>
 
