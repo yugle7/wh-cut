@@ -459,11 +459,12 @@ div {
     padding: 13px;
 }
 
-#setting .icon {
+.logo svg {
     width: 2.5rem;
     min-width: 2.5rem;
     height: 2.5rem;
     padding: 0.5rem;
+    stroke: transparent;
 }
 
 #cutting .icon {

@@ -1935,8 +1935,8 @@ const piecesPdf = () => {
 }
 
 const getLogo = () => `<div class="logo">
+    <svg>${spriteHtml('logo')}</svg>
     <span>whCut</span>
-    <svg style="stroke: transparent">${spriteHtml('logo')}</svg>
 </div>`;
 
 const getSigns = () => `<div class="task">
