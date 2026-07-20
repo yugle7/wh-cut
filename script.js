@@ -817,12 +817,16 @@ const toRemoveButton = () => {
     console.log('toRemoveButton');
     removeButton.classList.remove('hidden');
     recoverButton.classList.add('hidden');
+    updateButton.firstElementChild.classList.add('green');
+    updateButton.firstElementChild.classList.remove('red');
     deleted = false;
 }
 
 const toRecoverButton = () => {
     removeButton.classList.add('hidden');
     recoverButton.classList.remove('hidden');
+    updateButton.firstElementChild.classList.add('red');
+    updateButton.firstElementChild.classList.remove('green');
     deleted = true;
 }
 
@@ -1931,8 +1935,8 @@ const piecesPdf = () => {
 }
 
 const getLogo = () => `<div class="logo">
-    ${iconHtml('cutting', 'green')}
     <span>whCut</span>
+    <svg style="stroke: transparent">${spriteHtml('logo')}</svg>
 </div>`;
 
 const getSigns = () => `<div class="task">

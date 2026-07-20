@@ -614,8 +614,6 @@ select {
     box-shadow: inset 0 0 0 1px gray;
     position: absolute;
     transition: all 0.2s ease;
-    touch-action: none;
-    will-change: transform;
 }
 
 /* Деталь */
