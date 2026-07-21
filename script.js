@@ -3,9 +3,12 @@ const ALGO_URL = "https://d5d313gii5f4ak4h4arg.wnq2w1o5.apigw.yandexcloud.net";
 
 // Элементы
 
+const htmlElement = document.documentElement;
+
 // 1. Главная страница
 
 const mainPage = document.getElementById("main");
+const themeColorMeta = document.querySelector('meta[name="theme-color"]');
 
 const createTaskButton = document.getElementById("create-task");
 const tasksList = document.getElementById("tasks");
@@ -481,14 +484,15 @@ const loadTasks = async () => {
 
 let dark;
 
+const setTheme = () => {
+    htmlElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    themeColorMeta.content = getComputedStyle(htmlElement).getPropertyValue('--bg-primary').trim()
+}
+
 const loadTheme = () => {
     const q = localStorage.getItem('dark');
-    if (!q) {
-        dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    } else {
-        dark = q === 'true';
-    }
-    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    dark = q ? q === 'true' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setTheme();
     if (dark) {
         moon.classList.remove('hidden');
     } else {
@@ -504,7 +508,7 @@ const saveTheme = () => {
         moon.classList.add('hidden');
         sun.classList.remove('hidden');
     }
-    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    setTheme();
     localStorage.setItem('dark', dark);
 }
 
@@ -1185,7 +1189,7 @@ let takes = [];
 const observer = new ResizeObserver(() => {
     if (page === cuttingPage) {
         const width = dropArea.firstElementChild.getBoundingClientRect().width - 20;
-        document.documentElement.style.setProperty('--drop-width', width.toString());
+        htmlElement.style.setProperty('--drop-width', width.toString());
     }
 });
 
