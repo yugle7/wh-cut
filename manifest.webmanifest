@@ -4,8 +4,6 @@
   "description": "Приложения для раскроя",
   "scope": "/wh-cut/",
   "start_url": "/wh-cut/",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
   "display": "standalone",
   "icons": [
       {
