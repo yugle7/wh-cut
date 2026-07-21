@@ -198,183 +198,17 @@ const A = {
 
 // 4. Отладка
 
-// const fakeTasks = [
-//     {
-//         id: 0,
-//         title: 'Раскрой меня',
-//         start: '2026-06-01',
-//         finish: '2026-07-20',
-//         material: 'Владимирский ржаной',
-//         thick: 12,
-//         kerf: 4,
-//         sheet: {
-//             width: 2800, height: 2070, edge: 10
-//         },
-//         scraps: [{width: 1800, height: 1000, edge: 0, count: 1}],
-//         edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.2}],
-//         pieces: [{
-//             width: 334,
-//             height: 284,
-//             rotated: true,
-//             count: 2,
-//             edging: {left: 0, right: 1, up: null, down: null}
-//         }, {
-//             width: 572,
-//             height: 84,
-//             rotated: false,
-//             count: 1,
-//             edging: {left: null, right: 1, up: 1, down: null}
-//         }, {
-//             width: 604,
-//             height: 84,
-//             rotated: true,
-//             count: 1,
-//             edging: {left: 0, right: null, up: null, down: null}
-//         }, {
-//             width: 388,
-//             height: 324,
-//             rotated: false,
-//             count: 2,
-//             edging: {left: 1, right: 0, up: null, down: 1}
-//         }, {
-//             width: 389,
-//             height: 334,
-//             rotated: false,
-//             count: 1,
-//             edging: {left: null, right: 1, up: 0, down: null}
-//         }, {
-//             width: 806,
-//             height: 84,
-//             rotated: true,
-//             count: 1,
-//             edging: {left: 0, right: 1, up: 1, down: null}
-//         }, {
-//             width: 734,
-//             height: 334,
-//             rotated: true,
-//             count: 2,
-//             edging: {left: 1, right: 0, up: null, down: null}
-//         }, {
-//             width: 805,
-//             height: 324,
-//             rotated: false,
-//             count: 6,
-//             edging: {left: 0, right: 0, up: 1, down: null}
-//         }, {
-//             width: 1034,
-//             height: 334,
-//             rotated: true,
-//             count: 8,
-//             edging: {left: null, right: 1, up: null, down: 1}
-//         }]
-//     }
-// ];
-
-fakeTasks = [{
-    id: 0,
-    title: 'Раскрой меня',
-    start: '2026-06-01',
-    finish: '2026-07-20',
-    material: 'Владимирский ржаной',
-    thick: 12,
-    kerf: 4,
-    sheet: {
-        width: 2800, height: 2070, edge: 10
-    },
-    scraps: [{width: 1000, height: 2070, edge: 10, count: 1}],
-    edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.2}],
-    pieces: [{
-        width: 568, height: 80, rotated: true, count: 1, edging: {left: 0, right: 1, up: null, down: null}
-    }, {
-        width: 384, height: 320, rotated: true, count: 2, edging: {left: null, right: 1, up: 1, down: null}
-    }, {
-        width: 801, height: 320, rotated: true, count: 6, edging: {left: 0, right: null, up: null, down: null}
-    }, {
-        width: 802, height: 80, rotated: true, count: 1, edging: {left: 1, right: 0, up: null, down: 1}
-    }, {
-        width: 600, height: 80, rotated: true, count: 1, edging: {left: null, right: 1, up: 0, down: null}
-    }, {
-        width: 385, height: 330, rotated: true, count: 1, edging: {left: 0, right: 1, up: 1, down: null}
-    }, {
-        width: 1030, height: 330, rotated: true, count: 8, edging: {left: 1, right: 0, up: null, down: null}
-    }, {
-        width: 730, height: 330, rotated: true, count: 2, edging: {left: 0, right: 0, up: 1, down: null}
-    }, {
-        width: 280, height: 330, rotated: true, count: 2, edging: {left: null, right: 1, up: null, down: 1}
-        // }, /**/ {
-        //     width: 568, height: 80, rotated: true, count: 1, edging: {left: 0, right: 1, up: null, down: null}
-        // }, {
-        //     width: 384, height: 320, rotated: true, count: 2, edging: {left: null, right: 1, up: 1, down: null}
-        // }, {
-        //     width: 801, height: 320, rotated: true, count: 6, edging: {left: 0, right: null, up: null, down: null}
-        // }, {
-        //     width: 802, height: 80, rotated: true, count: 1, edging: {left: 1, right: 0, up: null, down: 1}
-        // }, {
-        //     width: 600, height: 80, rotated: true, count: 1, edging: {left: null, right: 1, up: 0, down: null}
-        // }, {
-        //     width: 385, height: 330, rotated: true, count: 1, edging: {left: 0, right: 1, up: 1, down: null}
-        // }, {
-        //     width: 1030, height: 330, rotated: true, count: 8, edging: {left: 1, right: 0, up: null, down: null}
-        // }, {
-        //     width: 730, height: 330, rotated: true, count: 2, edging: {left: 0, right: 0, up: 1, down: null}
-        // }, {
-        //     width: 280, height: 330, rotated: true, count: 2, edging: {left: null, right: 1, up: null, down: 1}
-        // }, {
-        //     width: 568, height: 80, rotated: true, count: 1, edging: {left: 0, right: 1, up: null, down: null}
-        // }, {
-        //     width: 384, height: 320, rotated: true, count: 2, edging: {left: null, right: 1, up: 1, down: null}
-        // }, {
-        //     width: 801, height: 320, rotated: true, count: 6, edging: {left: 0, right: null, up: null, down: null}
-        // }, {
-        //     width: 802, height: 80, rotated: true, count: 1, edging: {left: 1, right: 0, up: null, down: 1}
-        // }, {
-        //     width: 600, height: 80, rotated: true, count: 1, edging: {left: null, right: 1, up: 0, down: null}
-        // }, {
-        //     width: 385, height: 330, rotated: true, count: 1, edging: {left: 0, right: 1, up: 1, down: null}
-        // }, {
-        //     width: 1030, height: 330, rotated: true, count: 8, edging: {left: 1, right: 0, up: null, down: null}
-        // }, {
-        //     width: 730, height: 330, rotated: true, count: 2, edging: {left: 0, right: 0, up: 1, down: null}
-        // }, {
-        //     width: 280, height: 330, rotated: true, count: 2, edging: {left: null, right: 1, up: null, down: 1}
-        // },{
-        //     width: 568, height: 80, rotated: true, count: 1, edging: {left: 0, right: 1, up: null, down: null}
-        // }, {
-        //     width: 384, height: 320, rotated: true, count: 2, edging: {left: null, right: 1, up: 1, down: null}
-        // }, {
-        //     width: 801, height: 320, rotated: true, count: 6, edging: {left: 0, right: null, up: null, down: null}
-        // }, {
-        //     width: 802, height: 80, rotated: true, count: 1, edging: {left: 1, right: 0, up: null, down: 1}
-        // }, {
-        //     width: 600, height: 80, rotated: true, count: 1, edging: {left: null, right: 1, up: 0, down: null}
-        // }, {
-        //     width: 385, height: 330, rotated: true, count: 1, edging: {left: 0, right: 1, up: 1, down: null}
-        // }, {
-        //     width: 1030, height: 330, rotated: true, count: 8, edging: {left: 1, right: 0, up: null, down: null}
-        // }, {
-        //     width: 730, height: 330, rotated: true, count: 2, edging: {left: 0, right: 0, up: 1, down: null}
-        // }, {
-        //     width: 280, height: 330, rotated: true, count: 2, edging: {left: null, right: 1, up: null, down: 1}
-        // }, {
-        //     width: 568, height: 80, rotated: true, count: 1, edging: {left: 0, right: 1, up: null, down: null}
-        // }, {
-        //     width: 384, height: 320, rotated: true, count: 2, edging: {left: null, right: 1, up: 1, down: null}
-        // }, {
-        //     width: 801, height: 320, rotated: true, count: 6, edging: {left: 0, right: null, up: null, down: null}
-        // }, {
-        //     width: 802, height: 80, rotated: true, count: 1, edging: {left: 1, right: 0, up: null, down: 1}
-        // }, {
-        //     width: 600, height: 80, rotated: true, count: 1, edging: {left: null, right: 1, up: 0, down: null}
-        // }, {
-        //     width: 385, height: 330, rotated: true, count: 1, edging: {left: 0, right: 1, up: 1, down: null}
-        // }, {
-        //     width: 1030, height: 330, rotated: true, count: 8, edging: {left: 1, right: 0, up: null, down: null}
-        // }, {
-        //     width: 730, height: 330, rotated: true, count: 2, edging: {left: 0, right: 0, up: 1, down: null}
-        // }, {
-        //     width: 280, height: 330, rotated: true, count: 2, edging: {left: null, right: 1, up: null, down: 1}
-    }]
-}];
+async function loadFake() {
+  try {
+    const response = await fetch('fake.json'); // путь к файлу
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+    tasks = await response.json();
+  } catch (error) {
+    console.error("Can't load JSON:", error);
+  }
+}
 
 // Состояние
 
@@ -470,7 +304,7 @@ const loadTasks = async () => {
     } else {
         // const t = localStorage.getItem('tasks');
         // tasks = t ? JSON.parse(t) : [];
-        tasks = fakeTasks;
+        tasks = testTasks;
 
         tasks.forEach(q => {
             q.scraps = q.scraps.filter(Boolean);
