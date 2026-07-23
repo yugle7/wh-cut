@@ -2173,9 +2173,10 @@ const toCut = (drops, takes, n = 7) => {
 
         src.sort((a, b) => b.busy - a.busy || b.free - a.free);
 
-        if (!src[0].takes.length) return src[0].rects;
+        if (!src[0].takes.length) break;
         if (src.length > n) src.length = n;
     }
+    return src[0].rects;
 }
 
 // 5.2 Раскрой на сервере
@@ -2197,7 +2198,7 @@ doCutButton.onclick = (e) => {
 
         })
         .then(rects => {
-            addRects(rects, drops);
+            rects && addRects(rects, drops);
             console.log('rects:', rects);
         })
         .catch(error => {
@@ -2212,10 +2213,10 @@ cutButton.onclick = (e) => {
     const drops = dropsRect();
 
     const rects = toCut(drops, takes);
-    addRects(rects, drops);
+    rects && addRects(rects, drops);
 
     cuttingPage.style.gridTemplateRows = '1fr 6px auto';
-    doCutButton.classList.remove('hidden');
+    // doCutButton.classList.remove('hidden');
 }
 
 clearButton.onclick = () => clearCutting();

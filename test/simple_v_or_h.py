@@ -2,9 +2,22 @@ from collections import defaultdict
 from time import time
 
 
-def horizontal_cut(width, height, counts, packs):
-    S = defaultdict(list)
+def optimal_cut(width, height, takes):
+    return 0, []
 
+
+def suboptimal_cut(width, height, takes):
+    return 0, []
+
+
+def get_packs(packs, size):
+    return [q for q in packs if q[0] <= size][:10]
+
+
+def horizontal_cut(width, height, counts, packs):
+    packs = get_packs(packs, height)
+
+    S = defaultdict(list)
     for k, (h, w, a, i, c) in enumerate(packs):
         if h != height:
             break
@@ -35,6 +48,7 @@ def horizontal_cut(width, height, counts, packs):
 
 
 def vertical_cut(width, height, counts, packs):
+    packs = get_packs(packs, width)
     S = defaultdict(list)
 
     for k, (w, h, a, i, c) in enumerate(packs):
@@ -65,18 +79,11 @@ def vertical_cut(width, height, counts, packs):
     return area, counts
 
 
-def optimal(width, height, takes):
-    return 0, []
-
-
-def suboptimal(width, height, takes):
-    return 0, []
-
-
 def get_states(src, n=3):
     if len(src) == 1:
         return src
     src.sort(reverse=True)
+
     dst = []
     C = set()
     for q in src:
@@ -123,7 +130,7 @@ def get_vertical_packs(width, height, takes):
             for n, W in enumerate(range(w, min(height, c * w) + 1, w), 1):
                 dst.append((W, h, W * h, i, n))
     dst.sort(reverse=True)
-    return dst[:10]
+    return dst
 
 
 def get_horizontal_packs(width, height, takes):
@@ -136,7 +143,7 @@ def get_horizontal_packs(width, height, takes):
             for n, H in enumerate(range(h, min(width, c * h) + 1, h), 1):
                 dst.append((H, w, w * H, i, n))
     dst.sort(reverse=True)
-    return dst[:10]
+    return dst
 
 
 def get_takes(width, height, counts, takes):
@@ -184,12 +191,12 @@ def horizontal_cut_sheet(width, height, takes, states):
                 s.append((area, counts, i, k))
                 continue
 
-            a, c = suboptimal(width, h, t)
+            a, c = suboptimal_cut(width, h, t)
             s.append((area + a, c, i, k))
 
+            packs = get_vertical_packs(width, h, t)
             for dh in get_heights(width, h, t):
-                p = get_vertical_packs(width, dh, t)
-                a, c = horizontal_cut(width, dh, counts[:], p)
+                a, c = horizontal_cut(width, dh, counts[:], packs)
                 S[i + dh].append((area + a, c, i, k))
 
     s = get_states(s)
@@ -223,12 +230,12 @@ def vertical_cut_sheet(width, height, takes, states):
                 s.append((area, counts, i, k))
                 continue
 
-            a, c = suboptimal(w, height, t)
+            a, c = suboptimal_cut(w, height, t)
             s.append((area + a, c, i, k))
 
+            packs = get_horizontal_packs(w, height, t)
             for dw in get_widths(w, height, t):
-                p = get_horizontal_packs(dw, height, t)
-                a, c = vertical_cut(dw, height, counts[:], p)
+                a, c = vertical_cut(dw, height, counts[:], packs)
                 S[i + dw].append((area + a, c, i, k))
 
     s = get_states(s)
@@ -248,19 +255,18 @@ def cut_sheet(width, height, takes, states):
 
 
 if __name__ == '__main__':
-    o = time()
-    # pieces = [
-    #     (568, 80, True, 1),
-    #     (384, 320, True, 2),
-    #     (801, 320, True, 6),
-    #     (802, 80, True, 1),
-    #     (600, 80, True, 1),
-    #     (385, 330, True, 1),
-    #     (1030, 330, True, 8),
-    #     (730, 330, True, 2),
-    #     (280, 330, True, 2)
-    # ]
-    pieces = [
+    one = [
+        (568, 80, True, 1),
+        (384, 320, True, 2),
+        (801, 320, True, 6),
+        (802, 80, True, 1),
+        (600, 80, True, 1),
+        (385, 330, True, 1),
+        (1030, 330, True, 8),
+        (730, 330, True, 2),
+        (280, 330, True, 2)
+    ]
+    three = [
         (1070, 334, True, 1),
         (1054, 330, True, 13),
         (568, 330, True, 9),
@@ -280,8 +286,10 @@ if __name__ == '__main__':
         (1340, 560, True, 1),
         (568, 180, True, 1)
     ]
-    pieces = [(q[0] + 4, q[1] + 4, q[2], q[3]) for q in pieces]
+
+    pieces = [(q[0] + 4, q[1] + 4, q[2], q[3]) for q in three]
     print(sum(q[0] * q[1] * q[3] for q in pieces))
+    o = time()
 
     ans = cut([(2800, 2070), (2800, 2070), (2800, 2070)], pieces)
 
@@ -289,3 +297,7 @@ if __name__ == '__main__':
     print(ans)
 
 
+# 16474106
+# 16474106=5067340
+# 11406766=5667310
+# 5739456=5739456
