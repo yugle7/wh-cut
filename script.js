@@ -138,15 +138,15 @@ const edgingLines = ['line', 'dash', 'wave'];
 
 const defaultTask = {
     kerf: 4,
-    title: "Раскрой",
+    title: "",
     sheet: {width: 2800, height: 2070, edge: null},
     scraps: [],
-    edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.2}],
+    edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.4}],
     pieces: [],
 };
 
 const labels = {
-    task: 'Задача',
+    task: 'Раскрой',
     sheet: 'Лист',
     scrap: 'Обрезок',
     edging: 'Кромка',
@@ -288,7 +288,7 @@ const toTask = async (e) => {
 
 const addTask = ({id, title}) => {
     const q = document.createElement('li')
-    q.innerText = title;
+    q.innerText = title || labels.task;
     q.id = id;
     q.onclick = toTask;
     tasksList.appendChild(q);
@@ -357,7 +357,7 @@ toSettingButton.onclick = () => changePage(settingPage);
 
 // 2.1 Отображение данных
 
-const titleHtml = () => `<h1 class="out pad">${task.title}</h1>`
+const titleHtml = () => `<h1 class="out pad">${task.title || labels.task}</h1>`
 
 const dateHtml = () => task.start || task.finish ? `<div class="out"><span  class="pad">${toDate(task.start)}</span><span class="pad fade">${toDate(task.finish)}</span></div>` : '';
 
@@ -407,12 +407,12 @@ const setTask = () => {
 }
 
 const copyTaskToForm = () => {
-    taskTitleInput.value = task.title;
+    taskTitleInput.value = task.title || '';
 
     taskStartInput.value = task.start || '';
     taskFinishInput.value = task.finish || '';
     taskMaterialInput.value = task.material || '';
-    taskThickInput.value = task.thick || '0';
+    taskThickInput.value = task.thick || '';
 }
 
 const copySheetToForm = () => {
@@ -577,7 +577,7 @@ const updatePiece = () => {
 
 const updateTask = () => {
     console.log('updateTask')
-    task.title = taskTitleInput.value || labels.task;
+    task.title = taskTitleInput.value;
     task.material = taskMaterialInput.value;
     task.thick = +taskThickInput.value;
     task.start = taskStartInput.value;
@@ -607,7 +607,7 @@ removeTaskButton.onclick = () => {
     if (!task) return;
 
     if (task.pieces.some(Boolean) || task.scraps.some(Boolean)) {
-        toRemoveTaskPage.children[2].innerText = task.title;
+        toRemoveTaskPage.children[2].innerText = task.title || 'Раскрой';
         toRemoveTaskPage.classList.remove('hidden');
     } else {
         removeTask();
@@ -677,7 +677,7 @@ const changeForm = (f) => {
 }
 
 toUpdateTaskLink.onclick = (e) => {
-    taskTitleInput.value = task.title;
+    taskTitleInput.value = task.title || '';
 
     taskStartInput.value = task.start;
     taskFinishInput.value = task.finish;
@@ -1779,7 +1779,7 @@ const getLogo = () => `<div class="logo">
 
 const getSigns = () => `<div class="task">
     <div class="signs">
-        <div class="sign"><span>Заказ:</span><span>${task.title}</span></div>
+        <div class="sign"><span>Заказ:</span><span>${task.title || labels.task}</span></div>
         <div class="sign"><span>Дата:</span><span>${toDate(task.start)}</span></div>
         <div class="sign"><span>Срок:</span><span>${toDate(task.finish)}</span></div>
         <div style="width: 2cm"></div>
