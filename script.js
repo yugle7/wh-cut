@@ -1914,7 +1914,7 @@ const cuttingPdf = (w, h, drops, drags) => `<div class="cutting" style="${getSiz
      ${dropsPdf(drops)}
 </div>`;
 
-const getCuts = () => zones.filter(({drags}) => drags.length);
+const getCuts = () => zones.filter(({drags}) => drags.some(q => q.html));
 
 const toScale = ({width, height, drops, drags}) => ({
     w: width * scale,
@@ -1964,7 +1964,7 @@ const getVerticalPacks = (takes, counts) => {
         rotated && add(height, width);
         add(width, height);
     });
-    return dst.sort((a, b) => b.height - a.height || b.width - a.width);
+    return dst.sort((a, b) => b.height - a.height || b.width - a.width).slice(0, 16);
 }
 
 const getStates = (packs, counts, fit) => {

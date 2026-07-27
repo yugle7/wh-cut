@@ -799,7 +799,8 @@ th {
 
 @media print {
     @page {
-        margin: 1cm 0 1cm 1cm;
+        margin: 0;
+        padding: 1cm 0 1cm 1cm;
         size: A4;
     }
 
