@@ -199,15 +199,15 @@ const A = {
 // 4. Отладка
 
 async function loadFake() {
-  try {
-    const response = await fetch('fake.json'); // путь к файлу
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
+    try {
+        const response = await fetch('fake.json'); // путь к файлу
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        tasks = await response.json();
+    } catch (error) {
+        console.error("Can't load JSON:", error);
     }
-    tasks = await response.json();
-  } catch (error) {
-    console.error("Can't load JSON:", error);
-  }
 }
 
 // Состояние
@@ -245,6 +245,7 @@ let scraps = [];
 // 4. Печать
 
 let scale;
+let lengths;
 
 // 5. Автоматический раскрой
 
@@ -1459,8 +1460,8 @@ const findDropCorner = () => {
     const y = r.top + r.height / 2;
 
     r = drop.html.getBoundingClientRect();
-    drag.toLeft = x - r.left <= r.right - x;
-    drag.toTop = y - r.top <= r.bottom - y;
+    drag.toLeft = true; // x - r.left <= r.right - x;
+    drag.toTop = true; // y - r.top <= r.bottom - y;
 }
 
 const dropDrag = (e) => {
@@ -1740,13 +1741,27 @@ const scrapsPdf = () => {
 </table>`;
 }
 
+const addLength = ({width, height, count, edging}, i) => {
+    count -= takes[i].count;
+    if (!count) return;
+    const {up, down, left, right} = edging;
+
+    if (up != null) lengths[up] += count * width;
+    if (down != null) lengths[down] += count * width;
+    if (left != null) lengths[left] += count * height;
+    if (right != null) lengths[right] += count * height;
+}
+
 const edgingsPdf = () => {
-    const edgings = task.edgings.filter(Boolean).map(edgingPdf).join('\n');
+    lengths = Array(1 + edgingLines.length).fill(0);
+    task.pieces.filter(Boolean).map(addLength);
+    const edgings = task.edgings.filter(q => q && lengths[q.line]).map(edgingPdf).join('\n');
 
     return edgings && `<table class="whole">
     <thead><tr>
         <th>Линия</th>
         <th>Толщина</th>
+        <th>Длина</th>
         <th>Кромка</th>
     </tr></thead>
     <tbody>${edgings}</tbody>
@@ -1754,9 +1769,7 @@ const edgingsPdf = () => {
 }
 
 const piecesPdf = () => {
-    const pieces = task.pieces.filter(Boolean).map((q, i) => (
-        {...q, count: q.count - takes[i].count, i})
-    ).filter(({count}) => count > 0).map(piecePdf).join('\n');
+    const pieces = task.pieces.filter(Boolean).map(piecePdf).join('\n');
 
     return pieces && `<table>
     <thead><tr>
@@ -1809,18 +1822,21 @@ const whPdf = (width, height, {left, right, up, down}) => {
     return `<td>${w}</td><td>${h}</td>`
 }
 
-const piecePdf = ({width, height, count, rotated, text, extra, edging, i}) => `<tr>
+const countPdf = (count, i) => takes[i].count ? `<td style="white-space: nowrap; color: darkred">${count - takes[i].count} | ${takes[i].count}</td>` : `<td>${count}</td>`;
+
+const piecePdf = ({width, height, count, rotated, text, extra, edging}, i) => `<tr>
     <td>${i + 1}</td>
     ${whPdf(width, height, edging)}
-    <td>${count}</td>
+    ${countPdf(count, i)}
     ${flagPdf(rotated)}
     <td class="name">${text || ""}</td>
     ${flagPdf(extra)}
 </tr>`;
 
-const edgingPdf = ({line, thick, text}) => `<tr>
+const edgingPdf = ({line, thick, text, length}, i) => `<tr>
     <td>${linePdf(line)}</td>
     <td>${thick}</td>
+    <td>${lengths[line] || 0}</td>
     <td class="name">${text || ""}</td>
 </tr>`;
 
