@@ -37,8 +37,9 @@
 }
 
 * {
-    padding: 0;
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
     border: none;
     line-height: 1.5;
     font-size: 18px;
@@ -799,7 +800,8 @@ th {
     @page {
         margin: 0;
         padding: 1cm 0 1cm 1cm;
-        size: A4;
+        size: 210mm 297mm;
+        /*size: A4;*/
     }
 
     @page {
@@ -810,7 +812,6 @@ th {
             content: none;
         }
     }
-
 
 
     body * {
@@ -837,7 +838,7 @@ th {
         align-items: flex-start;
     }
 
-     body {
+    body {
         margin: 0;
         padding: 0;
     }
