@@ -741,6 +741,7 @@ input[type="text"] {
 
 table {
     border-collapse: collapse;
+    width: 170mm;
 }
 
 th {
@@ -751,7 +752,6 @@ th, td {
     border: 1px solid black;
     padding: 1mm 2mm;
     text-align: center;
-    vertical-align: center;
 }
 
 .top {
@@ -811,9 +811,7 @@ th {
         }
     }
 
-    body {
-        margin-right: 3cm;
-    }
+
 
     body * {
         visibility: hidden;
@@ -836,6 +834,12 @@ th {
         display: flex;
         flex-direction: column;
         gap: 1cm;
+        align-items: flex-start;
+    }
+
+     body {
+        margin: 0;
+        padding: 0;
     }
 
     #print, #print * {
