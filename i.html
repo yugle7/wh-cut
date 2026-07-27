@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Прямоугольник без пробелов</title>
+    <style>
+        :root {
+            --yellow: #c9a84c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f0f2f5;
+            font-family: system-ui, sans-serif;
+        }
+
+        svg {
+            width: fit-content;
+            height: fit-content;
+        }
+
+        #edging {
+            position: relative;
+
+            cursor: pointer;
+            user-select: none;
+        }
+
+
+        #top {
+            top: 0;
+            left: 10px;
+        }
+
+        #bottom {
+            bottom: 2px;
+            left: 10px;
+            transform: rotate(180deg);
+        }
+
+        #left {
+            left: 0;
+            top: -11px;
+            transform-origin: left bottom;
+            transform: rotate(90deg);
+        }
+
+        #right {
+            right: 0;
+            top: -11px;
+            transform-origin: bottom right;
+            rotate: -90deg;
+        }
+
+        svg {
+            position: absolute;
+            pointer-events: none;
+            background: transparent;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke: gray;
+        }
+    </style>
+</head>
+<body>
+<div id="edging">
+    <svg id="top" width="180" height="20" viewBox="0 0 180 20" preserveAspectRatio="none"></svg>
+    <svg id="bottom" width="180" height="20" viewBox="0 0 180 20" preserveAspectRatio="none"></svg>
+    <svg id="left" width="800" height="20" viewBox="0 0 180 20" preserveAspectRatio="none"></svg>
+    <svg id="right" width="180" height="20" viewBox="0 0 180 20" preserveAspectRatio="none"></svg>
+    <!--    <div id="top"></div>-->
+    <!--    <div id="bottom"></div>-->
+    <!--    <div id="left"></div>-->
+    <!--    <div id="right"></div>-->
+</div>
+
+<script>
+    (function () {
+        const container = document.getElementById('edging');
+
+        const top = document.getElementById('top');
+        const bottom = document.getElementById('bottom');
+        const left = document.getElementById('left');
+        const right = document.getElementById('right');
+
+        const edgings = {
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0
+        };
+
+        const setSize = (width, height) => {
+            let w = 9;
+            let h = 9;
+            if (width > height) {
+                h = 10 - Math.min(8, Math.ceil(width / height));
+            } else if (height > width) {
+                w = 10 - Math.min(8, Math.ceil(height / width));
+            }
+            w *= 20;
+            h *= 20;
+            console.log(w, h)
+            container.style.width = w + 20 + 'px'
+            container.style.height = h + 20 + 'px'
+
+            for (let q of [top, bottom]) {
+                q.setAttribute('width', w.toString());
+                q.setAttribute('viewBox', `0 0 ${w} 20`);
+            }
+            for (let q of [left, right]) {
+                q.setAttribute('width', h.toString());
+                q.setAttribute('viewBox', `0 0 ${h} 20`);
+            }
+        }
+
+        function setEdging(i) {
+            const side = document.getElementById(i);
+            console.log(side)
+            switch (edgings[i]) {
+                case 0:
+                    side.innerHTML = `<line x1="0" y1="10" x2="180" y2="10" stroke="gray"/>`
+                    break;
+                case 1:
+                    side.innerHTML = `<line x1="0" y1="10" x2="180" y2="10" stroke="var(--yellow)"/>`
+                    break;
+                case 2:
+                    side.innerHTML = `<line x1="0" y1="10" x2="180" y2="10" stroke-dashoffset="-5" stroke-dasharray="8 12" stroke="var(--yellow)"/>`
+                    break;
+                case 3:
+                    side.innerHTML = `<path d="M 0 10 Q 3 9, 5 9 Q 8 9, 10 10 Q 13 11, 15 11 Q 18 11, 20 10 Q 23 9, 25 9 Q 28 9, 30 10 Q 33 11, 35 11 Q 38 11, 40 10 Q 43 9, 45 9 Q 48 9, 50 10 Q 53 11, 55 11 Q 58 11, 60 10 Q 63 9, 65 9 Q 68 9, 70 10 Q 73 11, 75 11 Q 78 11, 80 10 Q 83 9, 85 9 Q 88 9, 90 10 Q 93 11, 95 11 Q 98 11, 100 10 Q 103 9, 105 9 Q 108 9, 110 10 Q 113 11, 115 11 Q 118 11, 120 10 Q 123 9, 125 9 Q 128 9, 130 10 Q 133 11, 135 11 Q 138 11, 140 10 Q 143 9, 145 9 Q 148 9, 150 10 Q 153 11, 155 11 Q 158 11, 160 10 Q 163 9, 165 9 Q 168 9, 170 10 Q 173 11, 175 11 Q 178 11, 180 10" stroke="var(--yellow)"/>`
+                    break;
+            }
+        }
+
+        const clickEdging = (i) => {
+            edgings[i] = (edgings[i] + 1) % 4;
+            setEdging(i)
+        }
+
+        ['top', 'bottom', 'left', 'right'].forEach(setEdging);
+        setSize(212, 1334);
+
+        container.addEventListener('click', function (e) {
+            const rect = container.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const w = rect.width;
+            const h = rect.height;
+
+            let s = 'bottom';
+            let d = h - y;
+            if (d > y) {
+                d = y;
+                s = 'top';
+            }
+            if (d > x) {
+                d = x;
+                s = 'left';
+            }
+            if (d > w - x) s = 'right';
+            clickEdging(s);
+        });
+    })();
+</script>
+</body>
+</html>

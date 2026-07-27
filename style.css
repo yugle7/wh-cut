@@ -233,6 +233,15 @@ button div {
     align-items: center;
 }
 
+.but {
+    min-height: 40px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .text {
     display: block;
     width: 100%;
@@ -288,6 +297,7 @@ a, li {
 }
 
 .blue {
+    color: var(--blue);
     stroke: var(--blue);
 }
 
@@ -361,6 +371,13 @@ svg {
 .big {
     color: var(--green);
     font-size: 26px;
+}
+
+.small {
+    text-align: left;
+    padding-top: 10px;
+    color: var(--blue);
+    font-size: 14px;
 }
 
 .pad {
