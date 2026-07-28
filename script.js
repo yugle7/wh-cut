@@ -2015,12 +2015,13 @@ const takesPdf = (drags) => {
 </table>`;
 }
 
-const cuttingPdf = (w, h, drops, drags) => `<div class="cutting" style="${getSizeStyle(w, h)}">
-     <div class="base"></div>
-     ${tapePdf(w, h)}
-     ${dragsPdf(drags)}
-     ${dropsPdf(drops)}
-</div>`;
+const cuttingPdf = (w, h, drops, drags) => '';
+// `<div class="cutting" style="${getSizeStyle(w, h)}">
+//      <div class="base"></div>
+//      ${tapePdf(w, h)}
+//      ${dragsPdf(drags)}
+//      ${dropsPdf(drops)}
+// </div>`;
 
 const getCuts = () => zones.filter(({drags}) => drags.some(q => q.html));
 
