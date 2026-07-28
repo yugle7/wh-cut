@@ -69,6 +69,15 @@
         <ol id="edgings"></ol>
 
         <br>
+        <button class="out" id="to-create-roll">
+            <span class="big pad">Рулоны</span>
+            <svg class="yellow">
+                <use href="sprite.svg#plus"></use>
+            </svg>
+        </button>
+        <ol id="rolls"></ol>
+
+        <br>
         <button class="out" id="to-create-piece">
             <span class="big pad">Детали</span>
             <svg class="yellow">
@@ -186,6 +195,23 @@
             <section class="out">
                 <label for="edging-text" class="hidden">Кромка</label>
                 <input type="text" id="edging-text" placeholder="Кромка"/>
+            </section>
+        </form>
+
+        <form id="roll" class="hidden">
+            <section class="out">
+                <label for="roll-edging">Кромка</label>
+                <button id="roll-edging"></button>
+            </section>
+            <section class="out">
+                <label for="roll-inner">Внутренний диаметр</label>
+                <input type="number" inputmode="numeric" step="0.1" id="roll-inner" placeholder="мм"
+                       autocomplete="off"/>
+            </section>
+            <section class="out">
+                <label for="roll-outer">Внешний диаметр</label>
+                <input type="number" inputmode="numeric" step="0.1" id="roll-outer" placeholder="мм"
+                       autocomplete="off"/>
             </section>
         </form>
 

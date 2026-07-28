@@ -76,6 +76,16 @@ const edgingLineInput = document.getElementById('edging-line');
 const edgingTextInput = document.getElementById('edging-text');
 const edgingThickInput = document.getElementById('edging-thick');
 
+// 3.5 Рулоны
+
+const rollForm = document.getElementById("roll");
+const rollsList = document.getElementById("rolls");
+const toCreateRollLink = document.getElementById("to-create-roll");
+
+const rollEdgingInput = document.getElementById('roll-edging');
+const rollInnerInput = document.getElementById('roll-inner');
+const rollOuterInput = document.getElementById('roll-outer');
+
 // 3.5 Детали
 
 const pieceForm = document.getElementById("piece");
@@ -379,6 +389,10 @@ const edgingHtml = (
     {line, thick, text}
 ) => `<div class="pad">${lineHtml(line)}</div>${textHtml(text)}${valueHtml(thick, 'мм')}`;
 
+const rollHtml = (
+    {line, inner, outer}
+) => `<div class="pad">${lineHtml(line)}</div>${valueHtml(`${inner} - ${outer}`, 'мм')}`;
+
 const pieceHtml = ({width, height, rotated, edging, count, text, extra}) => {
     const {left, up, right, down} = edging;
 
@@ -403,6 +417,8 @@ const setTask = () => {
     task.scraps.forEach(addScrap);
     edgingsList.replaceChildren();
     task.edgings.forEach(addEdging);
+    rollsList.replaceChildren();
+    task.rolls.forEach(addRoll);
     piecesList.replaceChildren();
     task.pieces.forEach(addPiece);
 }
@@ -458,6 +474,7 @@ const updateLink = () => {
     let html = null;
     if (form === scrapForm) html = scrapHtml(items[index])
     else if (form === edgingForm) html = edgingHtml(items[index])
+    else if (form === rollForm) html = rollHtml(items[index])
     else if (form === pieceForm) html = pieceHtml(items[index]);
     if (html) links.children[index].firstChild.innerHTML = html;
 }
@@ -466,6 +483,7 @@ const addLink = () => {
     console.log('addLink')
     if (form === scrapForm) addScrap(items[index], index)
     else if (form === edgingForm) addEdging(items[index], index)
+    else if (form === rollForm) addRoll(items[index], index)
     else if (form === pieceForm) addPiece(items[index], index)
     else links = null;
 }
@@ -517,6 +535,47 @@ const updateEdging = () => {
         thick,
         line: edgingLine,
         text: edgingTextInput.value
+    };
+}
+
+// 2.4 Добавление и обновление рулона
+
+const copyRollToForm = ({line, inner, outer}) => {
+    console.log('copyRollToForm')
+
+    edgingLine = line;
+    rollEdgingInput.innerHTML = lineHtml(line);
+
+    rollInnerInput.value = inner;
+    rollOuterInput.value = outer;
+}
+
+const addRoll = (roll, i) => {
+    console.log('addRoll')
+    let q = document.createElement('li');
+    q.innerHTML = `<button class="out">${rollHtml(roll)}</button>`;
+    q.firstChild.onclick = (e) => {
+        e.preventDefault();
+        index = i;
+        items = task.rolls;
+        links = rollsList;
+        changeForm(rollForm)
+        showButtons();
+        copyRollToForm(items[i]);
+        toInputPage();
+    }
+    rollsList.appendChild(q);
+};
+
+const updateRoll = () => {
+    let inner = +rollInnerInput.value;
+    let outer = +rollOuterInput.value;
+    if (inner > outer) [outer, inner] = [inner, outer];
+
+    blank = !inner || !outer
+    items[index] = deleted || blank ? null : {
+        inner, outer,
+        line: edgingLine,
     };
 }
 
@@ -742,6 +801,16 @@ toCreateEdgingLink.onclick = (e) => {
     showButtons();
     toInputPage();
 }
+toCreateRollLink.onclick = (e) => {
+    e.preventDefault();
+    links = rollsList;
+    items = task.rolls;
+    toCreateItem();
+    changeForm(rollForm);
+    clearForm();
+    showButtons();
+    toInputPage();
+}
 toCreatePieceLink.onclick = (e) => {
     e.preventDefault();
     links = piecesList;
@@ -806,9 +875,15 @@ const createTask = async () => {
 
 // 2.10 Изменения настроек
 
+rollEdgingInput.onclick = (e) => {
+    e.preventDefault();
+    edgingLine = getOldEdgingLine();
+    rollEdgingInput.innerHTML = lineHtml(edgingLine);
+}
+
 edgingLineInput.onclick = (e) => {
     e.preventDefault();
-    edgingLine = (edgingLine + 1) % edgingLines.length;
+    edgingLine = getNewEdgingLine();
     edgingLineInput.innerHTML = lineHtml(edgingLine);
 }
 
@@ -866,9 +941,22 @@ pieceExtraInput.onclick = (e) => {
 
 // 2.11 Очистка форм
 
+const getOldEdgingLine = () => {
+    return (edgingLine + 1) % edgingLines.length;
+}
+
+const getNewEdgingLine = () => {
+    return (edgingLine + 1) % edgingLines.length;
+}
+
 const clearEdgingForm = () => {
-    edgingLine = (edgingLine + 1) % edgingLines.length;
+    edgingLine = getNewEdgingLine();
     edgingLineInput.innerHTML = lineHtml(edgingLine);
+}
+
+const clearRollForm = () => {
+    edgingLine = 0;
+    rollEdgingInput.innerHTML = lineHtml(edgingLine);
 }
 
 const clearPieceForm = () => {
@@ -882,6 +970,7 @@ const clearPieceForm = () => {
 const clearForm = () => {
     form.querySelectorAll('input').forEach(q => q.value = '');
     if (form === edgingForm) clearEdgingForm()
+    else if (form === rollForm) clearRollForm()
     else if (form === pieceForm) clearPieceForm();
 }
 
@@ -902,6 +991,7 @@ recoverButton.onclick = (e) => {
 
     if (form === scrapForm) copyScrapToForm(items[index])
     else if (form === edgingForm) copyEdgingToForm(items[index])
+    else if (form === rollForm) copyRollToForm(items[index])
     else if (form === pieceForm) copyPieceToForm(items[index])
     else if (form === taskForm) copyTaskToForm()
     else if (form === sheetForm) copySheetToForm();
@@ -956,6 +1046,7 @@ const toUpdateItem = () => {
     else if (form === sheetForm) updateSheet()
     else if (form === scrapForm) updateScrap()
     else if (form === edgingForm) updateEdging()
+    else if (form === rollForm) updateRoll()
     else if (form === pieceForm) updatePiece();
 
     if (created) {
@@ -979,6 +1070,7 @@ updateButton.onclick = (e) => {
 const copyToForm = () => {
     if (form === scrapForm) copyScrapToForm(items[index])
     else if (form === edgingForm) copyEdgingToForm(items[index])
+    else if (form === rollForm) copyRollToForm(items[index])
     else if (form === pieceForm) copyPieceToForm(items[index]);
     showButtons();
 }
@@ -2452,6 +2544,9 @@ const blurAutoSave = async (update) => {
     await updateTask(update);
 }
 
+// 5. Рулоны
+
+const getRollLength = (inner, outer, thick) => Math.floor(Math.PI * (outer * outer - inner * inner) / thick);
 
 // Начальная загрузка
 
