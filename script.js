@@ -241,7 +241,6 @@ let link = null;
 let index = null;
 let deleted = null;
 let created = null;
-let blank = null;
 
 let edgingLine = null;
 let pieceRotated = false;
@@ -498,8 +497,7 @@ const updateScrap = () => {
     const count = +scrapCountInput.value;
     const edge = +scrapEdgeInput.value;
 
-    blank = !width || !height || !count;
-    items[index] = deleted || blank ? null : {width, height, edge, count};
+    items[index] =  !width || !height || !count ? null : {width, height, edge, count};
 }
 
 // 2.4 Добавление и обновление кромки
@@ -598,9 +596,8 @@ const updateRoll = () => {
     if (inner > outer) [outer, inner] = [inner, outer];
 
     const thick = edgingThicks[edgingLine];
-    blank = !inner || !outer || !thick;
 
-    items[index] = deleted || blank ? null : {
+    items[index] = !inner || !outer || !thick ? null : {
         inner, outer, line: edgingLine, length: getRollLength(inner, outer, thick)
     };
 }
@@ -649,8 +646,7 @@ const updatePiece = () => {
     const height = +pieceHeightInput.value;
     const count = +pieceCountInput.value;
 
-    blank = !width || !height || !count;
-    items[index] = deleted || blank ? null : {
+    items[index] = !width || !height || !count ? null : {
         width, height, count,
         rotated: pieceRotated,
         edging: pieceEdging,
@@ -968,14 +964,9 @@ const getNextLine = (used) => {
 }
 
 const getNextEdgingLine = (line) => {
-    let i = line == null ? 0 : (line + 1) % edgingIcons.length;
-    let n = 0;
-    while (edgingThicks[i] == null) {
-        i++;
-        n++;
-        if (n === edgingIcons.length || i === edgingIcons.length) return null;
-    }
-    return i;
+    let i = line == null ? 0 : line + 1;
+    while (i < edgingIcons.length && edgingThicks[i] == null) i++;
+    return i < edgingIcons.length ? i : null;
 }
 
 // 2.11 Очистка форм
