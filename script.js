@@ -144,7 +144,8 @@ const printPage = document.getElementById('print');
 
 // 1. Редактор
 
-const edgingLines = ['line', 'dash', 'wave'];
+const edgingThicks = [null, null, null];
+const edgingIcons = ['line', 'dash', 'wave'];
 
 const defaultTask = {
     kerf: 4,
@@ -185,7 +186,7 @@ const spriteHtml = (name) => `<use href="sprite.svg#${name}"></use>`;
 const iconHtml = (icon, color = "gray") => `<svg class="icon ${color}">${spriteHtml(icon)}</svg>`;
 const lineHtml = (line) => {
     const color = line === null ? "gray" : "yellow";
-    line = line === null ? "line" : edgingLines[line];
+    line = line === null ? "line" : edgingIcons[line];
     return `<svg class="line ${color}">${spriteHtml(line)}</svg>`;
 }
 
@@ -414,6 +415,8 @@ const setTask = () => {
     task.edgings = task.edgings.filter(Boolean);
     task.pieces = task.pieces.filter(Boolean);
 
+    task.edgings.forEach(({line, thick}) => (edgingThicks[line] = thick));
+
     scrapsList.replaceChildren();
     task.scraps.forEach(addScrap);
     edgingsList.replaceChildren();
@@ -509,10 +512,13 @@ const copyEdgingToForm = ({line, thick, text}) => {
 
     edgingThickInput.value = thick;
     edgingTextInput.value = text || '';
+
+    edgingThicks[line] = null;
 }
 
 const addEdging = (edging, i) => {
     console.log('addEdging')
+
     let q = document.createElement('li');
     q.innerHTML = `<button class="out">${edgingHtml(edging)}</button>`;
     q.firstChild.onclick = (e) => {
@@ -528,31 +534,33 @@ const addEdging = (edging, i) => {
     edgingsList.appendChild(q);
 };
 
-const getEdging = () => task.edgings.find(q => q && q.line === edgingLine);
-
 const updateRolls = () => {
-    const {thick} = getEdging();
-
     task.rolls.forEach((q, i) => {
-        if (q && q.line === edgingLine) {
-            q.thick = thick;
-            q.length = getRollLength(q);
+        if (!q) return;
 
+        const thick = edgingThicks[q.line];
+        if (thick) {
+            q.length = getRollLength(q.inner, q.outer, thick);
             rollsList.children[i].firstChild.innerHTML = rollHtml(q);
+        } else {
+            task.rolls[i] = null;
+            rollsList.children[i].classList.add('hidden');
         }
     });
 }
 
 const updateEdging = () => {
-    const thick = +edgingThickInput.value;
+    console.log('updateEdging')
+    if (edgingLine == null) return;
+    const thick = edgingThickInput.value ? +edgingThickInput.value : null;
 
-    blank = !thick || edgingLine === null;
-    const q = items[index] = deleted || blank ? null : {
+    items[index] = thick == null ? null : {
         thick,
         line: edgingLine,
         text: edgingTextInput.value
     };
-    if (q) updateRolls();
+    edgingThicks[edgingLine] = thick;
+    updateRolls();
 }
 
 // 2.4 Добавление и обновление рулона
@@ -589,14 +597,12 @@ const updateRoll = () => {
     let outer = +rollOuterInput.value;
     if (inner > outer) [outer, inner] = [inner, outer];
 
-    const {thick} = getEdging();
+    const thick = edgingThicks[edgingLine];
+    blank = !inner || !outer || !thick;
 
-    blank = !inner || !outer
-    const q = items[index] = deleted || blank ? null : {
-        inner, outer, thick, length,
-        line: edgingLine,
+    items[index] = deleted || blank ? null : {
+        inner, outer, line: edgingLine, length: getRollLength(inner, outer, thick)
     };
-    if (q) q.length = getRollLength(q);
 }
 
 // 2.5 Добавление и обновление детали
@@ -897,28 +903,14 @@ const createTask = async () => {
 
 rollEdgingInput.onclick = (e) => {
     e.preventDefault();
-    edgingLine = getOldEdgingLine();
+    edgingLine = getNextLine(true);
     rollEdgingInput.innerHTML = lineHtml(edgingLine);
 }
 
 edgingLineInput.onclick = (e) => {
     e.preventDefault();
-    const line = getNewEdgingLine();
-    if (line != null) {
-        edgingLine = line;
-        edgingLineInput.innerHTML = lineHtml(edgingLine);
-    }
-}
-
-const getNextEdgingLine = (line) => {
-    console.log('getNextEdgingLine')
-    const lines = task.edgings.filter(Boolean).map(q => q.line).sort();
-    if (lines.length === 0) return null;
-    if (line === null) return lines[0];
-    if (line >= lines[lines.length - 1]) return null;
-    let i = 0;
-    while (lines[i] <= line) i++;
-    return lines[i];
+    edgingLine = getNextLine(false);
+    edgingLineInput.innerHTML = lineHtml(edgingLine);
 }
 
 pieceEdgingUpInput.onclick = (e) => {
@@ -962,36 +954,39 @@ pieceExtraInput.onclick = (e) => {
     pieceExtraInput.innerText = pieceExtra ? labels.yes : labels.no;
 }
 
+// 2.11 Работа с кромками
+
+const getNextLine = (used) => {
+    let i = (edgingLine + 1) % edgingIcons.length;
+    let n = 0;
+    while (used === (edgingThicks[i] == null)) {
+        i = (i + 1) % edgingIcons.length;
+        n++;
+        if (n === edgingIcons.length) return null;
+    }
+    return i;
+}
+
+const getNextEdgingLine = (line) => {
+    let i = line == null ? 0 : (line + 1) % edgingIcons.length;
+    let n = 0;
+    while (edgingThicks[i] == null) {
+        i++;
+        n++;
+        if (n === edgingIcons.length || i === edgingIcons.length) return null;
+    }
+    return i;
+}
+
 // 2.11 Очистка форм
 
-const getOldEdgingLine = () => {
-    const edgings = task.edgings.filter(Boolean);
-    if (edgings.length === 0) return null;
-
-    let i = edgings.findIndex(({line}) => line === edgingLine);
-    i = (i + 1) % edgings.length;
-    return edgings[i].line;
-}
-
-const getNewEdgingLine = () => {
-    console.log('getNewEdgingLine')
-    const edgings = task.edgings.filter(Boolean);
-    if (edgings.length === edgingLines.length) return null;
-
-    let used = 0;
-    edgings.forEach(({line}) => used |= 1 << line);
-    let line = edgingLine == null ? 0 : (edgingLine + 1) % edgingLines.length;
-    while ((1 << line) & used) line = (line + 1) % edgingLines.length;
-    return line;
-}
-
 const clearEdgingForm = () => {
-    edgingLine = getNewEdgingLine();
+    edgingLine = getNextLine(false);
     edgingLineInput.innerHTML = lineHtml(edgingLine);
 }
 
 const clearRollForm = () => {
-    edgingLine = getOldEdgingLine();
+    edgingLine = getNextLine(true);
     rollEdgingInput.innerHTML = lineHtml(edgingLine);
 }
 
@@ -1881,9 +1876,8 @@ const addLength = ({width, height, count, edging}, i) => {
 }
 
 const edgingsPdf = () => {
-    lengths = Array(1 + edgingLines.length).fill(0);
     task.pieces.filter(Boolean).map(addLength);
-    const edgings = task.edgings.filter(q => q && lengths[q.line]).map(edgingPdf).join('\n');
+    const edgings = task.edgings.filter(q => q && q.length).map(edgingPdf).join('\n');
 
     return edgings && `<table class="whole">
     <thead><tr>
@@ -2594,7 +2588,7 @@ const blurAutoSave = async (update) => {
 // 5. Рулоны
 
 const getRollLength = (
-    {inner, outer, thick}
+    inner, outer, thick
 ) => Math.floor(Math.PI * (outer * outer - inner * inner) / 40 / thick) / 100;
 
 // Начальная загрузка
