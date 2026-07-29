@@ -903,8 +903,11 @@ rollEdgingInput.onclick = (e) => {
 
 edgingLineInput.onclick = (e) => {
     e.preventDefault();
-    edgingLine = getNewEdgingLine();
-    edgingLineInput.innerHTML = lineHtml(edgingLine);
+    const line = getNewEdgingLine();
+    if (line != null) {
+        edgingLine = line;
+        edgingLineInput.innerHTML = lineHtml(edgingLine);
+    }
 }
 
 const getNextEdgingLine = (line) => {
@@ -971,12 +974,13 @@ const getOldEdgingLine = () => {
 }
 
 const getNewEdgingLine = () => {
+    console.log('getNewEdgingLine')
     const edgings = task.edgings.filter(Boolean);
     if (edgings.length === edgingLines.length) return null;
 
     let used = 0;
-    edgings.forEach((line) => used = used & (1 << line));
-    let line = edgingLine === null ? 0 : (edgingLine + 1) % edgingLines.length;
+    edgings.forEach(({line}) => used |= 1 << line);
+    let line = edgingLine == null ? 0 : (edgingLine + 1) % edgingLines.length;
     while ((1 << line) & used) line = (line + 1) % edgingLines.length;
     return line;
 }
