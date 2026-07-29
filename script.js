@@ -146,6 +146,7 @@ const printPage = document.getElementById('print');
 
 const edgingThicks = [null, null, null];
 const edgingIcons = ['line', 'dash', 'wave'];
+const edgingLengths = [0, 0, 0];
 
 const defaultTask = {
     kerf: 4,
@@ -256,7 +257,6 @@ let scraps = [];
 // 4. Печать
 
 let scale;
-let lengths;
 
 // 5. Автоматический раскрой
 
@@ -497,7 +497,7 @@ const updateScrap = () => {
     const count = +scrapCountInput.value;
     const edge = +scrapEdgeInput.value;
 
-    items[index] =  !width || !height || !count ? null : {width, height, edge, count};
+    items[index] = !width || !height || !count ? null : {width, height, edge, count};
 }
 
 // 2.4 Добавление и обновление кромки
@@ -1860,42 +1860,29 @@ const addLength = ({width, height, count, edging}, i) => {
     if (!count) return;
     const {up, down, left, right} = edging;
 
-    if (up != null) lengths[up] += count * width;
-    if (down != null) lengths[down] += count * width;
-    if (left != null) lengths[left] += count * height;
-    if (right != null) lengths[right] += count * height;
+    if (up != null) edgingLengths[up] += count * width;
+    if (down != null) edgingLengths[down] += count * width;
+    if (left != null) edgingLengths[left] += count * height;
+    if (right != null) edgingLengths[right] += count * height;
 }
 
 const edgingsPdf = () => {
-    task.pieces.filter(Boolean).map(addLength);
-    const edgings = task.edgings.filter(q => q && q.length).map(edgingPdf).join('\n');
+    edgingLengths.fill(0);
+    task.pieces.filter(Boolean).forEach(addLength);
+    const edgings = task.edgings.filter(q => q && edgingLengths[q.line]).map(edgingPdf).join('\n');
 
     return edgings && `<table class="whole">
-    <thead><tr>
-        <th>Линия</th>
-        <th>Толщина</th>
-        <th>Длина</th>
-        <th>Кромка</th>
-    </tr></thead>
-    <tbody>${edgings}</tbody>
-</table>`;
+    <thead><tr><th>Линия</th><th>Толщина</th><th>Длина</th><th>Кромка</th></tr></thead>
+    <tbody>${edgings}</tbody></table>`;
 }
 
 const piecesPdf = () => {
     const pieces = task.pieces.filter(Boolean).map(piecePdf).join('\n');
 
     return pieces && `<table>
-    <thead><tr>
-        <th>#</th>
-        <th>Длина</th>
-        <th>Ширина</th>
-        <th>Кол-во</th>
-        <th>Пов-от</th>
-        <th>Деталь</th>
-        <th>Доп.об.</th>
-    </tr></thead>
-    <tbody>${pieces}</tbody>
-</table>`;
+    <thead><tr><th>#</th><th>Длина</th><th>Ширина</th><th>Кол-во</th>
+    <th>Пов-от</th><th>Деталь</th><th>Доп.об.</th></tr></thead>
+    <tbody>${pieces}</tbody></table>`;
 }
 
 const getLogo = () => `<div class="logo">
@@ -1960,7 +1947,7 @@ const piecePdf = ({width, height, count, rotated, text, extra, edging}, i) => `<
 const edgingPdf = ({line, thick, text, length}, i) => `<tr>
     <td>${linePdf(line)}</td>
     <td>${thick}</td>
-    <td>${lengths[line] || 0}</td>
+    <td>${edgingLengths[line] || 0}</td>
     <td class="name">${text || ""}</td>
 </tr>`;
 
