@@ -528,15 +528,31 @@ const addEdging = (edging, i) => {
     edgingsList.appendChild(q);
 };
 
+const getEdging = () => task.edgings.find(q => q && q.line === edgingLine);
+
+const updateRolls = () => {
+    const {thick} = getEdging();
+
+    task.rolls.forEach((q, i) => {
+        if (q && q.line === edgingLine) {
+            q.thick = thick;
+            q.length = getRollLength(q);
+
+            rollsList.children[i].firstChild.innerHTML = rollHtml(q);
+        }
+    });
+}
+
 const updateEdging = () => {
     const thick = +edgingThickInput.value;
 
     blank = !thick || edgingLine === null;
-    items[index] = deleted || blank ? null : {
+    const q = items[index] = deleted || blank ? null : {
         thick,
         line: edgingLine,
         text: edgingTextInput.value
     };
+    if (q) updateRolls();
 }
 
 // 2.4 Добавление и обновление рулона
@@ -573,14 +589,14 @@ const updateRoll = () => {
     let outer = +rollOuterInput.value;
     if (inner > outer) [outer, inner] = [inner, outer];
 
-    const {thick} = task.edgings.find(q => q && q.line === edgingLine);
-    const length = getRollLength(inner, outer, thick);
+    const {thick} = getEdging();
 
     blank = !inner || !outer
-    items[index] = deleted || blank ? null : {
+    const q = items[index] = deleted || blank ? null : {
         inner, outer, thick, length,
         line: edgingLine,
     };
+    if (q) q.length = getRollLength(q);
 }
 
 // 2.5 Добавление и обновление детали
@@ -1926,14 +1942,14 @@ downloadCuttingButton.onclick = () => {
 // 4.2 Постановка задачи
 
 const lines = [
-    '<line x1="2" y1="3" x2="58" y2="3"/>',
-    '<line x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"/>',
-    '<path d="M 2 3 Q 5 2, 7 2 Q 10 2, 12 3 Q 14 4, 17 4 Q 20 4, 22 3 Q 25 2, 27 2 Q 30 2, 32 3 Q 35 4, 37 4 Q 40 4, 42 3 Q 45 2, 47 2 Q 50 2, 52 3 Q 55 4, 57 4 L 58 4"/>'
+    '<line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"/>',
+    '<line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"/>',
+    '<path stroke="var(--yellow-min)" d="M 2 3 Q 5 2, 7 2 Q 10 2, 12 3 Q 14 4, 17 4 Q 20 4, 22 3 Q 25 2, 27 2 Q 30 2, 32 3 Q 35 4, 37 4 Q 40 4, 42 3 Q 45 2, 47 2 Q 50 2, 52 3 Q 55 4, 57 4 L 58 4"/>'
 ];
 
-const linePdf = (line) => line == null ? '' : `<svg class="line" stroke="black" viewBox="0 0 60 5">${lines[line]}</svg>`;
+const linePdf = (line) => line == null ? '' : `<svg class="line" viewBox="0 0 60 5">${lines[line]}</svg>`;
 
-const flagPdf = (flag) => flag ? '<svg viewBox="0 0 24 24"><path stroke="green" d="M2 12L10 20L22 2"/></svg>' : '';
+const flagPdf = (flag) => flag ? '<svg viewBox="0 0 24 24"><path stroke="var(--green-min)" stroke-width="3" d="M2 12L10 20L22 2"/></svg>' : '';
 
 const whPdf = (width, height, {left, right, up, down}) => {
     const w = `<div class="col"><span>${width}</span>${linePdf(up)}${linePdf(down)}</div>`;
@@ -1941,7 +1957,7 @@ const whPdf = (width, height, {left, right, up, down}) => {
     return `<td>${w}</td><td>${h}</td>`
 }
 
-const countPdf = (count, i) => takes[i].count ? `<td style="white-space: nowrap; color: darkred">${count - takes[i].count} | ${takes[i].count}</td>` : `<td>${count}</td>`;
+const countPdf = (count, i) => takes[i].count ? `<td style="white-space: nowrap; color: var(--red-min)">${count - takes[i].count} | ${takes[i].count}</td>` : `<td>${count}</td>`;
 
 const piecePdf = ({width, height, count, rotated, text, extra, edging}, i) => `<tr>
     <td>${i + 1}</td>
@@ -2573,7 +2589,9 @@ const blurAutoSave = async (update) => {
 
 // 5. Рулоны
 
-const getRollLength = (inner, outer, thick) => Math.floor(Math.PI * (outer * outer - inner * inner) / 40 / thick) / 100;
+const getRollLength = (
+    {inner, outer, thick}
+) => Math.floor(Math.PI * (outer * outer - inner * inner) / 40 / thick) / 100;
 
 // Начальная загрузка
 

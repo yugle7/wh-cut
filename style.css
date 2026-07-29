@@ -7,12 +7,15 @@
 
     --green: #4aaf8c;
     --green-max: #3fa07b;
+    --green-min: #007814;
     --blue: #7a82da;
     --blue-max: #6873d9;
     --red: #c97b72;
     --red-max: #dc6d62;
+    --red-min: #960000;
     --yellow: #c9a84c;
     --yellow-max: #e0b84a;
+    --yellow-min: #646400;
 
     --saturation: 40%;
     --lightness: 40%;
