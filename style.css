@@ -140,6 +140,8 @@ button:focus {
     opacity: 0.8;
 }
 
+
+
 label {
     width: 100%;
 }
@@ -211,6 +213,10 @@ button div {
 #input,
 #cutting {
     padding-top: 50px;
+}
+
+#output {
+    min-height: 100%;
 }
 
 #do-cut {
@@ -300,10 +306,6 @@ a, li {
 .blue {
     color: var(--blue);
     stroke: var(--blue);
-}
-
-.line.gray {
-    opacity: 0.5;
 }
 
 /* Навигация */
@@ -894,4 +896,9 @@ th {
     align-items: center;
     transform-origin: right bottom;
     transform: rotate(90deg) translateY(1.5cm);
+}
+
+td svg {
+    padding: 1mm;
+    height: 1.5em;
 }

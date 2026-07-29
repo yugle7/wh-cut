@@ -151,6 +151,7 @@ const defaultTask = {
     title: "",
     sheet: {width: 2800, height: 2070, edge: null},
     scraps: [],
+    rolls: [],
     edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.4}],
     pieces: [],
 };
@@ -241,7 +242,7 @@ let deleted = null;
 let created = null;
 let blank = null;
 
-let edgingLine = -1;
+let edgingLine = null;
 let pieceRotated = false;
 let pieceExtra = false;
 let pieceEdging = {left: null, up: null, right: null, down: null};
@@ -390,8 +391,8 @@ const edgingHtml = (
 ) => `<div class="pad">${lineHtml(line)}</div>${textHtml(text)}${valueHtml(thick, 'мм')}`;
 
 const rollHtml = (
-    {line, inner, outer}
-) => `<div class="pad">${lineHtml(line)}</div>${valueHtml(`${inner} - ${outer}`, 'мм')}`;
+    {line, inner, outer, length, thick}
+) => `<div class="pad">${lineHtml(line)}${v}${valueHtml(`${inner} - ${outer}`, 'мм')}</div>${valueHtml(length, 'м')}`;
 
 const pieceHtml = ({width, height, rotated, edging, count, text, extra}) => {
     const {left, up, right, down} = edging;
@@ -530,7 +531,7 @@ const addEdging = (edging, i) => {
 const updateEdging = () => {
     const thick = +edgingThickInput.value;
 
-    blank = !thick
+    blank = !thick || edgingLine === null;
     items[index] = deleted || blank ? null : {
         thick,
         line: edgingLine,
@@ -572,9 +573,12 @@ const updateRoll = () => {
     let outer = +rollOuterInput.value;
     if (inner > outer) [outer, inner] = [inner, outer];
 
+    const {thick} = task.edgings.find(q => q && q.line === edgingLine);
+    const length = getRollLength(inner, outer, thick);
+
     blank = !inner || !outer
     items[index] = deleted || blank ? null : {
-        inner, outer,
+        inner, outer, thick, length,
         line: edgingLine,
     };
 }
@@ -942,11 +946,23 @@ pieceExtraInput.onclick = (e) => {
 // 2.11 Очистка форм
 
 const getOldEdgingLine = () => {
-    return (edgingLine + 1) % edgingLines.length;
+    const edgings = task.edgings.filter(Boolean);
+    if (edgings.length === 0) return null;
+
+    let i = edgings.findIndex(({line}) => line === edgingLine);
+    i = (i + 1) % edgings.length;
+    return edgings[i].line;
 }
 
 const getNewEdgingLine = () => {
-    return (edgingLine + 1) % edgingLines.length;
+    const edgings = task.edgings.filter(Boolean);
+    if (edgings.length === edgingLines.length) return null;
+
+    let used = 0;
+    edgings.forEach((line) => used = used & (1 << line));
+    let line = edgingLine === null ? 0 : (edgingLine + 1) % edgingLines.length;
+    while ((1 << line) & used) line = (line + 1) % edgingLines.length;
+    return line;
 }
 
 const clearEdgingForm = () => {
@@ -955,7 +971,7 @@ const clearEdgingForm = () => {
 }
 
 const clearRollForm = () => {
-    edgingLine = 0;
+    edgingLine = getOldEdgingLine();
     rollEdgingInput.innerHTML = lineHtml(edgingLine);
 }
 
@@ -1878,7 +1894,12 @@ const piecesPdf = () => {
 }
 
 const getLogo = () => `<div class="logo">
-    <svg>${spriteHtml('logo')}</svg>
+    <svg viewBox="0 0 24 24">
+        <rect x="14" y="14" width="8" height="8" rx="2" ry="2" fill="#4aaf8c"/>
+        <rect x="14" y="2" width="8" height="9" rx="2" ry="2" fill="#7a82da"/>
+        <rect x="2" y="2" width="9" height="7" rx="2" ry="2" fill="#c97b72"/>
+        <rect x="2" y="12" width="9" height="10" rx="2" ry="2" fill="#c9a84c"/>
+    </svg>
     <span>whCut</span>
 </div>`;
 
@@ -1904,9 +1925,15 @@ downloadCuttingButton.onclick = () => {
 
 // 4.2 Постановка задачи
 
-const linePdf = (line, color = 'black') => line !== null ? `<svg class="line ${color}">${spriteHtml(edgingLines[line])}</use></svg>` : '';
+const lines = [
+    '<line x1="2" y1="3" x2="58" y2="3"/>',
+    '<line x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"/>',
+    '<path d="M 2 3 Q 5 2, 7 2 Q 10 2, 12 3 Q 14 4, 17 4 Q 20 4, 22 3 Q 25 2, 27 2 Q 30 2, 32 3 Q 35 4, 37 4 Q 40 4, 42 3 Q 45 2, 47 2 Q 50 2, 52 3 Q 55 4, 57 4 L 58 4"/>'
+];
 
-const flagPdf = (flag) => `<td style="color: green;">${flag ? `&#10003;` : ''}</td>`;
+const linePdf = (line) => line == null ? '' : `<svg class="line" stroke="black" viewBox="0 0 60 5">${lines[line]}</svg>`;
+
+const flagPdf = (flag) => flag ? '<svg viewBox="0 0 24 24"><path stroke="green" d="M2 12L10 20L22 2"/></svg>' : '';
 
 const whPdf = (width, height, {left, right, up, down}) => {
     const w = `<div class="col"><span>${width}</span>${linePdf(up)}${linePdf(down)}</div>`;
@@ -1920,9 +1947,9 @@ const piecePdf = ({width, height, count, rotated, text, extra, edging}, i) => `<
     <td>${i + 1}</td>
     ${whPdf(width, height, edging)}
     ${countPdf(count, i)}
-    ${flagPdf(rotated)}
+    <td>${flagPdf(rotated)}</td>
     <td class="name">${text || ""}</td>
-    ${flagPdf(extra)}
+    <td>${flagPdf(extra)}</td>
 </tr>`;
 
 const edgingPdf = ({line, thick, text, length}, i) => `<tr>
@@ -2015,13 +2042,12 @@ const takesPdf = (drags) => {
 </table>`;
 }
 
-const cuttingPdf = (w, h, drops, drags) => '';
-// `<div class="cutting" style="${getSizeStyle(w, h)}">
-//      <div class="base"></div>
-//      ${tapePdf(w, h)}
-//      ${dragsPdf(drags)}
-//      ${dropsPdf(drops)}
-// </div>`;
+const cuttingPdf = (w, h, drops, drags) => `<div class="cutting" style="${getSizeStyle(w, h)}">
+     <div class="base"></div>
+     ${tapePdf(w, h)}
+     ${dragsPdf(drags)}
+     ${dropsPdf(drops)}
+</div>`;
 
 const getCuts = () => zones.filter(({drags}) => drags.some(q => q.html));
 
@@ -2547,7 +2573,7 @@ const blurAutoSave = async (update) => {
 
 // 5. Рулоны
 
-const getRollLength = (inner, outer, thick) => Math.floor(Math.PI * (outer * outer - inner * inner) / thick);
+const getRollLength = (inner, outer, thick) => Math.floor(Math.PI * (outer * outer - inner * inner) / 40 / thick) / 100;
 
 // Начальная загрузка
 
