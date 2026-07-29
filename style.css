@@ -793,8 +793,8 @@ th {
     bottom: 0;
     right: 0;
     transform-origin: right bottom;
-    transform: rotate(90deg) translateY(100%) translateY(2cm);
-    width: 5cm;
+    transform: rotate(90deg) translateY(100%) translateY(2cm) translateX(-1mm);
+    max-width: 5cm;
 }
 
 .whole {
