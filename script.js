@@ -144,9 +144,8 @@ const printPage = document.getElementById('print');
 
 // 1. Редактор
 
-const edgingThicks = [null, null, null];
 const edgingIcons = ['line', 'dash', 'wave'];
-const edgingLengths = [0, 0, 0];
+const edgingThicks = Array(edgingIcons.length).fill(null);
 
 const defaultTask = {
     kerf: 4,
@@ -392,7 +391,7 @@ const edgingHtml = (
 
 const rollHtml = (
     {line, inner, outer, length, thick}
-) => `<div class="pad">${lineHtml(line)}${v}${valueHtml(`${inner} - ${outer}`, 'мм')}</div>${valueHtml(length, 'м')}`;
+) => `<div class="pad">${lineHtml(line)}${v}${valueHtml(`${inner} - ${outer}`, 'мм')}</div>${valueHtml((length / 1000).toFixed(2), 'м')}`;
 
 const pieceHtml = ({width, height, rotated, edging, count, text, extra}) => {
     const {left, up, right, down} = edging;
@@ -670,7 +669,9 @@ const updateTask = () => {
 
 const updateSheet = () => {
     task.sheet = {
-        width: +sheetWidthInput.value || 1, height: +sheetHeightInput.value || 1, edge: +sheetEdgeInput.value || 0
+        width: +sheetWidthInput.value || 1,
+        height: +sheetHeightInput.value || 1,
+        edge: +sheetEdgeInput.value || 0
     }
     task.kerf = +taskKerfInput.value;
     toUpdateSheetLink.innerHTML = sheetHtml(task.sheet);
@@ -1829,6 +1830,52 @@ document.addEventListener('pointercancel', onDragEnd);
 
 // 4. Печать
 
+// 4.1 Вычисление статистики
+
+const edgingLengths = Array(edgingIcons.length).fill(0);
+
+let cutsLength;
+let piecesArea;
+let scrapsArea;
+let piecesCount;
+
+const calc = () => {
+    edgingLengths.fill(0);
+    piecesArea = 0;
+    piecesCount = 0;
+
+    takes.forEach(({width, height, count}, i) => {
+        count = pieces[i].count - count;
+        if (!count) return;
+        const {up, down, left, right} = pieces[i].edging;
+
+        if (up != null) edgingLengths[up] += count * width;
+        if (down != null) edgingLengths[down] += count * width;
+        if (left != null) edgingLengths[left] += count * height;
+        if (right != null) edgingLengths[right] += count * height;
+
+        piecesArea += count * width * height;
+        piecesCount += count;
+    });
+
+    cutsLength = 0;
+    scrapsArea = 0;
+    getCuts().forEach(({width, height, drags, drops}) => {
+        scrapsArea += width * height;
+        drags.forEach(({html, width, height}) => html && html.isConnected && (cutsLength += width + height));
+        drops.forEach(({html, width, height}) => html && html.isConnected && (cutsLength += width + height));
+    });
+}
+
+const statisticsPdf = () => {
+    return `<table class="whole">
+    <thead><tr><th>Деталей</th><th>Площадь деталей</th><th>Площадь листов</th><th>Длина реза</th></tr></thead>
+    <tbody><td>${piecesCount} шт</td>
+    <td>${(piecesArea / 1000000).toFixed(3)} м²</td>
+    <td>${(scrapsArea / 1000000).toFixed(2)} м²</td>
+    <td>${(cutsLength / 1000).toFixed(2)} м</td></tbody>`
+}
+
 // 4.1. Загрузка
 
 const cuttingsPdf = () => getCuts().map(toScale).map(
@@ -1844,31 +1891,11 @@ const scrapsPdf = () => {
     }).map(scrapPdf).join('\n')
 
     return scraps && `<table class="whole">
-    <thead><tr>
-        <th>Длина</th>
-        <th>Ширина</th>
-        <th>Отступ</th>
-        <th>Кол-во</th>
-        <th>Лист</th>
-    </tr></thead>
-    <tbody>${scraps}</tbody>
-</table>`;
-}
-
-const addLength = ({width, height, count, edging}, i) => {
-    count -= takes[i].count;
-    if (!count) return;
-    const {up, down, left, right} = edging;
-
-    if (up != null) edgingLengths[up] += count * width;
-    if (down != null) edgingLengths[down] += count * width;
-    if (left != null) edgingLengths[left] += count * height;
-    if (right != null) edgingLengths[right] += count * height;
+    <thead><tr><th>Длина</th><th>Ширина</th><th>Отступ</th><th>Кол-во</th><th>Лист</th></tr></thead>
+    <tbody>${scraps}</tbody></table>`;
 }
 
 const edgingsPdf = () => {
-    edgingLengths.fill(0);
-    task.pieces.filter(Boolean).forEach(addLength);
     const edgings = task.edgings.filter(q => q && edgingLengths[q.line]).map(edgingPdf).join('\n');
 
     return edgings && `<table class="whole">
@@ -1876,13 +1903,21 @@ const edgingsPdf = () => {
     <tbody>${edgings}</tbody></table>`;
 }
 
-const piecesPdf = () => {
-    const pieces = task.pieces.filter(Boolean).map(piecePdf).join('\n');
+const rollsPdf = () => {
+    const rolls = task.rolls.filter(Boolean).map(rollPdf).join('\n');
 
-    return pieces && `<table>
+    return rolls && `<table class="whole">
+    <thead><tr><th>Кромка</th><th>Внутри</th><th>Снаружи</th><th>Длина</th><th>Рулон</th></tr></thead>
+    <tbody>${rolls}</tbody></table>`;
+}
+
+const piecesPdf = () => {
+    const t = pieces.map(piecePdf).join('\n');
+
+    return t && `<table>
     <thead><tr><th>#</th><th>Длина</th><th>Ширина</th><th>Кол-во</th>
     <th>Пов-от</th><th>Деталь</th><th>Доп.об.</th></tr></thead>
-    <tbody>${pieces}</tbody></table>`;
+    <tbody>${t}</tbody></table>`;
 }
 
 const getLogo = () => `<div class="logo">
@@ -1908,10 +1943,11 @@ const getSigns = () => `<div class="task">
     </div>
 </div>`
 
+
 downloadCuttingButton.onclick = () => {
+    calc();
     scale = getScale();
-    printPage.innerHTML = getSigns() + getLogo() + scrapsPdf() + edgingsPdf() + piecesPdf() + cuttingsPdf();
-    console.log(printPage);
+    printPage.innerHTML = getSigns() + getLogo() + statisticsPdf() + scrapsPdf() + edgingsPdf() + rollsPdf() + piecesPdf() + cuttingsPdf();
     window.print();
 }
 
@@ -1947,8 +1983,16 @@ const piecePdf = ({width, height, count, rotated, text, extra, edging}, i) => `<
 const edgingPdf = ({line, thick, text, length}, i) => `<tr>
     <td>${linePdf(line)}</td>
     <td>${thick}</td>
-    <td>${edgingLengths[line] || 0}</td>
+    <td class="data">${(edgingLengths[line] / 1000).toFixed(2)} м</td>
     <td class="name">${text || ""}</td>
+</tr>`;
+
+const rollPdf = ({line, inner, outer, length}) => `<tr>
+    <td>${linePdf(line)}</td>
+    <td>${inner}</td>
+    <td>${outer}</td>
+    <td class="data">${(length / 1000).toFixed(2)} м</td>
+    <td class="name"></td>
 </tr>`;
 
 const scrapPdf = ({width, height, edge, count, text}) => `<tr>
@@ -2567,7 +2611,7 @@ const blurAutoSave = async (update) => {
 
 const getRollLength = (
     inner, outer, thick
-) => Math.floor(Math.PI * (outer * outer - inner * inner) / 40 / thick) / 100;
+) => Math.floor(Math.PI * (outer * outer - inner * inner) / 4 / thick);
 
 // Начальная загрузка
 

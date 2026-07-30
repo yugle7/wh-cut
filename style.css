@@ -144,7 +144,6 @@ button:focus {
 }
 
 
-
 label {
     width: 100%;
 }
@@ -267,6 +266,11 @@ button div {
     text-align: left;
     width: 100%;
 }
+
+.data {
+    white-space: nowrap;
+}
+
 
 a {
     outline: none;
