@@ -1,6 +1,6 @@
 const GHPATH = '/wh-cut';
 const APP_PREFIX = 'whCut_';
-const VERSION = '1.0.14';
+const VERSION = '1.0.15';
 
 // Список файлов, которые будут доступны офлайн
 const URLS = [
