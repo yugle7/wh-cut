@@ -26,8 +26,6 @@ const toCuttingButton = document.getElementById("to-cutting");
 // 3. Настройки задачи раскроя
 
 const settingPage = document.getElementById("setting");
-const inputPage = document.getElementById("input");
-const outputPage = document.getElementById("output");
 
 const removeTaskButton = document.getElementById("remove-task");
 const yesRemoveTaskButton = document.getElementById("yes-remove-task");
@@ -59,7 +57,7 @@ const sheetEdgeInput = document.getElementById("sheet-edge");
 
 const scrapForm = document.getElementById("scrap");
 const scrapsList = document.getElementById("scraps");
-const toCreateScrapLink = document.getElementById("to-create-scrap");
+const createScrapButton = document.getElementById("to-create-scrap");
 
 const scrapWidthInput = document.getElementById("scrap-width");
 const scrapHeightInput = document.getElementById("scrap-height");
@@ -70,7 +68,7 @@ const scrapCountInput = document.getElementById("scrap-count");
 
 const edgingForm = document.getElementById("edging");
 const edgingsList = document.getElementById("edgings");
-const toCreateEdgingLink = document.getElementById("to-create-edging");
+const createEdgingButton = document.getElementById("to-create-edging");
 
 const edgingLineInput = document.getElementById('edging-line');
 const edgingTextInput = document.getElementById('edging-text');
@@ -80,7 +78,7 @@ const edgingThickInput = document.getElementById('edging-thick');
 
 const rollForm = document.getElementById("roll");
 const rollsList = document.getElementById("rolls");
-const toCreateRollLink = document.getElementById("to-create-roll");
+const createRollButton = document.getElementById("to-create-roll");
 
 const rollEdgingInput = document.getElementById('roll-edging');
 const rollInnerInput = document.getElementById('roll-inner');
@@ -90,11 +88,13 @@ const rollOuterInput = document.getElementById('roll-outer');
 
 const pieceForm = document.getElementById("piece");
 const piecesList = document.getElementById("pieces");
-const toCreatePieceLink = document.getElementById("to-create-piece");
+
+const toCreatePieceButton = document.getElementById("to-create-piece");
+const createPieceButton = document.getElementById("create-piece");
+const deletePieceButton = document.getElementById("delete-piece");
 
 const pieceWidthInput = document.getElementById('piece-width');
 const pieceHeightInput = document.getElementById('piece-height');
-const pieceRotateButton = document.getElementById('piece-rotate');
 
 const pieceRotatedInput = document.getElementById('piece-rotated');
 const pieceCountInput = document.getElementById('piece-count');
@@ -106,16 +106,6 @@ const pieceEdgingUpInput = document.getElementById('piece-edging-up');
 const pieceEdgingDownInput = document.getElementById('piece-edging-down');
 const pieceEdgingLeftInput = document.getElementById('piece-edging-left');
 const pieceEdgingRightInput = document.getElementById('piece-edging-right');
-
-// 3.6 Формы добавления и изменения
-
-const removeButton = document.getElementById("remove");
-const recoverButton = document.getElementById("recover");
-
-const updateButton = document.getElementById("update");
-const createButton = document.getElementById("create");
-const nextButton = document.getElementById("next");
-const prevButton = document.getElementById("prev");
 
 // 4. Редактор раскроя
 
@@ -234,11 +224,13 @@ let task = null;
 // 2. Параметры задачи
 
 let form = null;
+let link = null;
+let item = null;
+
 let items = null;
 let links = null;
-let link = null;
-
 let index = null;
+
 let deleted = null;
 let created = null;
 
@@ -366,6 +358,16 @@ changeThemeButton.onclick = () => {
 
 toSettingButton.onclick = () => changePage(settingPage);
 
+let deleteButton;
+let createButton;
+
+let clearForm;
+let copyToForm;
+let focusInput;
+
+let updateItem;
+let toHtml;
+
 // 2.1 Отображение данных
 
 const titleHtml = () => `<h1 class="out pad">${task.title || labels.task}</h1>`
@@ -393,7 +395,7 @@ const rollHtml = (
     {line, inner, outer, length, thick}
 ) => `<div class="pad">${lineHtml(line)}${v}${valueHtml(`${inner} - ${outer}`, 'мм')}</div>${valueHtml((length / 1000).toFixed(2), 'м')}`;
 
-const pieceHtml = ({width, height, rotated, edging, count, text, extra}) => {
+const toPieceHtml = ({width, height, rotated, edging, count, text, extra}) => {
     const {left, up, right, down} = edging;
 
     const w = `<div class="col"><span>${width}</span>${lineHtml(up)}${lineHtml(down)}</div>`;
@@ -421,8 +423,9 @@ const setTask = () => {
     task.edgings.forEach(addEdging);
     rollsList.replaceChildren();
     task.rolls.forEach(addRoll);
-    piecesList.replaceChildren();
-    task.pieces.forEach(addPiece);
+    piecesList.innerHTML = task.pieces.map(
+        (q, i) => `<li><button type="button" class="out" onclick="toEdit(event, ${i}, pieceForm)">${toPieceHtml(q)}</button></li>`
+    ).join('\n');
 }
 
 const copyTaskToForm = () => {
@@ -460,35 +463,12 @@ const addScrap = (scrap, i) => {
         index = i;
         items = task.scraps;
         links = scrapsList;
-        changeForm(scrapForm)
-        showButtons();
-        copyScrapToForm(items[i]);
-        toInputPage();
 
+        // changeForm(scrapForm)
+        copyToForm(item);
     }
     scrapsList.appendChild(q);
 };
-
-const removeLink = () => links.children[index].classList.add('hidden');
-
-
-const updateLink = () => {
-    let html = null;
-    if (form === scrapForm) html = scrapHtml(items[index])
-    else if (form === edgingForm) html = edgingHtml(items[index])
-    else if (form === rollForm) html = rollHtml(items[index])
-    else if (form === pieceForm) html = pieceHtml(items[index]);
-    if (html) links.children[index].firstChild.innerHTML = html;
-}
-
-const addLink = () => {
-    console.log('addLink')
-    if (form === scrapForm) addScrap(items[index], index)
-    else if (form === edgingForm) addEdging(items[index], index)
-    else if (form === rollForm) addRoll(items[index], index)
-    else if (form === pieceForm) addPiece(items[index], index)
-    else links = null;
-}
 
 const updateScrap = () => {
     const width = +scrapWidthInput.value;
@@ -523,10 +503,8 @@ const addEdging = (edging, i) => {
         index = i;
         items = task.edgings;
         links = edgingsList;
-        changeForm(edgingForm)
-        showButtons();
-        copyEdgingToForm(items[i]);
-        toInputPage();
+        // changeForm(edgingForm)
+        copyToForm(items[i]);
     }
     edgingsList.appendChild(q);
 };
@@ -581,10 +559,8 @@ const addRoll = (roll, i) => {
         index = i;
         items = task.rolls;
         links = rollsList;
-        changeForm(rollForm)
-        showButtons();
-        copyRollToForm(items[i]);
-        toInputPage();
+        // changeForm(rollForm)
+        copyToForm(items[i]);
     }
     rollsList.appendChild(q);
 };
@@ -609,10 +585,10 @@ const copyPieceToForm = ({width, height, rotated, count, edging, text, extra}) =
     pieceHeightInput.value = height;
 
     pieceRotated = rotated;
-    pieceRotatedInput.innerText = rotated ? labels.yes : labels.no;
+    pieceRotatedInput.innerHTML = pieceRotated ? o : x;
 
     pieceExtra = extra;
-    pieceExtraInput.innerText = extra ? labels.yes : labels.no;
+    pieceExtraInput.innerHTML = iconHtml(pieceExtra ? 'save' : 'cancel');
     pieceTextInput.value = text || '';
 
     pieceCountInput.value = count;
@@ -624,28 +600,25 @@ const copyPieceToForm = ({width, height, rotated, count, edging, text, extra}) =
     pieceEdgingRightInput.innerHTML = lineHtml(edging.right);
 }
 
-const addPiece = (piece, i) => {
-    let q = document.createElement('li');
-    q.innerHTML = `<button class="out">${pieceHtml(piece)}</button>`
-    q.firstChild.onclick = (e) => {
-        e.preventDefault();
-        index = i;
-        items = task.pieces;
-        links = piecesList;
-        changeForm(pieceForm)
-        showButtons();
-        copyPieceToForm(items[i]);
-        toInputPage();
-    }
-    piecesList.appendChild(q);
-};
+const toPieceForm = () => {
+    deleteButton = deletePieceButton;
+    createButton = createPieceButton;
+    copyToForm = copyPieceToForm;
+    focusInput = pieceWidthInput;
+    updateItem = updatePieceItem;
+    clearForm = clearPieceForm;
+    toHtml = toPieceHtml;
+    links = piecesList;
+    items = task.pieces;
+}
 
-const updatePiece = () => {
+const updatePieceItem = () => {
+    console.log('updatePieceItem');
     const width = +pieceWidthInput.value;
     const height = +pieceHeightInput.value;
-    const count = +pieceCountInput.value;
+    const count = +pieceCountInput.value || 1;
 
-    items[index] = !width || !height || !count ? null : {
+    items[index] = !width || !height ? null : {
         width, height, count,
         rotated: pieceRotated,
         edging: pieceEdging,
@@ -708,56 +681,171 @@ noRemoveTaskButton.onclick = () => toRemoveTaskPage.classList.add('hidden');
 
 // 2.8 Навигация по форме
 
-const getNextIndex = () => {
-    let i = index + 1;
-    while (i < items.length && !items[i]) i++;
-    return i < items.length ? i : null;
+const toCreateButton = () => {
+    createButton.classList.add('hidden');
+    deleteButton.innerText = 'Создать';
+    deleteButton.style.color = 'var(--green)';
 }
 
-const getPrevIndex = () => {
-    let i = index === null ? items.length - 1 : index - 1;
-    while (i >= 0 && !items[i]) i--;
-    return i >= 0 ? i : null;
+const toDeleteButton = () => {
+    deleteButton.innerText = 'Очистить';
+    deleteButton.style.color = 'var(--red)';
 }
 
-const showButtons = () => {
-    const prevIndex = getPrevIndex();
-    const nextIndex = getNextIndex();
-    prevIndex === null || nextIndex === null ? createButton.classList.remove('hidden') : createButton.classList.add('hidden');
-    prevIndex === null ? prevButton.classList.add('hidden') : prevButton.classList.remove('hidden');
-    nextIndex === null ? nextButton.classList.add('hidden') : nextButton.classList.remove('hidden');
+const toForm = (f) => {
+    console.log('toForm');
+    form = f;
+    if (form === pieceForm) toPieceForm();
 }
 
-const hideButtons = () => {
-    prevButton.classList.add('hidden')
-    nextButton.classList.add('hidden')
-    createButton.classList.add('hidden')
+const updateLink = () => {
+    console.log('updateLink');
+    if (items[index]) {
+        links.children[index].firstChild.innerHTML = toHtml(items[index]);
+        links.children[index].classList.remove('hidden');
+    }
 }
 
-const toRemoveButton = () => {
-    console.log('toRemoveButton');
-    removeButton.classList.remove('hidden');
-    recoverButton.classList.add('hidden');
-    updateButton.firstElementChild.classList.add('green');
-    updateButton.firstElementChild.classList.remove('red');
-    deleted = false;
+const createItem = () => {
+    index = items.length;
+    items.push(null);
 }
 
-const toRecoverButton = () => {
-    removeButton.classList.add('hidden');
-    recoverButton.classList.remove('hidden');
-    updateButton.firstElementChild.classList.add('red');
-    updateButton.firstElementChild.classList.remove('green');
-    deleted = true;
+const createLink = (i, f) => {
+    link = document.createElement('LI');
+    link.classList.add('hidden');
+    link.innerHTML = `<button type="button" class="out"></button>`
+    link.firstElementChild.onclick = (e) => toEdit(e, i, f);
 }
+
+const toSave = () => {
+    if (!form) return;
+    console.log('toSave')
+
+    if (createButton) createButton.classList.remove('hidden');
+
+    updateItem();
+    updateLink();
+
+    form.remove();
+    form = null;
+}
+
+const toDelete = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (created) {
+        toSave();
+        createButton.classList.remove('hidden');
+    } else {
+        deleted = !deleted;
+
+        if (deleted) {
+            clearForm();
+            deleteButton.innerText = 'Как было';
+        } else {
+            copyToForm(items[index]);
+            deleteButton.innerText = 'Очистить';
+        }
+    }
+}
+
+const toEdit = (e, i, f) => {
+    console.log('toEdit')
+    e.stopPropagation();
+    toSave();
+
+    created = deleted = false;
+    toForm(f);
+    toDeleteButton();
+
+    link = links.children[i];
+    item = items[i];
+    index = i;
+
+    copyToForm(item);
+    link.after(form);
+    link.classList.add('hidden');
+
+    focusInput.focus();
+}
+
+const toCreate = (e, f) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toSave();
+
+    created = true;
+    toForm(f);
+    toCreateButton();
+    clearForm();
+
+    createItem();
+    createLink(index, f);
+
+    links.append(link);
+    links.append(form);
+
+    focusInput.focus();
+
+    form.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+    });
+}
+
+// 2.9 Кнопки создания
+
+createPieceButton.onclick = toCreatePieceButton.onclick = (e) => toCreate(e, pieceForm);
+
+settingPage.addEventListener('click', (e) => {
+    e.stopPropagation();
+    // toSave();
+});
+
+// 2.9 Клик по инпуту
+
+let lastTapTime = 0;
+let tapStart;
+
+function handleDoubleClick(e) {
+    const t = e.target.tagName;
+    if (t !== 'INPUT' && t !== 'TEXTAREA') return;
+    e.preventDefault();
+    e.target.select();
+}
+
+function handleTouchStart(e) {
+    const touch = e.touches[0];
+    if (touch) tapStart = {x: touch.clientX, y: touch.clientY};
+}
+
+function handleTouchEnd(e) {
+    if (!tapStart) return;
+
+    const tag = e.target.tagName;
+    if (tag !== 'INPUT' && tag !== 'TEXTAREA') return;
+
+    const touch = e.changedTouches[0];
+    if (!touch) return;
+
+    const dx = Math.abs(touch.clientX - tapStart.x);
+    const dy = Math.abs(touch.clientY - tapStart.y);
+    if (dx > 10 || dy > 10) return;
+
+    const now = Date.now();
+    if (now - lastTapTime < 300 && now - lastTapTime > 0) {
+        e.preventDefault();
+        e.target.select();
+    }
+    lastTapTime = now;
+}
+
+document.addEventListener('dblclick', handleDoubleClick);
+document.addEventListener('touchstart', handleTouchStart, {passive: true});
+document.addEventListener('touchend', handleTouchEnd, {passive: false});
 
 // 2.9 Переключение между формами
-
-const changeForm = (f) => {
-    if (form) form.classList.add('hidden');
-    form = f;
-    form.classList.remove('hidden');
-}
 
 toUpdateTaskLink.onclick = (e) => {
     taskTitleInput.value = task.title || '';
@@ -768,10 +856,8 @@ toUpdateTaskLink.onclick = (e) => {
     taskThickInput.value = task.thick || '';
 
     items = links = null;
-    changeForm(taskForm);
-    hideButtons();
+    // changeForm(taskForm);
     copyTaskToForm();
-    toInputPage();
 }
 
 toUpdateSheetLink.onclick = (e) => {
@@ -782,67 +868,14 @@ toUpdateSheetLink.onclick = (e) => {
     taskKerfInput.value = task.kerf || '';
 
     items = links = null;
-    changeForm(sheetForm);
-    hideButtons();
+    // changeForm(sheetForm);
     copySheetToForm();
-    toInputPage();
-}
-
-createButton.onclick = (e) => {
-    e.preventDefault();
-
-    toUpdateItem();
-    toCreateItem();
-
-    clearForm();
-    showButtons();
 }
 
 const toCreateItem = () => {
     created = true;
     index = items.length;
     items.push(null);
-}
-
-toCreateScrapLink.onclick = (e) => {
-    e.preventDefault();
-    links = scrapsList;
-    items = task.scraps;
-    toCreateItem();
-    changeForm(scrapForm);
-    clearForm();
-    showButtons();
-    toInputPage();
-}
-toCreateEdgingLink.onclick = (e) => {
-    e.preventDefault();
-    links = edgingsList;
-    items = task.edgings;
-    toCreateItem();
-    changeForm(edgingForm);
-    clearForm();
-    showButtons();
-    toInputPage();
-}
-toCreateRollLink.onclick = (e) => {
-    e.preventDefault();
-    links = rollsList;
-    items = task.rolls;
-    toCreateItem();
-    changeForm(rollForm);
-    clearForm();
-    showButtons();
-    toInputPage();
-}
-toCreatePieceLink.onclick = (e) => {
-    e.preventDefault();
-    links = piecesList;
-    items = task.pieces;
-    toCreateItem();
-    changeForm(pieceForm);
-    clearForm();
-    showButtons();
-    toInputPage();
 }
 
 // 2.10 Отправка и получение данных
@@ -934,21 +967,16 @@ pieceEdgingRightInput.onclick = (e) => {
     pieceEdgingRightInput.innerHTML = lineHtml(pieceEdging.right);
 }
 
-pieceRotateButton.onclick = (e) => {
-    e.preventDefault();
-    [pieceWidthInput.value, pieceHeightInput.value] = [pieceHeightInput.value, pieceWidthInput.value];
-}
-
 pieceRotatedInput.onclick = (e) => {
     e.preventDefault();
     pieceRotated = !pieceRotated;
-    pieceRotatedInput.innerText = pieceRotated ? labels.yes : labels.no;
+    pieceRotatedInput.innerHTML = pieceRotated ? o : x;
 }
 
 pieceExtraInput.onclick = (e) => {
     e.preventDefault();
     pieceExtra = !pieceExtra;
-    pieceExtraInput.innerText = pieceExtra ? labels.yes : labels.no;
+    pieceExtraInput.innerHTML = iconHtml(pieceExtra ? 'save' : 'cancel');
 }
 
 // 2.11 Работа с кромками
@@ -983,133 +1011,13 @@ const clearRollForm = () => {
 }
 
 const clearPieceForm = () => {
+    form.querySelectorAll('input').forEach(q => q.value = '');
+
     pieceRotated = false;
-    pieceRotatedInput.innerText = pieceExtraInput.innerText = labels.no;
+    pieceRotatedInput.innerHTML = pieceExtraInput.innerHTML = iconHtml('cancel');
 
     pieceEdging = {left: null, up: null, right: null, down: null};
     pieceEdgingUpInput.innerHTML = pieceEdgingDownInput.innerHTML = pieceEdgingLeftInput.innerHTML = pieceEdgingRightInput.innerHTML = lineHtml(null);
-}
-
-const clearForm = () => {
-    form.querySelectorAll('input').forEach(q => q.value = '');
-    if (form === edgingForm) clearEdgingForm()
-    else if (form === rollForm) clearRollForm()
-    else if (form === pieceForm) clearPieceForm();
-}
-
-// 2.12 Удаление элементов из списка
-
-removeButton.onclick = (e) => {
-    e.preventDefault();
-
-    clearForm();
-    if (created) {
-        items.pop();
-        toOutputPage();
-    } else toRecoverButton();
-}
-
-recoverButton.onclick = (e) => {
-    e.preventDefault();
-
-    if (form === scrapForm) copyScrapToForm(items[index])
-    else if (form === edgingForm) copyEdgingToForm(items[index])
-    else if (form === rollForm) copyRollToForm(items[index])
-    else if (form === pieceForm) copyPieceToForm(items[index])
-    else if (form === taskForm) copyTaskToForm()
-    else if (form === sheetForm) copySheetToForm();
-
-    toRemoveButton();
-}
-
-// 2.13 Отображение списков
-
-const toOutputPage = () => {
-    console.log('toOutputPage');
-    inputPage.classList.add('hidden');
-    outputPage.classList.remove('hidden');
-    showLink();
-    created = false;
-}
-
-const showLink = () => {
-    if (links) {
-        if (items[index]) {
-            link = links.children[index];
-            link.classList.add('edited');
-            link.scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest'
-            });
-        } else {
-            link = null;
-            links.scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest'
-            });
-        }
-    }
-}
-
-const hideLink = () => link && link.classList.remove('edited');
-
-const toInputPage = () => {
-    console.log('toInputPage');
-    outputPage.classList.add('hidden');
-    inputPage.classList.remove('hidden');
-    hideLink();
-}
-
-// 2.14 Перемещение по спискам
-
-const toUpdateItem = () => {
-    console.log('toUpdateItem');
-
-    if (form === taskForm) updateTask()
-    else if (form === sheetForm) updateSheet()
-    else if (form === scrapForm) updateScrap()
-    else if (form === edgingForm) updateEdging()
-    else if (form === rollForm) updateRoll()
-    else if (form === pieceForm) updatePiece();
-
-    if (created) {
-        items[index] ? addLink() : items.pop();
-        created = false;
-    } else if (links) {
-        items[index] ? updateLink() : removeLink();
-    }
-    if (deleted) toRemoveButton();
-
-    saveTask().then();
-}
-
-updateButton.onclick = (e) => {
-    e.preventDefault();
-
-    toUpdateItem();
-    toOutputPage();
-}
-
-const copyToForm = () => {
-    if (form === scrapForm) copyScrapToForm(items[index])
-    else if (form === edgingForm) copyEdgingToForm(items[index])
-    else if (form === rollForm) copyRollToForm(items[index])
-    else if (form === pieceForm) copyPieceToForm(items[index]);
-    showButtons();
-}
-
-nextButton.onclick = (e) => {
-    e.preventDefault();
-    toUpdateItem();
-    index = getNextIndex();
-    copyToForm();
-}
-
-prevButton.onclick = (e) => {
-    e.preventDefault();
-    toUpdateItem();
-    index = getPrevIndex();
-    copyToForm();
 }
 
 // 3. Редактор раскроя

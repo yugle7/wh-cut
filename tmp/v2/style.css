@@ -82,8 +82,11 @@
 select,
 textarea,
 body {
-    background-color: var(--bg-primary);
     transition: background 0.35s ease, color 0.35s ease;
+}
+
+body {
+    background-color: var(--bg-primary);
 }
 
 article {
@@ -144,19 +147,11 @@ button:focus {
     opacity: 0.8;
 }
 
-
-label {
-    width: 100%;
-}
-
 .space {
     width: 100%;
 }
 
 form {
-    position: relative;
-    display: flex;
-    flex-direction: column;
     width: 100%;
     max-width: 700px;
     margin: 0 auto;
@@ -171,6 +166,7 @@ textarea {
     overflow: hidden;
 }
 
+textarea,
 input {
     font: inherit;
     border: none;
@@ -212,15 +208,11 @@ button div {
     flex-direction: row;
 }
 
-#output,
-#input,
+#setting,
 #cutting {
     padding-top: 50px;
 }
 
-#output {
-    min-height: 100%;
-}
 
 #do-cut {
     display: block;
@@ -239,17 +231,12 @@ button div {
     margin: 0 auto;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
 }
 
-.but {
-    min-height: 40px;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
+.head {
     justify-content: space-between;
-    align-items: center;
+
 }
 
 .text {
@@ -261,6 +248,8 @@ button div {
     overflow: hidden;
     text-overflow: "clip";
     opacity: 0.6;
+    mask-image: linear-gradient(to right, black calc(100% - 20px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 20px), transparent 100%);
 }
 
 .name {
@@ -915,4 +904,74 @@ th {
 td svg {
     padding: 1mm;
     height: 1.5em;
+}
+
+
+#piece-head {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 60px 50px 60px auto 60px 45px;
+    grid-template-rows: auto auto;
+    place-items: center;
+}
+
+#piece-foot {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 60px 50px 60px 20px 1fr;
+}
+
+
+
+#create-piece {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 60px 50px 60px auto 45px;
+}
+
+#delete-piece {
+    justify-self: flex-end;
+    color: var(--red);
+    font-size: 12px;
+}
+
+#piece {
+    background: var(--bg-header);
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-size: 12px;
+    opacity: 0.8;
+    width: 100%;
+    text-align: center;
+
+}
+
+textarea,
+input {
+    user-select: text;
+}
+
+#piece-text {
+    font-size: 14px;
+    width: 100%;
+}
+
+::placeholder {
+    opacity: 0.5;
+}
+
+/*::selection {*/
+/*    background: var(--bg-primary);*/
+/*}*/
+
+#piece .line {
+    margin: 10px 0;
+}
+
+.full {
+    width: 100%;
+    height: 100%;
 }
