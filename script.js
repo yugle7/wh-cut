@@ -313,9 +313,9 @@ const loadTasks = async () => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         tasks = await response.json();
     } else {
-        // const t = localStorage.getItem('tasks');
-        // tasks = t ? JSON.parse(t) : [];
-        tasks = testTasks;
+        const t = localStorage.getItem('tasks');
+        tasks = t ? JSON.parse(t) : [];
+        // tasks = testTasks;
 
         tasks.forEach(q => {
             q.scraps = q.scraps.filter(Boolean);
