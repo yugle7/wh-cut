@@ -1323,6 +1323,11 @@ const clearCutting = () => {
 toCuttingButton.onclick = () => {
     toSave();
     clearCutting();
+
+    const takes = takesRect();
+    const drops = dropsRect();
+    toCut(drops, takes);
+
     if (pieces.length) changePage(cuttingPage);
 }
 
@@ -2321,8 +2326,8 @@ cutButton.onclick = (e) => {
     const takes = takesRect();
     const drops = dropsRect();
 
-    doCut(drops, takes);
-    // toCut(drops, takes);
+    // doCut(drops, takes);
+    toCut(drops, takes);
 
     cuttingPage.style.gridTemplateRows = '1fr 6px auto';
 }
