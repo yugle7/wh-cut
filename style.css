@@ -655,6 +655,11 @@ select {
     transition: all 0.2s ease;
 }
 
+.drop div {
+    padding: 4px;
+    opacity: 0.8;
+}
+
 /* Деталь */
 
 .piece {

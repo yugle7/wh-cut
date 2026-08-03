@@ -1172,6 +1172,7 @@ const createDrop = (drop) => {
 
     q.onpointerup = dropDrag;
     q.onpointercancel = dropDrag;
+
     if (drop.busy === false) zone.html.appendChild(q);
 }
 
@@ -1187,6 +1188,7 @@ const createDrag = (drag) => {
     q.dataset.i = zone.drags.length.toString();
     zone.drags.push(drag);
 
+    q.style.position = 'relative';
     q.style.cursor = 'grab';
     q.style.zIndex = '9999';
     q.style.left = p(drag.left / zone.width);
@@ -1204,6 +1206,7 @@ const createDrag = (drag) => {
 
     zone.html.appendChild(q);
 }
+
 
 // 3.5 Оценка количества зон
 
@@ -1425,6 +1428,22 @@ const toDrag = (e) => {
 
 // 3.7 Завершение перетаскивания
 
+
+const widthHtml = (width, w, h, fontSize) => {
+    fontSize = Math.min(fontSize, w / width.toString().length, h / 1.2);
+    return fontSize > 8 ? `<div class="width" style="font-size: ${fontSize}px">${width}</div>` : '';
+}
+
+const heightHtml = (height, h, w, fontSize) => {
+    fontSize = Math.min(fontSize, h / height.toString().length, w / 1.2);
+    return fontSize > 8 ? `<div class="height" style="font-size: ${fontSize}px">${height}</div>` : '';
+}
+
+const sizeHtml = (width, height, w, h) => {
+    const fontSize = Math.min(16, (w + h) / (width.toString().length + height.toString().length + 2));
+    return widthHtml(width, w, h, fontSize) + heightHtml(height, h, w, fontSize);
+}
+
 const addDrop = (drop) => {
     const q = drop.html = document.createElement('DIV');
     q.classList.add('drop');
@@ -1442,6 +1461,9 @@ const addDrop = (drop) => {
     q.onpointerup = dropDrag;
     q.onpointercancel = dropDrag;
     zone.html.appendChild(q);
+
+    const r = q.getBoundingClientRect();
+    q.innerHTML = sizeHtml(drop.width, drop.height, r.width, r.height);
 }
 
 const addRightDrop = () => {
@@ -2489,7 +2511,6 @@ const addRects = (rects, drops) => {
                 q.busy = null;
 
                 drop = q;
-                console.log([0, 0, ...drops[i]], rects[i])
                 addCut([0, 0, ...drops[i]], rects[i]);
             }
             i++;
