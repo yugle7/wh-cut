@@ -1883,7 +1883,7 @@ const getSigns = () => `<div class="task">
     </div>
     <div class="signs">
         <div class="sign"><span>Материал:</span>${task.material || ''}<span id="material"></span></div>
-        <div class="sign"><span>Толщина:</span><span>${task.sheet.thick || ''} мм</span></div>
+        <div class="sign"><span>Толщина:</span><span>${task.sheet.depth || ''} мм</span></div>
     </div>
 </div>`
 
