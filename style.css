@@ -656,8 +656,9 @@ select {
 }
 
 .drop div {
-    padding: 4px;
     opacity: 0.8;
+    padding: 1px;
+    line-height: 1.2;
 }
 
 /* Деталь */

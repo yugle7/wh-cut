@@ -249,7 +249,7 @@ let scraps = [];
 
 // 4. Печать
 
-let scale;
+let scalePdf;
 
 // 5. Автоматический раскрой
 
@@ -1175,6 +1175,7 @@ const createDrop = (drop) => {
     q.onpointercancel = dropDrag;
 
     if (drop.busy === false) zone.html.appendChild(q);
+    q.innerHTML = sizeHtml(drop.width, drop.height, drop.width * scaleHtml, drop.height * scaleHtml);
 }
 
 const createDrag = (drag) => {
@@ -1287,12 +1288,15 @@ const getZones = () => {
     return dst;
 }
 
+let scaleHtml;
+
 const setZones = () => {
     console.log('setZones');
     zones = getZones();
 
     dropArea.replaceChildren()
     zones.forEach(createZone);
+    scaleHtml = getScaleHtml();
 
     for (zone of zones) createDrop(zone.drops.pop());
 }
@@ -1427,23 +1431,27 @@ const toDrag = (e) => {
     drag.html.style.top = move.y + move.dy + 'px';
 }
 
-// 3.7 Завершение перетаскивания
+// 3.7 Отображение размеров
 
+const getScaleHtml = () => Math.min(700, window.innerWidth) / task.width;
 
 const widthHtml = (width, w, h, fontSize) => {
-    fontSize = Math.min(fontSize, w / width.toString().length, h / 1.2);
+    fontSize = Math.min(fontSize, w / width.toString().length, (h - 2) / 1.2);
     return fontSize > 8 ? `<div class="width" style="font-size: ${fontSize}px">${width}</div>` : '';
 }
 
 const heightHtml = (height, h, w, fontSize) => {
-    fontSize = Math.min(fontSize, h / height.toString().length, w / 1.2);
+    fontSize = Math.min(fontSize, h / height.toString().length, (w - 2) / 1.2);
     return fontSize > 8 ? `<div class="height" style="font-size: ${fontSize}px">${height}</div>` : '';
 }
 
 const sizeHtml = (width, height, w, h) => {
-    const fontSize = Math.min(16, (w + h) / (width.toString().length + height.toString().length + 2));
+    const fontSize = Math.min(16, (w + h - 4) / (width.toString().length + height.toString().length + 2));
     return widthHtml(width, w, h, fontSize) + heightHtml(height, h, w, fontSize);
 }
+
+// 3.7 Завершение перетаскивания
+
 
 const addDrop = (drop) => {
     const q = drop.html = document.createElement('DIV');
@@ -1463,8 +1471,7 @@ const addDrop = (drop) => {
     q.onpointercancel = dropDrag;
     zone.html.appendChild(q);
 
-    const r = q.getBoundingClientRect();
-    q.innerHTML = sizeHtml(drop.width, drop.height, r.width, r.height);
+    q.innerHTML = sizeHtml(drop.width, drop.height, drop.width * scaleHtml, drop.height * scaleHtml);
 }
 
 const addRightDrop = () => {
@@ -1853,7 +1860,7 @@ const cuttingsPdf = () => getCuts().map(toScale).map(
     ({w, h, drops, drags}) => `<div class="page">${cuttingPdf(w, h, drops, drags)}${takesPdf(drags)}</div>`
 ).join('\n');
 
-const getScale = () => Math.min(A.width / task.width, A.height / task.height);
+const getScalePdf = () => Math.min(A.width / task.width, A.height / task.height);
 
 const scrapsPdf = () => {
     const scraps = toCount(getCuts()).map(([i, count]) => {
@@ -1917,7 +1924,7 @@ const getSigns = () => `<div class="task">
 
 downloadCuttingButton.onclick = () => {
     calc();
-    scale = getScale();
+    scalePdf = getScalePdf();
     printPage.innerHTML = getSigns() + getLogo() + statisticsPdf() + scrapsPdf() + edgingsPdf() + rollsPdf() + piecesPdf() + cuttingsPdf();
     window.print();
 }
@@ -2020,7 +2027,7 @@ const dragsPdf = (drags) => drags.map(({l, t, w, h, width, height, i}) => {
 }).join('\n');
 
 const dropsPdf = (places) => places.map(({l, t, w, h, width, height}) => {
-    if (Math.min(w, h) <= 2 * task.kerf * scale) return '';
+    if (Math.min(w, h) <= 2 * task.kerf * scalePdf) return '';
     const s = getRectStyle(l, t, w, h);
     return dropPdf(s, sizePdf(width, height, w, h)) + backPdf(s, 1);
 }).join('\n');
@@ -2059,13 +2066,13 @@ const cuttingPdf = (w, h, drops, drags) => `<div class="cutting" style="${getSiz
 const getCuts = () => zones.filter(({drags}) => drags.some(q => q.html));
 
 const toScale = ({width, height, drops, drags}) => ({
-    w: width * scale,
-    h: height * scale,
+    w: width * scalePdf,
+    h: height * scalePdf,
     drops: drops.filter(({html}) => html && html.isConnected).map(({top, left, width, height}) => ({
-        width, height, l: left * scale, t: top * scale, w: width * scale, h: height * scale
+        width, height, l: left * scalePdf, t: top * scalePdf, w: width * scalePdf, h: height * scalePdf
     })),
     drags: drags.filter(({html}) => html && html.isConnected).map(({top, left, width, height, take}) => ({
-        width, height, i: take, l: left * scale, t: top * scale, w: width * scale, h: height * scale
+        width, height, i: take, l: left * scalePdf, t: top * scalePdf, w: width * scalePdf, h: height * scalePdf
     }))
 });
 
