@@ -1215,7 +1215,7 @@ const zoneJson = ({width, height, edge}, i = -1) => ({
     width,
     height,
     i,
-    drops: [dropJson(width, height, edge)],
+    drops: [dropJson(width, height, edge || 0)],
     drags: []
 });
 
@@ -1228,8 +1228,9 @@ const getDrops = () => {
 
 const sheetJson = () => {
     const {width, height, edge} = task.sheet;
+    const e = edge || 0;
     return {
-        width: width - 2 * edge + task.kerf, height: height - 2 * edge + task.kerf
+        width: width - 2 * e + task.kerf, height: height - 2 * e + task.kerf
     };
 }
 
@@ -1940,7 +1941,7 @@ const rollPdf = ({line, inner, outer, length}) => `<tr>
 const scrapPdf = ({width, height, edge, count, text}) => `<tr>
     <td>${width}</td>
     <td>${height}</td>
-    <td>${edge}</td>
+    <td>${edge || 0}</td>
     <td>${count}</td>
     <td class="name">${text || ""}</td>
 </tr>`;
@@ -2289,17 +2290,13 @@ const toCut = (drops, takes, n = 7) => {
         if (!src[0].takes.length) break;
         if (src.length > n) src.length = n;
     }
-    return src[0].rects;
+    const rects = src[0].rects;
+    addRects(rects, drops);
 }
 
 // 5.2 Раскрой на сервере
 
-doCutButton.onclick = (e) => {
-    e.preventDefault();
-
-    const takes = takesRect();
-    const drops = dropsRect();
-
+const doCut = (drops, takes) => {
     fetch(ALGO_URL, {
         method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({drops, takes})
     })
@@ -2312,7 +2309,6 @@ doCutButton.onclick = (e) => {
         })
         .then(rects => {
             rects && addRects(rects, drops);
-            console.log('rects:', rects);
         })
         .catch(error => {
             console.error(error);
@@ -2325,11 +2321,10 @@ cutButton.onclick = (e) => {
     const takes = takesRect();
     const drops = dropsRect();
 
-    const rects = toCut(drops, takes);
-    rects && addRects(rects, drops);
+    doCut(drops, takes);
+    // toCut(drops, takes);
 
     cuttingPage.style.gridTemplateRows = '1fr 6px auto';
-    // doCutButton.classList.remove('hidden');
 }
 
 clearButton.onclick = () => clearCutting();
