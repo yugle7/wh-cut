@@ -1,12 +1,13 @@
 const testTasks = [
     {
         id: 0,
-        title: 'Детская',
+        title: 'Галечный',
         start: '2026-06-01',
         finish: '2026-07-20',
         material: 'Галечный',
+        thick: 12,
         kerf: 4,
-        sheet: {width: 2800, height: 2070, edge: 10, depth: 12, rotated: false},
+        sheet: {width: 2800, height: 2070, edge: 10},
         scraps: [],
         edgings: [
             {line: 0, thick: 2},

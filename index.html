@@ -36,275 +36,239 @@
 
 </article>
 
+<article id="to-remove-task" class="hidden">
+    <div>Вы действительно</div>
+    <div>хотите удалить задание?</div>
+    <div class="big"></div>
+    <span class="row">
+        <button id="yes-remove-task" class="eye">Да</button>
+        <button id="no-remove-task" class="eye">Нет</button>
+    </span>
+</article>
+
 <article id="setting" class="hidden">
-    <div id="to-remove-task" class="hidden">
-        <div>Вы действительно</div>
-        <div>хотите удалить задание?</div>
-        <h1></h1>
-        <div>
-            <button id="yes-remove-task" class="eye">Да</button>
-            <button id="no-remove-task" class="eye">Нет</button>
-        </div>
+    <div>
+        <label for="task-title" class="hidden">Название задачи</label>
+        <input type="text" class="big" id="task-title" placeholder="Название задачи"/>
     </div>
-    <div id="output">
-        <div id="to-update-task"></div>
-        <button class="out" id="to-update-sheet"></button>
+    <div id="update-task">
 
-        <br>
-        <button class="out" id="to-create-scrap">
-            <span class="big pad">Обрезки</span>
-            <svg class="yellow">
-                <use href="sprite.svg#plus"></use>
-            </svg>
-        </button>
-        <ol id="scraps"></ol>
-
-        <br>
-        <button class="out" id="to-create-edging">
-            <span class="big pad">Кромки</span>
-            <svg class="yellow">
-                <use href="sprite.svg#plus"></use>
-            </svg>
-        </button>
-        <ol id="edgings"></ol>
-
-        <br>
-        <button class="out" id="to-create-roll">
-            <span class="big pad">Рулоны</span>
-            <svg class="yellow">
-                <use href="sprite.svg#plus"></use>
-            </svg>
-        </button>
-        <ol id="rolls"></ol>
-
-        <br>
-        <button class="out" id="to-create-piece">
-            <span class="big pad">Детали</span>
-            <svg class="yellow">
-                <use href="sprite.svg#plus"></use>
-            </svg>
-        </button>
-        <ol id="pieces"></ol>
-        <br>
-        <button id="remove-task" class="eye">
-            Удалить задание
-        </button>
-
-        <nav>
-            <button id="to-main">
-                <svg class="green">
-                    <use href="sprite.svg#left"></use>
-                </svg>
-            </button>
-            <button id="to-cutting">
-                <svg class="yellow">
-                    <use href="sprite.svg#cutting"></use>
-                </svg>
-            </button>
-        </nav>
     </div>
-
-    <div id="input" class="hidden">
-        <form id="task" class="hidden">
-            <section class="out">
-                <label for="task-title" class="hidden">Название задачи</label>
-                <input type="text" id="task-title" placeholder="Название задачи"/>
-            </section>
-            <section class="out">
-                <label for="task-start">Дата</label>
+    <div id="task" class="hidden">
+        <form tabindex="0">
+            <div>
+                <label for="task-start">Начало</label>
                 <input type="date" id="task-start"/>
-            </section>
-            <section class="out">
-                <label for="task-finish">Срок</label>
+            </div>
+            <div>
+                <label for="task-finish">Завершение</label>
                 <input type="date" id="task-finish"/>
-            </section>
-            <section class="out">
-                <label for="task-material" class="hidden">Материал листа</label>
-                <input type="text" id="task-material" placeholder="Материал листа"/>
-            </section>
-            <section class="out">
-                <label for="task-thick">Толщина листа</label>
-                <input type="number" inputmode="numeric" id="task-thick" placeholder="мм"/>
-            </section>
-        </form>
-
-        <form id="sheet" class="hidden">
-            <section class="out">
-                <span>Размеры листа</span>
-                <div class="center">
-                    <label>
-                        <input type="number" inputmode="numeric" id="sheet-width" placeholder="длина"
-                               autocomplete="off"/>
-                    </label>
-                    <svg class="icon">
-                        <use href="sprite.svg#x"></use>
-                    </svg>
-                    <label>
-                        <input type="number" inputmode="numeric" id="sheet-height" placeholder="ширина"
-                               autocomplete="off"/>
-                    </label>
-                </div>
-            </section>
-            <section class="out">
-                <label for="sheet-edge">Отступ от края</label>
-                <input type="number" inputmode="numeric" id="sheet-edge" placeholder="мм" autocomplete="off"/>
-            </section>
-            <section class="out">
+            </div>
+            <div>
                 <label for="task-kerf">Ширина реза</label>
                 <input type="number" inputmode="numeric" id="task-kerf" placeholder="мм"/>
-            </section>
+            </div>
+            <label for="task-material" class="hidden">Материал листа</label>
+            <input type="text" id="task-material" placeholder="Материал листа"/>
+            <button type="button" id="save-task" class="create" onclick="toSave()">Сохранить</button>
         </form>
+    </div>
+    <br>
 
-        <form id="scrap" class="hidden">
-            <section class="out">
-                <span>Размеры</span>
-                <div>
-                    <label>
-                        <input type="number" inputmode="numeric" id="scrap-width" placeholder="длина"
-                               autocomplete="off"/>
-                    </label>
+    <button id="add-sheet"><span class="big">Лист</span></button>
+    <button id="update-sheet"></button>
+    <div id="sheet" class="hidden">
+        <form>
+            <section>
+                <label for="sheet-width">Длина</label>
+                <label for="sheet-rotated"></label>
+                <label for="sheet-height">Высота</label>
+                <span></span>
+                <label for="sheet-edge">Отступ</label>
+                <span></span>
+                <label for="sheet-depth">Толщина</label>
+
+                <input type="number" inputmode="numeric" id="sheet-width" placeholder="мм" autocomplete="off"/>
+                <button type="button" id="sheet-rotated"></button>
+                <input type="number" inputmode="numeric" id="sheet-height" placeholder="мм" autocomplete="off"/>
+                <svg>
+                    <use href="sprite.svg#v"></use>
+                </svg>
+                <input type="number" inputmode="numeric" id="sheet-edge" placeholder="мм" autocomplete="off"/>
+                <span></span>
+                <input type="number" inputmode="numeric" id="sheet-depth" placeholder="мм"/>
+            </section>
+            <button type="button" id="save-sheet" class="create" onclick="toSave()">Сохранить</button>
+        </form>
+    </div>
+
+    <br>
+    <button id="add-scrap" class="head">
+        <span class="big">Обрезки</span>
+        <svg class="yellow">
+            <use href="sprite.svg#plus"></use>
+        </svg>
+    </button>
+    <ol id="scraps"></ol>
+    <button id="create-scrap" class="create">Добавить</button>
+
+    <br>
+    <button id="add-edging" class="head">
+        <span class="big">Кромки</span>
+        <svg class="yellow">
+            <use href="sprite.svg#plus"></use>
+        </svg>
+    </button>
+    <ol id="edgings"></ol>
+    <button id="create-edging" class="create">Добавить</button>
+    <br>
+
+    <button id="add-roll" class="head">
+        <span class="big">Рулоны</span>
+        <svg class="yellow">
+            <use href="sprite.svg#plus"></use>
+        </svg>
+    </button>
+    <ol id="rolls"></ol>
+    <button id="create-roll" class="create">Добавить</button>
+    <br>
+
+    <button id="add-piece" class="head">
+        <span class="big">Детали</span>
+        <svg class="yellow">
+            <use href="sprite.svg#plus"></use>
+        </svg>
+    </button>
+    <ol id="pieces"></ol>
+    <button id="create-piece" class="create">Добавить</button>
+    <br>
+    <button id="remove-task" class="eye">
+        Удалить задание
+    </button>
+
+    <nav>
+        <button id="to-main">
+            <svg class="green">
+                <use href="sprite.svg#left"></use>
+            </svg>
+        </button>
+        <button id="to-cutting">
+            <svg class="yellow">
+                <use href="sprite.svg#cutting"></use>
+            </svg>
+        </button>
+    </nav>
+
+    <div class="hidden">
+        <div id="scrap">
+            <form>
+                <section>
+                    <label for="scrap-width">Длина</label>
+                    <span></span>
+                    <label for="scrap-height">Высота</label>
+                    <span></span>
+                    <label for="scrap-edge">Отступ</label>
+                    <span></span>
+                    <label for="scrap-count">Кол-во</label>
+
+                    <input type="number" inputmode="numeric" id="scrap-width" placeholder="мм" autocomplete="off"/>
                     <svg class="icon">
                         <use href="sprite.svg#x"></use>
                     </svg>
-                    <label>
-                        <input type="number" inputmode="numeric" id="scrap-height" placeholder="ширина"
-                               autocomplete="off"/>
-                    </label>
-                </div>
-            </section>
-            <section class="out">
-                <label for="scrap-edge">Отступ от края</label>
-                <input type="number" inputmode="numeric" id="scrap-edge" placeholder="мм" autocomplete="off"/>
-            </section>
-            <section class="out">
-                <label for="scrap-count">Количество</label>
-                <input type="number" inputmode="numeric" id="scrap-count" placeholder="шт" autocomplete="off"/>
-            </section>
-        </form>
-
-        <form id="edging" class="hidden">
-            <section class="out">
-                <label for="edging-line">Линия</label>
-                <button id="edging-line"></button>
-            </section>
-            <section class="out">
-                <label for="edging-thick">Толщина</label>
-                <input type="number" inputmode="numeric" step="0.1" id="edging-thick" placeholder="мм"
-                       autocomplete="off"/>
-            </section>
-            <section class="out">
-                <label for="edging-text" class="hidden">Кромка</label>
-                <input type="text" id="edging-text" placeholder="Кромка"/>
-            </section>
-        </form>
-
-        <form id="roll" class="hidden">
-            <section class="out">
-                <label for="roll-edging">Кромка</label>
-                <button id="roll-edging"></button>
-            </section>
-            <section class="out">
-                <label for="roll-inner">Внутренний диаметр</label>
-                <input type="number" inputmode="numeric" step="0.1" id="roll-inner" placeholder="мм"
-                       autocomplete="off"/>
-            </section>
-            <section class="out">
-                <label for="roll-outer">Внешний диаметр</label>
-                <input type="number" inputmode="numeric" step="0.1" id="roll-outer" placeholder="мм"
-                       autocomplete="off"/>
-            </section>
-        </form>
-
-        <form id="piece" class="hidden">
-            <section class="out">
-                <span>Размеры</span>
-                <div>
-                    <label>
-                        <input type="number" inputmode="numeric" id="piece-width" placeholder="длина"
-                               autocomplete="off"/>
-                    </label>
-                    <svg class="icon" id="piece-rotate">
-                        <use href="sprite.svg#x"></use>
+                    <input type="number" inputmode="numeric" id="scrap-height" placeholder="мм" autocomplete="off"/>
+                    <svg class="icon">
+                        <use href="sprite.svg#v"></use>
                     </svg>
-                    <label>
-                        <input type="number" inputmode="numeric" id="piece-height" placeholder="ширина"
+                    <input type="number" inputmode="numeric" id="scrap-edge" placeholder="мм" autocomplete="off"/>
+                    <span></span>
+                    <input type="number" inputmode="numeric" id="scrap-count" placeholder="шт" autocomplete="off"/>
+                </section>
+                <button type="button" id="delete-scrap" class="delete" onclick="toDelete(event)">Очистить</button>
+            </form>
+        </div>
+
+        <div id="edging">
+            <form>
+                <section>
+                    <label for="edging-line">Линия</label>
+                    <span></span>
+                    <label for="edging-thick">Толщина</label>
+
+                    <button id="edging-line"></button>
+                    <span></span>
+                    <input type="number" inputmode="numeric" step="0.1" id="edging-thick" placeholder="мм"
+                           autocomplete="off"/>
+                </section>
+                <label for="edging-text" class="hidden">Описание</label>
+                <textarea id="edging-text" placeholder="Описание"></textarea>
+                <button type="button" id="delete-edging" class="delete" onclick="toDelete(event)">Очистить</button>
+            </form>
+
+        </div>
+
+        <div id="roll">
+            <form>
+                <section>
+                    <label for="roll-edging">Кромка</label>
+                    <span></span>
+                    <label>Внутри Снаружи</label>
+                    <label for="roll-inner" class="hidden">Внутри</label>
+                    <label for="roll-outer" class="hidden">Снаружи</label>
+                    <span></span>
+
+                    <button id="roll-edging"></button>
+                    <svg class="icon">
+                        <use href="sprite.svg#v"></use>
+                    </svg>
+                    <div>
+                        <input type="number" inputmode="numeric" step="0.1" id="roll-inner" placeholder="мм"
                                autocomplete="off"/>
-                    </label>
-                </div>
-            </section>
-            <section class="out">
-                <label for="piece-rotated">Можно вращать</label>
-                <button id="piece-rotated">нет</button>
-            </section>
-            <section class="out">
-                <label for="piece-count">Количество</label>
-                <input type="number" inputmode="numeric" id="piece-count" placeholder="шт" autocomplete="off"/>
-            </section>
-            <section class="out">
-                <label for="piece-edging-up">Кромка слева</label>
-                <button id="piece-edging-up"></button>
-            </section>
-            <section class="out">
-                <label for="piece-edging-down">Кромка справа</label>
-                <button id="piece-edging-down"></button>
-            </section>
+                        <span class="pad">-</span>
+                        <input type="number" inputmode="numeric" step="0.1" id="roll-outer" placeholder="мм"
+                               autocomplete="off"/>
+                        <span></span>
+                    </div>
+                </section>
+                <button type="button" id="delete-roll" class="delete" onclick="toDelete(event)">Очистить</button>
+            </form>
+        </div>
 
-            <section class="out">
-                <label for="piece-edging-left">Кромка сверху</label>
-                <button id="piece-edging-left"></button>
-            </section>
-            <section class="out">
-                <label for="piece-edging-right">Кромка снизу</label>
-                <button id="piece-edging-right"></button>
-            </section>
-            <section class="out">
-                <label for="piece-text" class="hidden">Деталь</label>
-                <input type="text" id="piece-text" placeholder="Деталь"/>
-            </section>
-            <section class="out">
-                <label for="piece-extra">Доп. обработка</label>
-                <button id="piece-extra">нет</button>
-            </section>
-        </form>
+        <div id="piece">
+            <form>
+                <section>
+                    <label for="piece-width">Длина</label>
+                    <label for="piece-rotated">Пов-от</label>
+                    <label for="piece-height">Высота</label>
+                    <span></span>
+                    <label for="piece-extra">Доп.об.</label>
+                    <label for="piece-count">Кол-во</label>
 
-        <nav>
-            <button id="remove">
-                <svg class="red">
-                    <use href="sprite.svg#cancel"></use>
-                </svg>
-            </button>
-            <button id="recover" class="hidden">
-                <svg class="gray">
-                    <use href="sprite.svg#recover"></use>
-                </svg>
-            </button>
+                    <input type="number" inputmode="numeric" id="piece-width" placeholder="мм" autocomplete="off"/>
+                    <button type="button" id="piece-rotated"></button>
+                    <input type="number" inputmode="numeric" id="piece-height" placeholder="мм" autocomplete="off"/>
+                    <span></span>
+                    <button type="button" id="piece-extra"></button>
+                    <input type="number" inputmode="numeric" id="piece-count" placeholder="шт" autocomplete="off"/>
 
-            <div class="space"></div>
+                    <div id="piece-edging-up"></div>
+                    <span></span>
+                    <div id="piece-edging-left"></div>
+                    <span></span>
+                    <span></span>
+                    <span></span>
 
-            <button id="prev" class="hidden">
-                <svg class="blue">
-                    <use href="sprite.svg#left"></use>
-                </svg>
-            </button>
-            <button id="create" class="hidden">
-                <svg class="yellow">
-                    <use href="sprite.svg#create"></use>
-                </svg>
-            </button>
-            <button id="next" class="hidden">
-                <svg class="blue">
-                    <use href="sprite.svg#right"></use>
-                </svg>
-            </button>
-
-            <div class="space"></div>
-
-            <button id="update">
-                <svg class="green">
-                    <use href="sprite.svg#save"></use>
-                </svg>
-            </button>
-        </nav>
+                    <div id="piece-edging-down"></div>
+                    <span></span>
+                    <div id="piece-edging-right"></div>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </section>
+                <label for="piece-text" class="hidden">Описание</label>
+                <textarea id="piece-text" placeholder="Описание"></textarea>
+                <button type="button" id="delete-piece" class="delete" onclick="toDelete(event)">Очистить</button>
+            </form>
+        </div>
     </div>
 </article>
 

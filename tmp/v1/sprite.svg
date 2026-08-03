@@ -71,9 +71,6 @@
         <line x1="12" y1="4" x2="12" y2="20"/>
         <line x1="4" y1="12" x2="20" y2="12"/>
     </symbol>
-    <symbol id="expand" viewBox="0 0 24 24">
-        <path d="M4 8L12 16L20 8"/>
-    </symbol>
 
     <!--Кромки-->
     <symbol id="line" viewBox="0 0 60 5">

@@ -82,11 +82,8 @@
 select,
 textarea,
 body {
-    transition: background 0.35s ease, color 0.35s ease;
-}
-
-body {
     background-color: var(--bg-primary);
+    transition: background 0.35s ease, color 0.35s ease;
 }
 
 article {
@@ -133,31 +130,37 @@ button {
     padding: 10px;
 }
 
-#setting form,
-#setting {
-
-}
-
 button:focus {
     outline: none;
 }
 
-.item,
+.out,
 .eye {
     opacity: 1;
 }
 
-.item:hover,
+.out:hover,
 .eye:hover {
     opacity: 0.8;
+}
+
+
+label {
+    width: 100%;
 }
 
 .space {
     width: 100%;
 }
 
-* {
-    scroll-margin-top: 60px;
+form {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 10px;
 }
 
 textarea {
@@ -168,7 +171,6 @@ textarea {
     overflow: hidden;
 }
 
-textarea,
 input {
     font: inherit;
     border: none;
@@ -210,11 +212,15 @@ button div {
     flex-direction: row;
 }
 
-#setting,
+#output,
+#input,
 #cutting {
     padding-top: 50px;
 }
 
+#output {
+    min-height: 100%;
+}
 
 #do-cut {
     display: block;
@@ -226,27 +232,35 @@ button div {
     padding: 10px;
 }
 
-
-section > span {
+.out {
+    min-height: 60px;
     width: 100%;
-    height: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.head {
+.but {
+    min-height: 40px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
     justify-content: space-between;
+    align-items: center;
 }
 
 .text {
     display: block;
     width: 100%;
     text-align: left;
-    padding: 20px;
+    margin: 10px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: "clip";
     opacity: 0.6;
-    mask-image: linear-gradient(to right, black 70%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, black 70%, transparent 100%);
 }
 
 .name {
@@ -337,8 +351,6 @@ nav {
 #remove-task {
     color: var(--red);
     padding: 10px;
-    font-size: 16px;
-    width: fit-content !important;
 }
 
 #to-remove-task button {
@@ -377,7 +389,6 @@ svg {
 .big {
     color: var(--green);
     font-size: 26px;
-    width: 100%;
 }
 
 .small {
@@ -399,7 +410,6 @@ h1, h2 {
 
 h1 {
     font-size: 26px;
-    width: fit-content;
 }
 
 
@@ -444,16 +454,6 @@ ol {
     flex-direction: column;
     cursor: pointer;
     width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    align-items: flex-start;
-    padding: 10px 20px;
-}
-
-#to-update-task > div {
-    justify-content: space-between;
-    width: 100%;
-    height: 50px;
 }
 
 
@@ -513,13 +513,8 @@ svg:hover {
     scale: 1.1;
 }
 
-
 .rotated {
     rotate: 90deg;
-}
-
-.row {
-    align-self: center;
 }
 
 svg {
@@ -581,8 +576,10 @@ select {
 /* Кнопки */
 
 .unit {
-    display: flex;
-    gap: 5px;
+    color: gray;
+    opacity: 0.5;
+    font-size: 0.9em;
+    padding-left: 5px;
 }
 
 #gutter {
@@ -711,6 +708,10 @@ input[type="text"] {
     box-shadow: inset 0 0 0 1px gray;
     position: absolute;
     z-index: 9999;
+}
+
+.value {
+    padding-right: 10px;
 }
 
 .back {
@@ -914,228 +915,4 @@ th {
 td svg {
     padding: 1mm;
     height: 1.5em;
-}
-
-/* Формы */
-
-form {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-li > button {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 10px 20px;
-}
-
-#task-title {
-    width: fit-content;
-    min-width: 100px;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 10px 20px;
-}
-
-/* Задача */
-
-#update-task > div {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 10px 20px;
-}
-
-#task > form > section {
-    display: grid;
-    grid-template-columns: 120px 120px auto 50px;
-    grid-template-rows: auto auto;
-    place-items: center;
-    width: 100%;
-}
-
-/* Лист */
-
-#update-sheet > div {
-    display: grid;
-    grid-template-columns: 50px 50px 50px 50px 50px auto 45px;
-    place-items: center;
-    width: 100%;
-}
-
-#sheet > form > section {
-    display: grid;
-    grid-template-columns: 50px 50px 50px 50px 45px auto 45px;
-    grid-template-rows: auto auto;
-    place-items: center;
-    width: 100%;
-}
-
-/* Обрезок */
-
-#scraps > li > button > div {
-    display: grid;
-    grid-template-columns: 50px 50px 50px 50px 45px auto 45px;
-    place-items: center;
-}
-
-#scrap > form > section {
-    display: grid;
-    grid-template-columns: 50px 50px 50px 50px 45px auto 45px;
-    grid-template-rows: auto auto;
-    place-items: center;
-    width: 100%;
-}
-
-/* Кромка */
-
-#edgings > li > button > div {
-    display: grid;
-    grid-template-columns: 60px auto 60px;
-    place-items: center;
-}
-
-#edging > form > section {
-    display: grid;
-    grid-template-columns: 60px auto 60px;
-    grid-template-rows: auto auto auto;
-    place-items: center;
-    width: 100%;
-}
-
-/* Рулон */
-
-#rolls > li > button > div {
-    display: grid;
-    grid-template-columns: 60px 50px 120px auto 60px;
-    place-items: center;
-}
-
-#roll > form > section {
-    display: grid;
-    grid-template-columns:  60px 50px 120px auto;
-    grid-template-rows: auto auto;
-    place-items: center;
-    width: 100%;
-}
-
-/* Деталь */
-
-#pieces > li > button > div {
-    display: grid;
-    grid-template-columns: 60px 50px 60px auto 60px 45px;
-    place-items: center;
-}
-
-#piece > form > section {
-    display: grid;
-    grid-template-columns: 60px 50px 60px auto 60px 45px;
-    grid-template-rows: auto auto auto;
-    place-items: center;
-    width: 100%;
-}
-
-
-form > div {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    place-items: flex-start;
-    gap: 10px;
-}
-
-textarea {
-    width: 100%;
-}
-
-
-section > label {
-    font-size: 12px;
-    opacity: 0.8;
-}
-
-
-li > button > div {
-    width: 100%;
-}
-
-form > div > label {
-    width: 100%;
-}
-
-#task,
-#sheet,
-#scrap,
-#edging,
-#roll,
-#piece {
-    background: var(--bg-header);
-    display: flex;
-    flex-direction: column;
-}
-
-#scrap .line,
-#piece .line {
-    margin: 10px 0;
-}
-
-
-input {
-    user-select: text;
-}
-
-::placeholder {
-    opacity: 0.5;
-}
-
-
-#setting > button {
-    position: relative;
-    min-height: 60px;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 10px 20px;
-}
-
-button > label {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-}
-
-#task > form > div {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-    height: 50px;
-}
-
-.create {
-    color: var(--green);
-    justify-content: flex-end;
-    font-size: 12px;
-}
-
-.delete {
-    align-self: flex-end;
-    font-size: 12px;
-}
-
-textarea {
-    padding-top: 10px;
 }

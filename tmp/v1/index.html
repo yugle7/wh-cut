@@ -36,83 +36,73 @@
 
 </article>
 
-<article id="to-remove-task" class="hidden">
-    <div>Вы действительно</div>
-    <div>хотите удалить задание?</div>
-    <h1></h1>
-    <div>
-        <button id="yes-remove-task" class="eye">Да</button>
-        <button id="no-remove-task" class="eye">Нет</button>
-    </div>
-</article>
-
 <article id="setting" class="hidden">
-    <div id="to-update-task"></div>
-    <button class="out" id="to-update-sheet"></button>
+    <div id="to-remove-task" class="hidden">
+        <div>Вы действительно</div>
+        <div>хотите удалить задание?</div>
+        <h1></h1>
+        <div>
+            <button id="yes-remove-task" class="eye">Да</button>
+            <button id="no-remove-task" class="eye">Нет</button>
+        </div>
+    </div>
+    <div id="output">
+        <div id="to-update-task"></div>
+        <button class="out" id="to-update-sheet"></button>
 
-    <br>
-    <button class="out" id="to-create-scrap">
-        <span class="big pad">Обрезки</span>
-        <svg class="yellow">
-            <use href="sprite.svg#plus"></use>
-        </svg>
-    </button>
-    <ol id="scraps"></ol>
-
-    <br>
-    <button class="out" id="to-create-edging">
-        <span class="big pad">Кромки</span>
-        <svg class="yellow">
-            <use href="sprite.svg#plus"></use>
-        </svg>
-    </button>
-    <ol id="edgings"></ol>
-
-    <br>
-    <button class="out" id="to-create-roll">
-        <span class="big pad">Рулоны</span>
-        <svg class="yellow">
-            <use href="sprite.svg#plus"></use>
-        </svg>
-    </button>
-    <ol id="rolls"></ol>
-
-    <br>
-    <button id="to-create-piece" class="out">
-        <span class="big">Детали</span>
-        <svg class="yellow">
-            <use href="sprite.svg#plus"></use>
-        </svg>
-    </button>
-    <ol id="pieces"></ol>
-    <button id="create-piece" class="out pad">
-        <label>Длина</label>
-        <svg>
-            <use href="sprite.svg#x"></use>
-        </svg>
-        <label>Высота</label>
-        <span></span>
-        <label>Кол-во</label>
-    </button>
-
-    <br>
-    <button id="remove-task" class="eye">
-        Удалить задание
-    </button>
-
-    <nav>
-        <button id="to-main">
-            <svg class="green">
-                <use href="sprite.svg#left"></use>
-            </svg>
-        </button>
-        <button id="to-cutting">
+        <br>
+        <button class="out" id="to-create-scrap">
+            <span class="big pad">Обрезки</span>
             <svg class="yellow">
-                <use href="sprite.svg#cutting"></use>
+                <use href="sprite.svg#plus"></use>
             </svg>
         </button>
-    </nav>
+        <ol id="scraps"></ol>
 
+        <br>
+        <button class="out" id="to-create-edging">
+            <span class="big pad">Кромки</span>
+            <svg class="yellow">
+                <use href="sprite.svg#plus"></use>
+            </svg>
+        </button>
+        <ol id="edgings"></ol>
+
+        <br>
+        <button class="out" id="to-create-roll">
+            <span class="big pad">Рулоны</span>
+            <svg class="yellow">
+                <use href="sprite.svg#plus"></use>
+            </svg>
+        </button>
+        <ol id="rolls"></ol>
+
+        <br>
+        <button class="out" id="to-create-piece">
+            <span class="big pad">Детали</span>
+            <svg class="yellow">
+                <use href="sprite.svg#plus"></use>
+            </svg>
+        </button>
+        <ol id="pieces"></ol>
+        <br>
+        <button id="remove-task" class="eye">
+            Удалить задание
+        </button>
+
+        <nav>
+            <button id="to-main">
+                <svg class="green">
+                    <use href="sprite.svg#left"></use>
+                </svg>
+            </button>
+            <button id="to-cutting">
+                <svg class="yellow">
+                    <use href="sprite.svg#cutting"></use>
+                </svg>
+            </button>
+        </nav>
+    </div>
 
     <div id="input" class="hidden">
         <form id="task" class="hidden">
@@ -224,51 +214,97 @@
                        autocomplete="off"/>
             </section>
         </form>
-    </div>
-    <div class="hidden">
-        <div id="piece">
-            <form>
-                <section id="piece-head">
-                    <label for="piece-width">Длина</label>
-                    <label for="piece-rotated">Пов-от</label>
-                    <label for="piece-height">Высота</label>
-                    <button type="button" onclick="toSave(event)" class="full"></button>
-                    <label for="piece-extra">Доп.об.</label>
-                    <label for="piece-count">Кол-во</label>
 
-                    <div class="col">
-                        <input type="number" inputmode="numeric" id="piece-width" placeholder="мм"
+        <form id="piece" class="hidden">
+            <section class="out">
+                <span>Размеры</span>
+                <div>
+                    <label>
+                        <input type="number" inputmode="numeric" id="piece-width" placeholder="длина"
                                autocomplete="off"/>
-                    </div>
-                    <button type="button" id="piece-rotated"></button>
-                    <div class="col">
-                        <input type="number" inputmode="numeric" id="piece-height" placeholder="мм"
+                    </label>
+                    <svg class="icon" id="piece-rotate">
+                        <use href="sprite.svg#x"></use>
+                    </svg>
+                    <label>
+                        <input type="number" inputmode="numeric" id="piece-height" placeholder="ширина"
                                autocomplete="off"/>
-                    </div>
-                    <button type="button" onclick="toSave()" class="full"></button>
-                    <button type="button" id="piece-extra"></button>
-                    <input type="number" inputmode="numeric" id="piece-count" placeholder="шт" autocomplete="off"/>
-                </section>
+                    </label>
+                </div>
+            </section>
+            <section class="out">
+                <label for="piece-rotated">Можно вращать</label>
+                <button id="piece-rotated">нет</button>
+            </section>
+            <section class="out">
+                <label for="piece-count">Количество</label>
+                <input type="number" inputmode="numeric" id="piece-count" placeholder="шт" autocomplete="off"/>
+            </section>
+            <section class="out">
+                <label for="piece-edging-up">Кромка слева</label>
+                <button id="piece-edging-up"></button>
+            </section>
+            <section class="out">
+                <label for="piece-edging-down">Кромка справа</label>
+                <button id="piece-edging-down"></button>
+            </section>
 
-                <section id="piece-foot">
-                    <div class="col">
-                        <span id="piece-edging-up"></span>
-                        <span id="piece-edging-down"></span>
-                    </div>
-                    <button type="button" onclick="toSave()" class="full"></button>
-                    <div class="col">
-                        <span id="piece-edging-left"></span>
-                        <span id="piece-edging-right"></span>
-                    </div>
-                    <span></span>
-                    <div>
-                        <label for="piece-text" class="hidden">Описание</label>
-                        <textarea id="piece-text" placeholder="Описание"></textarea>
-                    </div>
-                </section>
-                <button type="button" id="delete-piece" onclick="toDelete(event)">Очистить</button>
-            </form>
-        </div>
+            <section class="out">
+                <label for="piece-edging-left">Кромка сверху</label>
+                <button id="piece-edging-left"></button>
+            </section>
+            <section class="out">
+                <label for="piece-edging-right">Кромка снизу</label>
+                <button id="piece-edging-right"></button>
+            </section>
+            <section class="out">
+                <label for="piece-text" class="hidden">Деталь</label>
+                <input type="text" id="piece-text" placeholder="Деталь"/>
+            </section>
+            <section class="out">
+                <label for="piece-extra">Доп. обработка</label>
+                <button id="piece-extra">нет</button>
+            </section>
+        </form>
+
+        <nav>
+            <button id="remove">
+                <svg class="red">
+                    <use href="sprite.svg#cancel"></use>
+                </svg>
+            </button>
+            <button id="recover" class="hidden">
+                <svg class="gray">
+                    <use href="sprite.svg#recover"></use>
+                </svg>
+            </button>
+
+            <div class="space"></div>
+
+            <button id="prev" class="hidden">
+                <svg class="blue">
+                    <use href="sprite.svg#left"></use>
+                </svg>
+            </button>
+            <button id="create" class="hidden">
+                <svg class="yellow">
+                    <use href="sprite.svg#create"></use>
+                </svg>
+            </button>
+            <button id="next" class="hidden">
+                <svg class="blue">
+                    <use href="sprite.svg#right"></use>
+                </svg>
+            </button>
+
+            <div class="space"></div>
+
+            <button id="update">
+                <svg class="green">
+                    <use href="sprite.svg#save"></use>
+                </svg>
+            </button>
+        </nav>
     </div>
 </article>
 

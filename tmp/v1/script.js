@@ -26,6 +26,8 @@ const toCuttingButton = document.getElementById("to-cutting");
 // 3. Настройки задачи раскроя
 
 const settingPage = document.getElementById("setting");
+const inputPage = document.getElementById("input");
+const outputPage = document.getElementById("output");
 
 const removeTaskButton = document.getElementById("remove-task");
 const yesRemoveTaskButton = document.getElementById("yes-remove-task");
@@ -35,7 +37,7 @@ const toRemoveTaskPage = document.getElementById("to-remove-task");
 // 3.1 Задача
 
 const taskForm = document.getElementById("task");
-const updateTaskButton = document.getElementById("update-task");
+const toUpdateTaskLink = document.getElementById("to-update-task");
 
 const taskTitleInput = document.getElementById("task-title");
 const taskMaterialInput = document.getElementById("task-material");
@@ -47,22 +49,17 @@ const taskKerfInput = document.getElementById("task-kerf");
 // 3.2 Лист
 
 const sheetForm = document.getElementById("sheet");
-const updateSheetButton = document.getElementById("update-sheet");
+const toUpdateSheetLink = document.getElementById("to-update-sheet");
 
 const sheetWidthInput = document.getElementById("sheet-width");
 const sheetHeightInput = document.getElementById("sheet-height");
 const sheetEdgeInput = document.getElementById("sheet-edge");
-const sheetDepthInput = document.getElementById("sheet-depth");
-const sheetRotatedInput = document.getElementById("sheet-rotated");
 
 // 3.3 Обрезки
 
 const scrapForm = document.getElementById("scrap");
 const scrapsList = document.getElementById("scraps");
-
-const addScrapButton = document.getElementById("add-scrap");
-const createScrapButton = document.getElementById("create-scrap");
-const deleteScrapButton = document.getElementById("delete-scrap");
+const toCreateScrapLink = document.getElementById("to-create-scrap");
 
 const scrapWidthInput = document.getElementById("scrap-width");
 const scrapHeightInput = document.getElementById("scrap-height");
@@ -73,10 +70,7 @@ const scrapCountInput = document.getElementById("scrap-count");
 
 const edgingForm = document.getElementById("edging");
 const edgingsList = document.getElementById("edgings");
-
-const addEdgingButton = document.getElementById("add-edging");
-const createEdgingButton = document.getElementById("create-edging");
-const deleteEdgingButton = document.getElementById("delete-edging");
+const toCreateEdgingLink = document.getElementById("to-create-edging");
 
 const edgingLineInput = document.getElementById('edging-line');
 const edgingTextInput = document.getElementById('edging-text');
@@ -86,10 +80,7 @@ const edgingThickInput = document.getElementById('edging-thick');
 
 const rollForm = document.getElementById("roll");
 const rollsList = document.getElementById("rolls");
-
-const addRollButton = document.getElementById("add-roll");
-const createRollButton = document.getElementById("create-roll");
-const deleteRollButton = document.getElementById("delete-roll");
+const toCreateRollLink = document.getElementById("to-create-roll");
 
 const rollEdgingInput = document.getElementById('roll-edging');
 const rollInnerInput = document.getElementById('roll-inner');
@@ -99,13 +90,11 @@ const rollOuterInput = document.getElementById('roll-outer');
 
 const pieceForm = document.getElementById("piece");
 const piecesList = document.getElementById("pieces");
-
-const addPieceButton = document.getElementById("add-piece");
-const createPieceButton = document.getElementById("create-piece");
-const deletePieceButton = document.getElementById("delete-piece");
+const toCreatePieceLink = document.getElementById("to-create-piece");
 
 const pieceWidthInput = document.getElementById('piece-width');
 const pieceHeightInput = document.getElementById('piece-height');
+const pieceRotateButton = document.getElementById('piece-rotate');
 
 const pieceRotatedInput = document.getElementById('piece-rotated');
 const pieceCountInput = document.getElementById('piece-count');
@@ -117,6 +106,16 @@ const pieceEdgingUpInput = document.getElementById('piece-edging-up');
 const pieceEdgingDownInput = document.getElementById('piece-edging-down');
 const pieceEdgingLeftInput = document.getElementById('piece-edging-left');
 const pieceEdgingRightInput = document.getElementById('piece-edging-right');
+
+// 3.6 Формы добавления и изменения
+
+const removeButton = document.getElementById("remove");
+const recoverButton = document.getElementById("recover");
+
+const updateButton = document.getElementById("update");
+const createButton = document.getElementById("create");
+const nextButton = document.getElementById("next");
+const prevButton = document.getElementById("prev");
 
 // 4. Редактор раскроя
 
@@ -149,15 +148,25 @@ const edgingIcons = ['line', 'dash', 'wave'];
 const edgingThicks = Array(edgingIcons.length).fill(null);
 
 const defaultTask = {
-    title: "",
     kerf: 4,
-    sheet: {width: 2800, height: 2070, edge: null, depth: 16},
+    title: "",
+    sheet: {width: 2800, height: 2070, edge: null},
     scraps: [],
     rolls: [],
     edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.4}],
     pieces: [],
 };
 
+const labels = {
+    task: 'Раскрой',
+    sheet: 'Лист',
+    scrap: 'Обрезок',
+    edging: 'Кромка',
+    piece: 'Деталь',
+    yes: 'да',
+    no: 'нет',
+    cut: 'собрать'
+}
 
 const toDate = (isoDate) => {
     if (!isoDate) return '';
@@ -181,7 +190,7 @@ const lineHtml = (line) => {
     return `<svg class="line ${color}">${spriteHtml(line)}</svg>`;
 }
 
-const valueHtml = (value, unit) => `<span class="unit"><span>${value || 0}</span><span class="fade">${unit}</span></span>`
+const valueHtml = (value, unit) => `<span class="value"><span>${value || 0}</span> <span class="unit">${unit}</span></span>`
 
 const x = iconHtml('x');
 const v = iconHtml('v');
@@ -225,18 +234,15 @@ let task = null;
 // 2. Параметры задачи
 
 let form = null;
-let link = null;
-let item = null;
-
 let items = null;
 let links = null;
-let index = null;
+let link = null;
 
+let index = null;
 let deleted = null;
 let created = null;
 
 let edgingLine = null;
-let sheetRotated = false;
 let pieceRotated = false;
 let pieceExtra = false;
 let pieceEdging = {left: null, up: null, right: null, down: null};
@@ -293,7 +299,7 @@ const toTask = async (e) => {
 
 const addTask = ({id, title}) => {
     const q = document.createElement('li')
-    q.innerText = title || 'Задача';
+    q.innerText = title || labels.task;
     q.id = id;
     q.onclick = toTask;
     tasksList.appendChild(q);
@@ -360,61 +366,48 @@ changeThemeButton.onclick = () => {
 
 toSettingButton.onclick = () => changePage(settingPage);
 
-let deleteButton;
-let createButton;
-let updateButton;
-
-let clearForm;
-let copyToForm;
-let focusInput;
-
-let update;
-let updateItem;
-let toHtml;
-
 // 2.1 Отображение данных
 
-const dateHtml = () => task.start || task.finish ? `<div><span>${toDate(task.start)}</span><span class="fade">${toDate(task.finish)}</span></div>` : '';
+const titleHtml = () => `<h1 class="out pad">${task.title || labels.task}</h1>`
 
-const materialHtml = () => `<div><span>${task.material || 'Материал'}</span><span>${valueHtml(task.kerf, 'мм')}</span></div>`;
+const dateHtml = () => task.start || task.finish ? `<div class="out"><span  class="pad">${toDate(task.start)}</span><span class="pad fade">${toDate(task.finish)}</span></div>` : '';
 
-const toSheetHtml = (
-    {width, height, edge, depth}
-) => `<div>${width}${x}${height}${v}${valueHtml(edge, 'мм')}</span><span></span>${valueHtml(depth, 'мм')}</div>`;
+const materialHtml = () => task.material ? `<div class="out"><span  class="pad">${task.material}</span><span>${valueHtml(task.thick, 'мм')}</span></div>` : '';
 
-const toScrapHtml = (
+const kerfHtml = () => `<span>${valueHtml(task.kerf || 0, 'мм')}</span>`;
+
+const sheetHtml = (
+    {width, height, edge}
+) => `<span class="pad">${width}${x}${height}${v}${valueHtml(edge, 'мм')}</span>${kerfHtml()}`;
+
+const scrapHtml = (
     {width, height, edge, count}
-) => `<div>${width}${x}${height}${v}${valueHtml(edge, 'мм')}<span></span>${valueHtml(count, 'шт')}</div>`;
+) => `<div class="pad">${width}${x}${height}${v}${valueHtml(edge, 'мм')}</div>${valueHtml(count, 'шт')}`;
 
 const textHtml = (text) => `<div class="text">${text || ''}</div>`;
-const toEdgingHtml = (
+const edgingHtml = (
     {line, thick, text}
-) => `<div>${lineHtml(line)}${textHtml(text)}${valueHtml(thick, 'мм')}</div>`;
+) => `<div class="pad">${lineHtml(line)}</div>${textHtml(text)}${valueHtml(thick, 'мм')}`;
 
-const toRollHtml = (
+const rollHtml = (
     {line, inner, outer, length, thick}
-) => `<div>${lineHtml(line)}${v}${valueHtml(`${inner} - ${outer}`, 'мм')}<span></span>${valueHtml((length / 1000).toFixed(2), 'м')}</div>`;
+) => `<div class="pad">${lineHtml(line)}${v}${valueHtml(`${inner} - ${outer}`, 'мм')}</div>${valueHtml((length / 1000).toFixed(2), 'м')}`;
 
-const toPieceHtml = ({width, height, rotated, edging, count, text, extra}) => {
+const pieceHtml = ({width, height, rotated, edging, count, text, extra}) => {
     const {left, up, right, down} = edging;
 
     const w = `<div class="col"><span>${width}</span>${lineHtml(up)}${lineHtml(down)}</div>`;
     const h = `<div class="col"><span>${height}</span>${lineHtml(left)}${lineHtml(right)}</div>`;
-    const e = extra ? iconHtml('save', 'green') : `<span></span>`;
+    const e = extra ? iconHtml('save', 'green') : '';
 
-    return `<div>${w}${rotated ? o : x}${h}${textHtml(text)}${e}${valueHtml(count, 'шт')}</div>`
+    return `<div class="pad">${w}${rotated ? o : x}${h}</div>${textHtml(text)}${e}${valueHtml(count, 'шт')}`
 }
-
-const defaultClearForm = () => form && form.querySelectorAll('input,textarea').forEach(q => q.value = '')
 
 // 2.2 Заполнение полей задачи
 
 const setTask = () => {
-    taskTitleInput.value = task.title;
-    sheetRotated = task.sheet.rotated;
-
-    updateTaskButton.innerHTML = dateHtml() + materialHtml();
-    updateSheetButton.innerHTML = toSheetHtml(task.sheet);
+    toUpdateTaskLink.innerHTML = titleHtml() + dateHtml() + materialHtml();
+    toUpdateSheetLink.innerHTML = sheetHtml(task.sheet);
 
     task.scraps = task.scraps.filter(Boolean);
     task.edgings = task.edgings.filter(Boolean);
@@ -422,108 +415,31 @@ const setTask = () => {
 
     task.edgings.forEach(({line, thick}) => (edgingThicks[line] = thick));
 
-    scrapsList.innerHTML = task.scraps.map(
-        (q, i) => `<li><button type="button" onclick="toEdit(event, ${i}, toScrapForm)">${toScrapHtml(q)}</button></li>`
-    ).join('\n')
-    edgingsList.innerHTML = task.edgings.map(
-        (q, i) => `<li><button type="button" onclick="toEdit(event, ${i}, toEdgingForm)">${toEdgingHtml(q)}</button></li>`
-    ).join('\n')
-    rollsList.innerHTML = task.rolls.map(
-        (q, i) => `<li><button type="button" onclick="toEdit(event, ${i}, toRollForm)">${toRollHtml(q)}</button></li>`
-    ).join('\n')
-    piecesList.innerHTML = task.pieces.map(
-        (q, i) => `<li><button type="button" onclick="toEdit(event, ${i}, toPieceForm)">${toPieceHtml(q)}</button></li>`
-    ).join('\n');
-
-    copyTaskToForm();
-    copySheetToForm();
+    scrapsList.replaceChildren();
+    task.scraps.forEach(addScrap);
+    edgingsList.replaceChildren();
+    task.edgings.forEach(addEdging);
+    rollsList.replaceChildren();
+    task.rolls.forEach(addRoll);
+    piecesList.replaceChildren();
+    task.pieces.forEach(addPiece);
 }
-
-taskTitleInput.onblur = () => {
-    console.log('taskTitleInput.onblur')
-    document.getElementById(task.id).innerText = task.title = taskTitleInput.value;
-}
-
-const toUpdate = (e, toForm) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    toSave();
-    toForm();
-
-    updateButton.classList.add('hidden');
-    form.classList.remove('hidden');
-    focusInput.focus();
-}
-
-// 2.3 Обновление задачи
 
 const copyTaskToForm = () => {
+    taskTitleInput.value = task.title || '';
+
     taskStartInput.value = task.start || '';
     taskFinishInput.value = task.finish || '';
     taskMaterialInput.value = task.material || '';
-    taskKerfInput.value = task.kerf == null ? '' : task.kerf;
+    taskThickInput.value = task.thick || '';
 }
-
-const updateTask = () => {
-    console.log('updateTask')
-    task.start = taskStartInput.value;
-    task.finish = taskFinishInput.value;
-    task.material = taskMaterialInput.value;
-    task.kerf = +taskKerfInput.value;
-
-    updateTaskButton.innerHTML = dateHtml() + materialHtml();
-}
-
-updateTaskButton.onclick = (e) => toUpdate(e, toTaskForm);
-
-const toTaskForm = () => {
-    update = updateTask;
-    updateButton = updateTaskButton;
-    form = taskForm;
-    focusInput = taskMaterialInput;
-}
-
-// 2.3 Обновление листа
 
 const copySheetToForm = () => {
     sheetWidthInput.value = task.sheet.width;
     sheetHeightInput.value = task.sheet.height;
     sheetEdgeInput.value = task.sheet.edge;
-    sheetDepthInput.value = task.sheet.depth || '';
-    sheetRotatedInput.innerHTML = sheetRotated ? o : x;
+    taskKerfInput.value = task.kerf || '';
 }
-
-sheetRotatedInput.onclick = (e) => {
-    console.log('sheetRotatedInput')
-    e.preventDefault();
-    e.stopPropagation();
-    sheetRotated = !sheetRotated;
-    sheetRotatedInput.innerHTML = sheetRotated ? o : x;
-}
-
-const updateSheet = () => {
-    console.log('updateSheet')
-    task.sheet = {
-        width: +sheetWidthInput.value || 1,
-        height: +sheetHeightInput.value || 1,
-        edge: +sheetEdgeInput.value || 0,
-        depth: +sheetDepthInput.value || 0
-    }
-    updateSheetButton.innerHTML = toSheetHtml(task.sheet);
-}
-
-taskForm.onclick = sheetForm.onclick = (e) => e.stopPropagation();
-updateSheetButton.onclick = (e) => toUpdate(e, toSheetForm);
-
-
-const toSheetForm = () => {
-    update = updateSheet;
-    updateButton = updateSheetButton;
-    form = sheetForm;
-    focusInput = sheetWidthInput;
-}
-
 
 // 2.3 Добавление и обновление обрезка
 
@@ -535,26 +451,52 @@ const copyScrapToForm = ({width, height, edge, count}) => {
     scrapCountInput.value = count;
 }
 
-const updateScrapItem = () => {
-    const width = +scrapWidthInput.value;
-    const height = +scrapHeightInput.value;
-    const count = scrapCountInput.value ? +scrapCountInput.value : 1;
-    const edge = +scrapEdgeInput.value;
+const addScrap = (scrap, i) => {
+    console.log('addScrap')
+    let q = document.createElement('li');
+    q.innerHTML = `<button class="out">${scrapHtml(scrap)}</button>`
+    q.firstChild.onclick = (e) => {
+        e.stopPropagation();
+        index = i;
+        items = task.scraps;
+        links = scrapsList;
+        changeForm(scrapForm)
+        showButtons();
+        copyScrapToForm(items[i]);
+        toInputPage();
 
-    items[index] = !width || !height ? null : {width, height, edge, count};
+    }
+    scrapsList.appendChild(q);
+};
+
+const removeLink = () => links.children[index].classList.add('hidden');
+
+
+const updateLink = () => {
+    let html = null;
+    if (form === scrapForm) html = scrapHtml(items[index])
+    else if (form === edgingForm) html = edgingHtml(items[index])
+    else if (form === rollForm) html = rollHtml(items[index])
+    else if (form === pieceForm) html = pieceHtml(items[index]);
+    if (html) links.children[index].firstChild.innerHTML = html;
 }
 
-const toScrapForm = () => {
-    form = scrapForm;
-    deleteButton = deleteScrapButton;
-    createButton = createScrapButton;
-    copyToForm = copyScrapToForm;
-    focusInput = pieceWidthInput;
-    updateItem = updateScrapItem;
-    clearForm = clearScrapForm;
-    toHtml = toScrapHtml;
-    links = scrapsList;
-    items = task.scraps;
+const addLink = () => {
+    console.log('addLink')
+    if (form === scrapForm) addScrap(items[index], index)
+    else if (form === edgingForm) addEdging(items[index], index)
+    else if (form === rollForm) addRoll(items[index], index)
+    else if (form === pieceForm) addPiece(items[index], index)
+    else links = null;
+}
+
+const updateScrap = () => {
+    const width = +scrapWidthInput.value;
+    const height = +scrapHeightInput.value;
+    const count = +scrapCountInput.value;
+    const edge = +scrapEdgeInput.value;
+
+    items[index] = !width || !height || !count ? null : {width, height, edge, count};
 }
 
 // 2.4 Добавление и обновление кромки
@@ -571,33 +513,23 @@ const copyEdgingToForm = ({line, thick, text}) => {
     edgingThicks[line] = null;
 }
 
-const toEdgingForm = () => {
-    form = edgingForm;
-    deleteButton = deleteEdgingButton;
-    createButton = createEdgingButton;
-    copyToForm = copyEdgingToForm;
-    focusInput = edgingThickInput;
-    updateItem = updateEdgingItem;
-    clearForm = clearEdgingForm;
-    toHtml = toEdgingHtml;
-    links = edgingsList;
-    items = task.edgings;
-}
+const addEdging = (edging, i) => {
+    console.log('addEdging')
 
-const updateEdgingItem = () => {
-    console.log('updateEdgingItem')
-    if (edgingLine == null) return;
-    const thick = edgingThickInput.value ? +edgingThickInput.value : null;
-
-    items[index] = thick ? {
-        thick,
-        line: edgingLine,
-        text: edgingTextInput.value
-    } : null;
-
-    edgingThicks[edgingLine] = thick;
-    updateRolls();
-}
+    let q = document.createElement('li');
+    q.innerHTML = `<button class="out">${edgingHtml(edging)}</button>`;
+    q.firstChild.onclick = (e) => {
+        e.preventDefault();
+        index = i;
+        items = task.edgings;
+        links = edgingsList;
+        changeForm(edgingForm)
+        showButtons();
+        copyEdgingToForm(items[i]);
+        toInputPage();
+    }
+    edgingsList.appendChild(q);
+};
 
 const updateRolls = () => {
     task.rolls.forEach((q, i) => {
@@ -606,7 +538,7 @@ const updateRolls = () => {
         const thick = edgingThicks[q.line];
         if (thick) {
             q.length = getRollLength(q.inner, q.outer, thick);
-            rollsList.children[i].firstChild.innerHTML = toRollHtml(q);
+            rollsList.children[i].firstChild.innerHTML = rollHtml(q);
         } else {
             task.rolls[i] = null;
             rollsList.children[i].classList.add('hidden');
@@ -614,20 +546,21 @@ const updateRolls = () => {
     });
 }
 
-// 2.4 Добавление и обновление рулона
+const updateEdging = () => {
+    console.log('updateEdging')
+    if (edgingLine == null) return;
+    const thick = edgingThickInput.value ? +edgingThickInput.value : null;
 
-const toRollForm = () => {
-    form = rollForm;
-    deleteButton = deleteRollButton;
-    createButton = createRollButton;
-    copyToForm = copyRollToForm;
-    focusInput = rollInnerInput;
-    updateItem = updateRollItem;
-    clearForm = clearRollForm;
-    toHtml = toRollHtml;
-    links = rollsList;
-    items = task.rolls;
+    items[index] = thick == null ? null : {
+        thick,
+        line: edgingLine,
+        text: edgingTextInput.value
+    };
+    edgingThicks[edgingLine] = thick;
+    updateRolls();
 }
+
+// 2.4 Добавление и обновление рулона
 
 const copyRollToForm = ({line, inner, outer}) => {
     console.log('copyRollToForm')
@@ -639,7 +572,24 @@ const copyRollToForm = ({line, inner, outer}) => {
     rollOuterInput.value = outer;
 }
 
-const updateRollItem = () => {
+const addRoll = (roll, i) => {
+    console.log('addRoll')
+    let q = document.createElement('li');
+    q.innerHTML = `<button class="out">${rollHtml(roll)}</button>`;
+    q.firstChild.onclick = (e) => {
+        e.preventDefault();
+        index = i;
+        items = task.rolls;
+        links = rollsList;
+        changeForm(rollForm)
+        showButtons();
+        copyRollToForm(items[i]);
+        toInputPage();
+    }
+    rollsList.appendChild(q);
+};
+
+const updateRoll = () => {
     let inner = +rollInnerInput.value;
     let outer = +rollOuterInput.value;
     if (inner > outer) [outer, inner] = [inner, outer];
@@ -659,10 +609,10 @@ const copyPieceToForm = ({width, height, rotated, count, edging, text, extra}) =
     pieceHeightInput.value = height;
 
     pieceRotated = rotated;
-    pieceRotatedInput.innerHTML = pieceRotated ? o : x;
+    pieceRotatedInput.innerText = rotated ? labels.yes : labels.no;
 
     pieceExtra = extra;
-    pieceExtraInput.innerHTML = iconHtml(pieceExtra ? 'save' : 'cancel');
+    pieceExtraInput.innerText = extra ? labels.yes : labels.no;
     pieceTextInput.value = text || '';
 
     pieceCountInput.value = count;
@@ -674,32 +624,57 @@ const copyPieceToForm = ({width, height, rotated, count, edging, text, extra}) =
     pieceEdgingRightInput.innerHTML = lineHtml(edging.right);
 }
 
-const toPieceForm = () => {
-    form = pieceForm;
-    deleteButton = deletePieceButton;
-    createButton = createPieceButton;
-    copyToForm = copyPieceToForm;
-    focusInput = pieceWidthInput;
-    updateItem = updatePieceItem;
-    clearForm = clearPieceForm;
-    toHtml = toPieceHtml;
-    links = piecesList;
-    items = task.pieces;
-}
+const addPiece = (piece, i) => {
+    let q = document.createElement('li');
+    q.innerHTML = `<button class="out">${pieceHtml(piece)}</button>`
+    q.firstChild.onclick = (e) => {
+        e.preventDefault();
+        index = i;
+        items = task.pieces;
+        links = piecesList;
+        changeForm(pieceForm)
+        showButtons();
+        copyPieceToForm(items[i]);
+        toInputPage();
+    }
+    piecesList.appendChild(q);
+};
 
-const updatePieceItem = () => {
-    console.log('updatePieceItem');
+const updatePiece = () => {
     const width = +pieceWidthInput.value;
     const height = +pieceHeightInput.value;
-    const count = +pieceCountInput.value || 1;
+    const count = +pieceCountInput.value;
 
-    items[index] = !width || !height ? null : {
+    items[index] = !width || !height || !count ? null : {
         width, height, count,
         rotated: pieceRotated,
         edging: pieceEdging,
         text: pieceTextInput.value,
         extra: pieceExtra
     };
+}
+
+// 2.6 Обновление задачи и листа
+
+const updateTask = () => {
+    console.log('updateTask')
+    task.title = taskTitleInput.value;
+    task.material = taskMaterialInput.value;
+    task.thick = +taskThickInput.value;
+    task.start = taskStartInput.value;
+    task.finish = taskFinishInput.value;
+
+    toUpdateTaskLink.innerHTML = titleHtml() + dateHtml() + materialHtml();
+}
+
+const updateSheet = () => {
+    task.sheet = {
+        width: +sheetWidthInput.value || 1,
+        height: +sheetHeightInput.value || 1,
+        edge: +sheetEdgeInput.value || 0
+    }
+    task.kerf = +taskKerfInput.value;
+    toUpdateSheetLink.innerHTML = sheetHtml(task.sheet);
 }
 
 // 2.7 Управление задачей
@@ -733,179 +708,141 @@ noRemoveTaskButton.onclick = () => toRemoveTaskPage.classList.add('hidden');
 
 // 2.8 Навигация по форме
 
-const toCreateButton = () => {
-    createButton.classList.add('hidden');
-    deleteButton.innerText = 'Создать';
-    deleteButton.style.color = 'var(--green)';
+const getNextIndex = () => {
+    let i = index + 1;
+    while (i < items.length && !items[i]) i++;
+    return i < items.length ? i : null;
 }
 
-const toDeleteButton = () => {
-    deleteButton.innerText = 'Очистить';
-    deleteButton.style.color = 'var(--red)';
+const getPrevIndex = () => {
+    let i = index === null ? items.length - 1 : index - 1;
+    while (i >= 0 && !items[i]) i--;
+    return i >= 0 ? i : null;
 }
 
-const updateLink = () => {
-    console.log('updateLink');
-    if (items[index]) {
-        links.children[index].firstChild.innerHTML = toHtml(items[index]);
-        links.children[index].classList.remove('hidden');
-    }
+const showButtons = () => {
+    const prevIndex = getPrevIndex();
+    const nextIndex = getNextIndex();
+    prevIndex === null || nextIndex === null ? createButton.classList.remove('hidden') : createButton.classList.add('hidden');
+    prevIndex === null ? prevButton.classList.add('hidden') : prevButton.classList.remove('hidden');
+    nextIndex === null ? nextButton.classList.add('hidden') : nextButton.classList.remove('hidden');
 }
 
-const createItem = () => {
-    index = items.length;
-    items.push(null);
+const hideButtons = () => {
+    prevButton.classList.add('hidden')
+    nextButton.classList.add('hidden')
+    createButton.classList.add('hidden')
 }
 
-const createLink = (i, f) => {
-    link = document.createElement('LI');
-    link.classList.add('hidden');
-    link.innerHTML = `<button type="button"></button>`
-    link.firstElementChild.onclick = (e) => toEdit(e, i, f);
+const toRemoveButton = () => {
+    console.log('toRemoveButton');
+    removeButton.classList.remove('hidden');
+    recoverButton.classList.add('hidden');
+    updateButton.firstElementChild.classList.add('green');
+    updateButton.firstElementChild.classList.remove('red');
+    deleted = false;
 }
 
-const toSave = () => {
-    if (!form) return;
-
-    if (form === taskForm || form === sheetForm) {
-        update();
-        updateButton.classList.remove('hidden');
-        form.classList.add('hidden');
-    } else {
-        createButton.classList.remove('hidden');
-        updateItem();
-        updateLink();
-        form.remove();
-    }
-    form = null;
+const toRecoverButton = () => {
+    removeButton.classList.add('hidden');
+    recoverButton.classList.remove('hidden');
+    updateButton.firstElementChild.classList.add('red');
+    updateButton.firstElementChild.classList.remove('green');
+    deleted = true;
 }
-
-const toDelete = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (created) {
-        toSave();
-        createButton.classList.remove('hidden');
-    } else {
-        deleted = !deleted;
-
-        if (deleted) {
-            defaultClearForm();
-            clearForm && clearForm();
-            deleteButton.innerText = 'Как было';
-        } else {
-            copyToForm(items[index]);
-            deleteButton.innerText = 'Очистить';
-        }
-    }
-}
-
-const toEdit = (e, i, f) => {
-    console.log('toEdit')
-    e.stopPropagation();
-    toSave();
-
-    created = deleted = false;
-    f();
-    toDeleteButton();
-
-    link = links.children[i];
-    item = items[i];
-    index = i;
-
-    copyToForm(item);
-    link.after(form);
-    link.classList.add('hidden');
-
-    focusInput.focus();
-}
-
-const toCreate = (e, toForm) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    toSave();
-    toForm();
-
-    created = true;
-    toCreateButton();
-    defaultClearForm();
-    clearForm();
-
-    createItem();
-    createLink(index, toForm);
-
-    links.append(link);
-    links.append(form);
-
-    focusInput.focus();
-
-    form.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-    });
-}
-
-// 2.9 Кнопки создания
-
-createScrapButton.onclick = addScrapButton.onclick = (e) => toCreate(e, toScrapForm);
-createEdgingButton.onclick = addEdgingButton.onclick = (e) => toCreate(e, toEdgingForm);
-createRollButton.onclick = addRollButton.onclick = (e) => toCreate(e, toRollForm);
-createPieceButton.onclick = addPieceButton.onclick = (e) => toCreate(e, toPieceForm);
-
-settingPage.addEventListener('click', function (e) {
-    e.stopPropagation();
-    if (e.target.tagName === 'SPAN') toSave();
-});
-
-// 2.9 Клик по инпуту
-
-let lastTapTime = 0;
-let tapStart;
-
-function handleDoubleClick(e) {
-    const t = e.target.tagName;
-    if (t !== 'INPUT' && t !== 'TEXTAREA') return;
-    e.preventDefault();
-    e.target.select();
-}
-
-function handleTouchStart(e) {
-    const touch = e.touches[0];
-    if (touch) tapStart = {x: touch.clientX, y: touch.clientY};
-}
-
-function handleTouchEnd(e) {
-    if (!tapStart) return;
-
-    const tag = e.target.tagName;
-    if (tag !== 'INPUT' && tag !== 'TEXTAREA') return;
-
-    const touch = e.changedTouches[0];
-    if (!touch) return;
-
-    const dx = Math.abs(touch.clientX - tapStart.x);
-    const dy = Math.abs(touch.clientY - tapStart.y);
-    if (dx > 10 || dy > 10) return;
-
-    const now = Date.now();
-    if (now - lastTapTime < 300 && now - lastTapTime > 0) {
-        e.preventDefault();
-        e.target.select();
-    }
-    lastTapTime = now;
-}
-
-document.addEventListener('dblclick', handleDoubleClick);
-document.addEventListener('touchstart', handleTouchStart, {passive: true});
-document.addEventListener('touchend', handleTouchEnd, {passive: false});
 
 // 2.9 Переключение между формами
+
+const changeForm = (f) => {
+    if (form) form.classList.add('hidden');
+    form = f;
+    form.classList.remove('hidden');
+}
+
+toUpdateTaskLink.onclick = (e) => {
+    taskTitleInput.value = task.title || '';
+
+    taskStartInput.value = task.start;
+    taskFinishInput.value = task.finish;
+    taskMaterialInput.value = task.material || '';
+    taskThickInput.value = task.thick || '';
+
+    items = links = null;
+    changeForm(taskForm);
+    hideButtons();
+    copyTaskToForm();
+    toInputPage();
+}
+
+toUpdateSheetLink.onclick = (e) => {
+    sheetWidthInput.value = task.sheet.width;
+    sheetHeightInput.value = task.sheet.height;
+    sheetEdgeInput.value = task.sheet.edge;
+
+    taskKerfInput.value = task.kerf || '';
+
+    items = links = null;
+    changeForm(sheetForm);
+    hideButtons();
+    copySheetToForm();
+    toInputPage();
+}
+
+createButton.onclick = (e) => {
+    e.preventDefault();
+
+    toUpdateItem();
+    toCreateItem();
+
+    clearForm();
+    showButtons();
+}
 
 const toCreateItem = () => {
     created = true;
     index = items.length;
     items.push(null);
+}
+
+toCreateScrapLink.onclick = (e) => {
+    e.preventDefault();
+    links = scrapsList;
+    items = task.scraps;
+    toCreateItem();
+    changeForm(scrapForm);
+    clearForm();
+    showButtons();
+    toInputPage();
+}
+toCreateEdgingLink.onclick = (e) => {
+    e.preventDefault();
+    links = edgingsList;
+    items = task.edgings;
+    toCreateItem();
+    changeForm(edgingForm);
+    clearForm();
+    showButtons();
+    toInputPage();
+}
+toCreateRollLink.onclick = (e) => {
+    e.preventDefault();
+    links = rollsList;
+    items = task.rolls;
+    toCreateItem();
+    changeForm(rollForm);
+    clearForm();
+    showButtons();
+    toInputPage();
+}
+toCreatePieceLink.onclick = (e) => {
+    e.preventDefault();
+    links = piecesList;
+    items = task.pieces;
+    toCreateItem();
+    changeForm(pieceForm);
+    clearForm();
+    showButtons();
+    toInputPage();
 }
 
 // 2.10 Отправка и получение данных
@@ -997,16 +934,21 @@ pieceEdgingRightInput.onclick = (e) => {
     pieceEdgingRightInput.innerHTML = lineHtml(pieceEdging.right);
 }
 
+pieceRotateButton.onclick = (e) => {
+    e.preventDefault();
+    [pieceWidthInput.value, pieceHeightInput.value] = [pieceHeightInput.value, pieceWidthInput.value];
+}
+
 pieceRotatedInput.onclick = (e) => {
     e.preventDefault();
     pieceRotated = !pieceRotated;
-    pieceRotatedInput.innerHTML = pieceRotated ? o : x;
+    pieceRotatedInput.innerText = pieceRotated ? labels.yes : labels.no;
 }
 
 pieceExtraInput.onclick = (e) => {
     e.preventDefault();
     pieceExtra = !pieceExtra;
-    pieceExtraInput.innerHTML = iconHtml(pieceExtra ? 'save' : 'cancel');
+    pieceExtraInput.innerText = pieceExtra ? labels.yes : labels.no;
 }
 
 // 2.11 Работа с кромками
@@ -1039,19 +981,135 @@ const clearRollForm = () => {
     edgingLine = getNextLine(true);
     rollEdgingInput.innerHTML = lineHtml(edgingLine);
 }
-const clearScrapForm = () => {
-    scrapEdgeInput.value = task.sheet.edge || '';
-}
 
 const clearPieceForm = () => {
-    console.log('clearPieceForm')
-    pieceRotated = sheetRotated;
-    pieceExtra = false;
-    pieceRotatedInput.innerHTML = iconHtml(pieceRotated ? 'o' : 'x');
-    pieceExtraInput.innerHTML = iconHtml(pieceExtra ? 'save' : 'cancel');
+    pieceRotated = false;
+    pieceRotatedInput.innerText = pieceExtraInput.innerText = labels.no;
 
     pieceEdging = {left: null, up: null, right: null, down: null};
     pieceEdgingUpInput.innerHTML = pieceEdgingDownInput.innerHTML = pieceEdgingLeftInput.innerHTML = pieceEdgingRightInput.innerHTML = lineHtml(null);
+}
+
+const clearForm = () => {
+    form.querySelectorAll('input').forEach(q => q.value = '');
+    if (form === edgingForm) clearEdgingForm()
+    else if (form === rollForm) clearRollForm()
+    else if (form === pieceForm) clearPieceForm();
+}
+
+// 2.12 Удаление элементов из списка
+
+removeButton.onclick = (e) => {
+    e.preventDefault();
+
+    clearForm();
+    if (created) {
+        items.pop();
+        toOutputPage();
+    } else toRecoverButton();
+}
+
+recoverButton.onclick = (e) => {
+    e.preventDefault();
+
+    if (form === scrapForm) copyScrapToForm(items[index])
+    else if (form === edgingForm) copyEdgingToForm(items[index])
+    else if (form === rollForm) copyRollToForm(items[index])
+    else if (form === pieceForm) copyPieceToForm(items[index])
+    else if (form === taskForm) copyTaskToForm()
+    else if (form === sheetForm) copySheetToForm();
+
+    toRemoveButton();
+}
+
+// 2.13 Отображение списков
+
+const toOutputPage = () => {
+    console.log('toOutputPage');
+    inputPage.classList.add('hidden');
+    outputPage.classList.remove('hidden');
+    showLink();
+    created = false;
+}
+
+const showLink = () => {
+    if (links) {
+        if (items[index]) {
+            link = links.children[index];
+            link.classList.add('edited');
+            link.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            });
+        } else {
+            link = null;
+            links.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            });
+        }
+    }
+}
+
+const hideLink = () => link && link.classList.remove('edited');
+
+const toInputPage = () => {
+    console.log('toInputPage');
+    outputPage.classList.add('hidden');
+    inputPage.classList.remove('hidden');
+    hideLink();
+}
+
+// 2.14 Перемещение по спискам
+
+const toUpdateItem = () => {
+    console.log('toUpdateItem');
+
+    if (form === taskForm) updateTask()
+    else if (form === sheetForm) updateSheet()
+    else if (form === scrapForm) updateScrap()
+    else if (form === edgingForm) updateEdging()
+    else if (form === rollForm) updateRoll()
+    else if (form === pieceForm) updatePiece();
+
+    if (created) {
+        items[index] ? addLink() : items.pop();
+        created = false;
+    } else if (links) {
+        items[index] ? updateLink() : removeLink();
+    }
+    if (deleted) toRemoveButton();
+
+    saveTask().then();
+}
+
+updateButton.onclick = (e) => {
+    e.preventDefault();
+
+    toUpdateItem();
+    toOutputPage();
+}
+
+const copyToForm = () => {
+    if (form === scrapForm) copyScrapToForm(items[index])
+    else if (form === edgingForm) copyEdgingToForm(items[index])
+    else if (form === rollForm) copyRollToForm(items[index])
+    else if (form === pieceForm) copyPieceToForm(items[index]);
+    showButtons();
+}
+
+nextButton.onclick = (e) => {
+    e.preventDefault();
+    toUpdateItem();
+    index = getNextIndex();
+    copyToForm();
+}
+
+prevButton.onclick = (e) => {
+    e.preventDefault();
+    toUpdateItem();
+    index = getPrevIndex();
+    copyToForm();
 }
 
 // 3. Редактор раскроя
@@ -1876,14 +1934,14 @@ const getLogo = () => `<div class="logo">
 
 const getSigns = () => `<div class="task">
     <div class="signs">
-        <div class="sign"><span>Заказ:</span><span>${task.title || ''}</span></div>
+        <div class="sign"><span>Заказ:</span><span>${task.title || labels.task}</span></div>
         <div class="sign"><span>Дата:</span><span>${toDate(task.start)}</span></div>
         <div class="sign"><span>Срок:</span><span>${toDate(task.finish)}</span></div>
         <div style="width: 2cm"></div>
     </div>
     <div class="signs">
-        <div class="sign"><span>Материал:</span>${task.material || ''}<span id="material"></span></div>
-        <div class="sign"><span>Толщина:</span><span>${task.thick || ''} мм</span></div>
+        <div class="sign"><span>Материал:</span>${task.material}<span id="material"></span></div>
+        <div class="sign"><span>Толщина:</span><span>${task.thick} мм</span></div>
     </div>
 </div>`
 
