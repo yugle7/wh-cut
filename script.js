@@ -419,6 +419,7 @@ const setTask = () => {
 
     task.scraps = task.scraps.filter(Boolean);
     task.edgings = task.edgings.filter(Boolean);
+    task.rolls = task.rolls.filter(Boolean);
     task.pieces = task.pieces.filter(Boolean);
 
     task.edgings.forEach(({line, thick}) => (edgingThicks[line] = thick));
@@ -1841,7 +1842,7 @@ const statisticsPdf = () => {
     return `<table class="whole">
     <thead><tr><th>Деталей</th><th>Площадь деталей</th><th>Площадь листов</th><th>Длина реза</th></tr></thead>
     <tbody><td>${valuePdf(piecesCount, 'шт')}</td>
-    <td>${valuePdf((piecesArea / 1000000).toFixed(3), 'м²')}</td>
+    <td>${valuePdf((piecesArea / 1000000).toFixed(2), 'м²')}</td>
     <td>${valuePdf((scrapsArea / 1000000).toFixed(2), 'м²')}</td>
     <td>${valuePdf((cutsLength / 1000).toFixed(2), 'м')}</td></tbody>`
 }
@@ -1953,7 +1954,7 @@ const piecePdf = ({width, height, count, rotated, text, extra, edging}, i) => `<
 const edgingPdf = ({line, thick, text, length}, i) => `<tr>
     <td>${linePdf(line)}</td>
     <td>${thick}</td>
-    <td class="data">${valuePdf((edgingLengths[line] / 1000).toFixed(2), 'м')}</td>
+    <td class="data">${valuePdf((edgingLengths[line] / 1000).toFixed(1), 'м')}</td>
     <td class="name">${text || ""}</td>
 </tr>`;
 
@@ -1961,7 +1962,7 @@ const rollPdf = ({line, inner, outer, length}) => `<tr>
     <td>${linePdf(line)}</td>
     <td>${inner}</td>
     <td>${outer}</td>
-    <td class="data">${valuePdf((length / 1000).toFixed(2), 'м')}</td>
+    <td class="data">${valuePdf((length / 1000).toFixed(1), 'м')}</td>
     <td class="name"></td>
 </tr>`;
 
