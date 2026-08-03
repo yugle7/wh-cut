@@ -257,17 +257,18 @@ let line;
 
 const changePage = (p) => {
     console.log('changePage')
-    if (page === p) return false;
+    if (page === p) return;
     page.classList.add("hidden");
     page = p;
     page.classList.remove("hidden");
-
-    return true;
 }
 
 // 1. Выбор задачи
 
-toMainButton.onclick = () => changePage(mainPage);
+toMainButton.onclick = () => {
+    toSave();
+    changePage(mainPage);
+}
 
 createTaskButton.onclick = async () => {
     await createTask();
@@ -279,14 +280,13 @@ createTaskButton.onclick = async () => {
 const toTask = async (e) => {
     e.preventDefault()
 
-    if (changePage(settingPage)) {
-        scrapsList.replaceChildren();
-        edgingsList.replaceChildren();
-        piecesList.replaceChildren();
+    changePage(settingPage);
+    scrapsList.replaceChildren();
+    edgingsList.replaceChildren();
+    piecesList.replaceChildren();
 
-        await loadTask(e.currentTarget.id);
-        setTask();
-    }
+    await loadTask(e.currentTarget.id);
+    setTask();
 }
 
 // 1.1 Отображение данных
@@ -758,6 +758,7 @@ const createLink = (i, f) => {
 
 const toSave = () => {
     if (!form) return;
+    console.log('toSave');
 
     if (form === taskForm || form === sheetForm) {
         update();
@@ -1319,6 +1320,7 @@ const clearCutting = () => {
 }
 
 toCuttingButton.onclick = () => {
+    toSave();
     clearCutting();
     if (pieces.length) changePage(cuttingPage);
 }
