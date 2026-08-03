@@ -725,7 +725,10 @@ removeTaskButton.onclick = () => {
 
 yesRemoveTaskButton.onclick = () => {
     toRemoveTaskPage.classList.add('hidden');
-    if (task) removeLink();
+    if (task) {
+        tasks = tasks.filter(({id}) => id !== task.id);
+        document.getElementById(task.id).remove();
+    }
     changePage(mainPage);
 }
 
