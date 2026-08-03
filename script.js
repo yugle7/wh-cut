@@ -176,7 +176,7 @@ const spriteHtml = (name) => `<use href="sprite.svg#${name}"></use>`;
 
 const iconHtml = (icon, color = "gray") => `<svg class="icon ${color}">${spriteHtml(icon)}</svg>`;
 const lineHtml = (line) => {
-    const color = line === null ? "gray" : "yellow";
+    const color = line === null ? "gray fade" : "yellow";
     line = line === null ? "line" : edgingIcons[line];
     return `<svg class="line ${color}">${spriteHtml(line)}</svg>`;
 }
@@ -308,7 +308,8 @@ const loadTasks = async () => {
         tasks = await response.json();
     } else {
         const t = localStorage.getItem('tasks');
-        tasks = t ? JSON.parse(t) : [];
+        tasks = t ? JSON.parse(t).filter(Boolean) : [];
+        tasks.forEach((q, i) => q.id = i);
         // tasks = testTasks;
 
         tasks.forEach(q => {
@@ -704,13 +705,6 @@ const updatePieceItem = () => {
 
 // 2.7 Управление задачей
 
-const removeTask = async () => {
-    document.getElementById(task.id).remove();
-    tasks = tasks.filter(({id}) => id !== task.id);
-    await deleteTask();
-    task = null;
-}
-
 removeTaskButton.onclick = () => {
     if (!task) return;
 
@@ -719,17 +713,12 @@ removeTaskButton.onclick = () => {
         toRemoveTaskPage.classList.remove('hidden');
     } else {
         removeTask();
-        changePage(mainPage);
     }
 }
 
 yesRemoveTaskButton.onclick = () => {
     toRemoveTaskPage.classList.add('hidden');
-    if (task) {
-        tasks = tasks.filter(({id}) => id !== task.id);
-        document.getElementById(task.id).remove();
-    }
-    changePage(mainPage);
+    removeTask();
 }
 
 noRemoveTaskButton.onclick = () => toRemoveTaskPage.classList.add('hidden');
@@ -921,7 +910,7 @@ const loadTask = async (id) => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         task = await response.json();
     } else {
-        task = tasks.find(q => q.id === +id);
+        task = tasks[id];
     }
 }
 
@@ -937,15 +926,19 @@ const saveTask = async () => {
     }
 }
 
-const deleteTask = async () => {
+const removeTask = async () => {
+    document.getElementById(task.id).remove();
+    changePage(mainPage);
     if (DATA_URL) {
         const url = new URL(DATA_URL);
         url.searchParams.set("task_id", '-' + task.id)
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
     } else {
+        tasks[task.id] = null;
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
+    task = form = null;
 }
 
 const createTask = async () => {
