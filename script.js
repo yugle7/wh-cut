@@ -770,6 +770,7 @@ const toSave = () => {
         updateLink();
         form.remove();
     }
+    saveTask();
     form = null;
 }
 
@@ -917,7 +918,6 @@ const loadTask = async (id) => {
 
 const saveTask = async () => {
     console.log('saveTask');
-    console.assert(task);
     if (DATA_URL) {
         const url = new URL(DATA_URL);
         url.searchParams.set("task", JSON.stringify(task))
