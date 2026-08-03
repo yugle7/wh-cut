@@ -3,7 +3,7 @@ log
 out
 src
 dst
-..
+tmp
 .env
 .venv
 catboost_info
