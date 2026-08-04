@@ -268,6 +268,7 @@ const changePage = (p) => {
 toMainButton.onclick = () => {
     toSave();
     changePage(mainPage);
+    document.title = 'Раскрой'
 }
 
 createTaskButton.onclick = async () => {
@@ -293,7 +294,7 @@ const toTask = async (e) => {
 
 const addTask = ({id, title}) => {
     const q = document.createElement('li')
-    q.innerText = title || 'Задача';
+    q.innerText = title;
     q.id = id;
     q.onclick = toTask;
     tasksList.appendChild(q);
@@ -410,8 +411,12 @@ const defaultClearForm = () => form && form.querySelectorAll('input,textarea').f
 
 // 2.2 Заполнение полей задачи
 
+const getTaskTitle = () => task.title || task.material || (task.id + 1);
+
 const setTask = () => {
     taskTitleInput.value = task.title;
+    document.title = getTaskTitle();
+
     sheetRotated = task.sheet.rotated;
 
     updateTaskButton.innerHTML = dateHtml() + materialHtml();
@@ -443,7 +448,8 @@ const setTask = () => {
 
 taskTitleInput.onblur = () => {
     console.log('taskTitleInput.onblur')
-    document.getElementById(task.id).innerText = task.title = taskTitleInput.value;
+    task.title = taskTitleInput.value;
+    document.getElementById(task.id).innerText = document.title = getTaskTitle();
 }
 
 const toUpdate = (e, toForm) => {
@@ -710,7 +716,7 @@ removeTaskButton.onclick = () => {
     if (!task) return;
 
     if (task.pieces.some(Boolean) || task.scraps.some(Boolean)) {
-        toRemoveTaskPage.children[2].innerText = task.title || 'Раскрой';
+        toRemoveTaskPage.children[2].innerText = getTaskTitle();
         toRemoveTaskPage.classList.remove('hidden');
     } else {
         removeTask();
@@ -776,22 +782,22 @@ const toSave = () => {
 }
 
 const toDelete = (e) => {
+    if (created) {
+        createButton.onclick(e);
+        return;
+    }
     e.preventDefault();
     e.stopPropagation();
-    if (created) {
-        toSave();
-        createButton.classList.remove('hidden');
-    } else {
-        deleted = !deleted;
 
-        if (deleted) {
-            defaultClearForm();
-            clearForm && clearForm();
-            deleteButton.innerText = 'Как было';
-        } else {
-            copyToForm(items[index]);
-            deleteButton.innerText = 'Очистить';
-        }
+    deleted = !deleted;
+
+    if (deleted) {
+        defaultClearForm();
+        clearForm && clearForm();
+        deleteButton.innerText = 'Как было';
+    } else {
+        copyToForm(items[index]);
+        deleteButton.innerText = 'Очистить';
     }
 }
 
@@ -850,7 +856,13 @@ createPieceButton.onclick = addPieceButton.onclick = (e) => toCreate(e, toPieceF
 
 settingPage.addEventListener('click', function (e) {
     e.stopPropagation();
+    e.preventDefault();
     if (e.target.tagName === 'SPAN') toSave();
+});
+
+settingPage.addEventListener('keydown', function (e) {
+    e.stopPropagation();
+    if (e.key === 'Enter' && e.target.tagName !== 'BUTTON') toSave();
 });
 
 // 2.9 Клик по инпуту
@@ -1328,7 +1340,7 @@ const clearCutting = () => {
     doCutButton.classList.add('hidden');
 }
 
-toCuttingButton.onclick = () => {
+toCuttingButton.onclick = toCuttingButton.nextElementSibling.onclick = () => {
     toSave();
     clearCutting();
 
@@ -2015,8 +2027,16 @@ const sizePdf = (width, height, w, h) => {
 
 const tapePdf = (w, h) => {
     const lines = []
-    for (let y = -w; y <= h; y += 5) {
-        lines.push(`<line x1=0 y1=${y} x2=${w} y2=${y + w}></line>`)
+    w = Math.floor(w)
+    h = Math.floor(h)
+    // for (let y = -w; y <= h; y += 5) {
+    //     lines.push(`<line x1=0 y1=${y} x2=${w} y2=${y + w}></line>`)
+    // }
+    for (let y = 0; y <= h; y += 5) {
+        lines.push(`<line x1=0 y1=${y} x2=${h - y} y2=${h}></line>`)
+    }
+    for (let x = 5; x <= w; x += 5) {
+        lines.push(`<line x1=${x} y1=0 x2=${w} y2=${w - x}></line>`)
     }
     return `<svg class="tape" viewBox="0 0 ${w} ${h}">${lines.join('\n')}</svg>`
 }

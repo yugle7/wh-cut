@@ -329,9 +329,9 @@ nav {
     line-height: 0;
 }
 
-#change-theme,
-#rotate-piece {
+.right {
     margin-left: auto;
+    max-height: 50px;
 }
 
 #remove-task {
@@ -1023,13 +1023,13 @@ li > button {
 
 #rolls > li > button > div {
     display: grid;
-    grid-template-columns: 60px 50px 120px auto 60px;
+    grid-template-columns: 60px 60px 140px auto 60px;
     place-items: center;
 }
 
 #roll > form > section {
     display: grid;
-    grid-template-columns:  60px 50px 120px auto;
+    grid-template-columns:  60px 60px 120px auto;
     grid-template-rows: auto auto;
     place-items: center;
     width: 100%;
@@ -1121,6 +1121,12 @@ button > label {
     position: absolute;
     top: 10px;
     right: 20px;
+}
+
+nav > label {
+    font-size: 14px;
+    opacity: 0.8;
+    align-self: center;
 }
 
 #task > form > div {
