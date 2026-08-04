@@ -1340,15 +1340,28 @@ const clearCutting = () => {
     doCutButton.classList.add('hidden');
 }
 
+const overlayScreen = document.getElementById('overlay');
+
+const toOverlayCut = () => {
+    overlayScreen.style.display = 'block';
+
+    const takes = takesRect();
+    const drops = dropsRect();
+
+    setTimeout(() => {
+        toCut(drops, takes);
+        overlayScreen.style.display = 'none';
+    }, 0);
+}
+
 toCuttingButton.onclick = toCuttingButton.nextElementSibling.onclick = () => {
     toSave();
     clearCutting();
 
-    const takes = takesRect();
-    const drops = dropsRect();
-    toCut(drops, takes);
-
-    if (pieces.length) changePage(cuttingPage);
+    if (pieces.length) {
+        changePage(cuttingPage);
+        toOverlayCut();
+    }
 }
 
 // 3.7 Начало перетаскивания
