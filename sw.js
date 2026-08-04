@@ -1,8 +1,7 @@
 const GHPATH = '/wh-cut';
 const APP_PREFIX = 'whCut_';
-const VERSION = '1.0.25';
+const VERSION = '1.0.26';
 
-// Список файлов, которые будут доступны офлайн
 const URLS = [
     `${GHPATH}/`,
     `${GHPATH}/index.html`,
@@ -14,48 +13,58 @@ const URLS = [
     `${GHPATH}/favicon.svg`
 ];
 
-const CACHE_NAME = APP_PREFIX + VERSION
+const CACHE_NAME = APP_PREFIX + VERSION;
 
-// Установка Service Worker — кэшируем файлы
-self.addEventListener('install', function (e) {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then(function (cache) {
-      console.log('Installing cache : ' + CACHE_NAME);
-      return cache.addAll(URLS)
-    })
-  )
-})
+// Установка — кешируем файлы и активируемся сразу
+self.addEventListener('install', e => {
+    e.waitUntil(
+        (async () => {
+            const cache = await caches.open(CACHE_NAME);
+            await cache.addAll(URLS);
+            await self.skipWaiting();
+        })()
+    );
+});
 
-// Перехват запросов — отдаем из кэша, если есть
-self.addEventListener('fetch', function (e) {
-  console.log('Fetch request : ' + e.request.url);
-  e.respondWith(
-    caches.match(e.request).then(function (request) {
-      if (request) {
-        console.log('Responding with cache : ' + e.request.url);
-        return request
-      } else {
-        console.log('File is not cached, fetching : ' + e.request.url);
-        return fetch(e.request)
-      }
-    })
-  )
-})
+// Перехват запросов — сначала кеш, потом сеть (с fallback)
+self.addEventListener('fetch', e => {
+    if (e.request.method !== 'GET') return;
 
-// Активация — удаляем старые кэши
+    const url = new URL(e.request.url);
+    if (url.origin !== location.origin) return;
+
+    if (e.request.mode === 'navigate') {
+        e.respondWith(
+            fetch(e.request)
+                .then(response => {
+                    if (!response.ok) throw new Error();
+                    return response;
+                })
+                .catch(() =>
+                    caches.match(`${GHPATH}/index.html`)
+                )
+        );
+        return;
+    }
+
+    e.respondWith(
+        caches.match(e.request).then(response => {
+            return response || fetch(e.request);
+        })
+    );
+});
+
+// Активация — удаляем старые кеши и захватываем управление
 self.addEventListener('activate', function (e) {
-  e.waitUntil(
-    caches.keys().then(function (keyList) {
-      var cacheWhitelist = keyList.filter(function (key) {
-        return key.indexOf(APP_PREFIX)
-      })
-      cacheWhitelist.push(CACHE_NAME);
-      return Promise.all(keyList.map(function (key, i) {
-        if (cacheWhitelist.indexOf(key) === -1) {
-          console.log('Deleting cache : ' + keyList[i] );
-          return caches.delete(keyList[i])
-        }
-      }))
-    })
-  )
-})
+    e.waitUntil((async () => {
+        const cacheNames = await caches.keys();
+        const validKeys = cacheNames.filter(key => key.startsWith(APP_PREFIX));
+        const deletePromises = validKeys.map(async (key) => {
+            if (key !== CACHE_NAME) {
+                await caches.delete(key);
+            }
+        });
+        await Promise.all(deletePromises);
+        await self.clients.claim();
+    })());
+});
