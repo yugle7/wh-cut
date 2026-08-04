@@ -812,7 +812,7 @@ const toEdit = (e, i, f) => {
     link.after(form);
     link.classList.add('hidden');
 
-    focusInput.focus();
+    // focusInput.focus();
 }
 
 const toCreate = (e, toForm) => {
