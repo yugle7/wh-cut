@@ -1343,7 +1343,7 @@ const clearCutting = () => {
 const overlayScreen = document.getElementById('overlay');
 
 const toOverlayCut = () => {
-    overlayScreen.style.display = 'block';
+    overlayScreen.style.display = 'flex';
 
     const takes = takesRect();
     const drops = dropsRect();
