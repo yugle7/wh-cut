@@ -294,7 +294,7 @@ const toTask = async (e) => {
 
 const addTask = ({id, title}) => {
     const q = document.createElement('li')
-    q.innerText = title;
+    q.innerText = title || '..';
     q.id = id;
     q.onclick = toTask;
     tasksList.appendChild(q);
