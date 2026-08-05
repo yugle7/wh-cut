@@ -356,5 +356,29 @@
     }
 </script>
 
+<script>
+    (function () {
+        const EDGE = 30;
+        let startX = 0, startY = 0, isEdge = false;
+
+        document.addEventListener('touchstart', function (e) {
+            const t = e.touches[0];
+            startX = t.clientX;
+            startY = t.clientY;
+            isEdge = (startX < EDGE || startX > window.innerWidth - EDGE);
+        }, {passive: true});
+
+        document.addEventListener('touchmove', function (e) {
+            if (!isEdge) return;
+            const t = e.touches[0];
+            const dx = t.clientX - startX;
+            const dy = t.clientY - startY;
+            if (Math.abs(dx) > Math.abs(dy)) {
+                e.preventDefault();
+            }
+        }, {passive: false});
+    })();
+</script>
+
 </body>
 </html>
