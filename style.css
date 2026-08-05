@@ -67,6 +67,7 @@
 
 html, body {
     overscroll-behavior: none;
+    touch-action: pan-y;
 }
 
 #cutting * {
@@ -836,6 +837,9 @@ th {
         }
         @bottom-center {
             content: none;
+        }
+        @bottom-left-corner {
+            content: counter(page);
         }
     }
 
