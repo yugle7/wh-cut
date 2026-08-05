@@ -310,7 +310,9 @@ const loadTasks = async () => {
     } else {
         const t = localStorage.getItem('tasks');
         tasks = t ? JSON.parse(t).filter(Boolean) : [];
+
         tasks.forEach((q, i) => q.id = i);
+        tasks.forEach(q => q.rolls = q.rolls || []);
         // tasks = testTasks;
 
         tasks.forEach(q => {
