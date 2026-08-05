@@ -1,6 +1,6 @@
 const GHPATH = '/wh-cut';
 const APP_PREFIX = 'whCut_';
-const VERSION = '1.0.38';
+const VERSION = '1.0.39';
 
 const URLS = [
     `${GHPATH}/`,
@@ -21,7 +21,7 @@ self.addEventListener('install', e => {
         (async () => {
             const cache = await caches.open(CACHE_NAME);
             await cache.addAll(URLS);
-            await self.skipWaiting();
+            self.skipWaiting();
         })()
     );
 });
@@ -35,9 +35,11 @@ self.addEventListener('fetch', e => {
 
     if (e.request.mode === 'navigate') {
         e.respondWith(
-            fetch(e.request)
-                .then(response => {
+            fetch(e.request, {cache: 'no-cache'})
+                .then(async response => {
                     if (!response.ok) throw new Error();
+                    const cache = await caches.open(CACHE_NAME);
+                    await cache.put(`${GHPATH}/index.html`, response.clone());
                     return response;
                 })
                 .catch(() =>
@@ -58,13 +60,11 @@ self.addEventListener('fetch', e => {
 self.addEventListener('activate', function (e) {
     e.waitUntil((async () => {
         const cacheNames = await caches.keys();
-        const validKeys = cacheNames.filter(key => key.startsWith(APP_PREFIX));
-        const deletePromises = validKeys.map(async (key) => {
-            if (key !== CACHE_NAME) {
-                await caches.delete(key);
-            }
-        });
-        await Promise.all(deletePromises);
+        await Promise.all(
+            cacheNames
+                .filter(key => key.startsWith(APP_PREFIX) && key !== CACHE_NAME)
+                .map(key => caches.delete(key))
+        );
         await self.clients.claim();
     })());
 });
