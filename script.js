@@ -518,10 +518,10 @@ sheetRotatedInput.onclick = (e) => {
 const updateSheet = () => {
     console.log('updateSheet')
     task.sheet = {
-        width: +sheetWidthInput.value || 1,
-        height: +sheetHeightInput.value || 1,
-        edge: +sheetEdgeInput.value || 0,
-        depth: +sheetDepthInput.value || 0
+        width: +sheetWidthInput.value,
+        height: +sheetHeightInput.value,
+        edge: +sheetEdgeInput.value,
+        depth: +sheetDepthInput.value
     }
     updateSheetButton.innerHTML = toSheetHtml(task.sheet);
 }
@@ -1364,9 +1364,12 @@ toCuttingButton.onclick = toCuttingButton.nextElementSibling.onclick = () => {
     toSave();
     clearCutting();
 
-    if (pieces.length) {
+    if (pieces.length && (task.scraps.some(Boolean) || (task.sheet.width && task.sheet.height))) {
         changePage(cuttingPage);
         toOverlayCut();
+    } else {
+        toCuttingButton.firstElementChild.classList.remove('yellow');
+        setTimeout(() => toCuttingButton.firstElementChild.classList.add('yellow'), 3000);
     }
 }
 
