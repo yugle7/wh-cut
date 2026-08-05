@@ -452,6 +452,7 @@ taskTitleInput.onblur = () => {
     console.log('taskTitleInput.onblur')
     task.title = taskTitleInput.value;
     document.getElementById(task.id).innerText = document.title = getTaskTitle();
+    saveTask();
 }
 
 const toUpdate = (e, toForm) => {
