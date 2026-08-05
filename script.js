@@ -453,7 +453,6 @@ const setTask = () => {
 taskTitleInput.onblur = () => {
     console.log('taskTitleInput.onblur')
     task.title = taskTitleInput.value;
-    document.getElementById(task.id).innerText = document.title = getTaskTitle(task);
     saveTask();
 }
 
@@ -943,6 +942,11 @@ const saveTask = async () => {
     } else {
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
+    const title = getTaskTitle(task);
+    if (title !== document.title) {
+        document.getElementById(task.id).innerText = document.title = title;
+    }
+
 }
 
 const removeTask = async () => {
