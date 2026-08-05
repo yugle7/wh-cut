@@ -199,20 +199,6 @@ const A = {
     width: A4.width - 90, height: A4.height - 40
 }
 
-// 4. Отладка
-
-async function loadFake() {
-    try {
-        const response = await fetch('fake.json'); // путь к файлу
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-        tasks = await response.json();
-    } catch (error) {
-        console.error("Can't load JSON:", error);
-    }
-}
-
 // Состояние
 
 // 1. Общее
@@ -312,10 +298,10 @@ const loadTasks = async () => {
     } else {
         const t = localStorage.getItem('tasks');
         tasks = t ? JSON.parse(t).filter(Boolean) : [];
+        tasks += testTasks;
 
         tasks.forEach((q, i) => q.id = i);
         tasks.forEach(q => q.rolls = q.rolls || []);
-        // tasks = testTasks;
 
         tasks.forEach(q => {
             q.scraps = q.scraps.filter(Boolean);

@@ -352,12 +352,7 @@
         navigator.serviceWorker.register('/wh-cut/sw.js', {
             scope: '/wh-cut/',
             updateViaCache: 'none'
-        }).then(reg => {
-            console.log('active:', reg.active?.scriptURL);
-            console.log('waiting:', reg.waiting?.scriptURL);
-            console.log('installing:', reg.installing?.scriptURL);
-            reg.update();
-        });
+        }).then(reg => reg.update());
     }
 </script>
 
