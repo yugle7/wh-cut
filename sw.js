@@ -1,6 +1,6 @@
 const GHPATH = '/wh-cut';
 const APP_PREFIX = 'whCut_';
-const VERSION = '1.0.40';
+const VERSION = '1.0.42';
 console.log(VERSION)
 
 const URLS = [
@@ -34,21 +34,21 @@ self.addEventListener('fetch', e => {
     const url = new URL(e.request.url);
     if (url.origin !== location.origin) return;
 
-    if (e.request.mode === 'navigate') {
-        e.respondWith(
-            fetch(e.request, {cache: 'no-cache'})
-                .then(async response => {
-                    if (!response.ok) throw new Error();
-                    const cache = await caches.open(CACHE_NAME);
-                    await cache.put(`${GHPATH}/index.html`, response.clone());
-                    return response;
-                })
-                .catch(() =>
-                    caches.match(`${GHPATH}/index.html`)
-                )
-        );
-        return;
-    }
+    // if (e.request.mode === 'navigate') {
+    //     e.respondWith(
+    //         fetch(e.request, {cache: 'no-cache'})
+    //             .then(async response => {
+    //                 if (!response.ok) throw new Error();
+    //                 const cache = await caches.open(CACHE_NAME);
+    //                 await cache.put(`${GHPATH}/index.html`, response.clone());
+    //                 return response;
+    //             })
+    //             .catch(() =>
+    //                 caches.match(`${GHPATH}/index.html`)
+    //             )
+    //     );
+    //     return;
+    // }
 
     e.respondWith(
         caches.match(e.request).then(response => {
