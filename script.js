@@ -275,7 +275,8 @@ createTaskButton.onclick = async () => {
     await createTask();
     setTask();
     changePage(settingPage);
-    addTask(task);
+
+    addTask();
 };
 
 const toTask = async (e) => {
@@ -292,10 +293,11 @@ const toTask = async (e) => {
 
 // 1.1 Отображение данных
 
-const addTask = ({id, title}) => {
+
+const addTask = () => {
     const q = document.createElement('li')
-    q.innerText = title || '..';
-    q.id = id;
+    q.innerText = getTaskTitle(task);
+    q.id = task.id;
     q.onclick = toTask;
     tasksList.appendChild(q);
 }
@@ -413,11 +415,11 @@ const defaultClearForm = () => form && form.querySelectorAll('input,textarea').f
 
 // 2.2 Заполнение полей задачи
 
-const getTaskTitle = () => task.title || task.material || (task.id + 1);
+const getTaskTitle = ({title, material}) => title || material || '..';
 
 const setTask = () => {
     taskTitleInput.value = task.title;
-    document.title = getTaskTitle();
+    document.title = getTaskTitle(task);
 
     sheetRotated = task.sheet.rotated;
 
@@ -451,7 +453,7 @@ const setTask = () => {
 taskTitleInput.onblur = () => {
     console.log('taskTitleInput.onblur')
     task.title = taskTitleInput.value;
-    document.getElementById(task.id).innerText = document.title = getTaskTitle();
+    document.getElementById(task.id).innerText = document.title = getTaskTitle(task);
     saveTask();
 }
 
@@ -719,7 +721,7 @@ removeTaskButton.onclick = () => {
     if (!task) return;
 
     if (task.pieces.some(Boolean) || task.scraps.some(Boolean)) {
-        toRemoveTaskPage.children[2].innerText = getTaskTitle();
+        toRemoveTaskPage.children[2].innerText = getTaskTitle(task);
         toRemoveTaskPage.classList.remove('hidden');
     } else {
         removeTask();
@@ -967,6 +969,7 @@ const createTask = async () => {
     } else {
         task = structuredClone(defaultTask);
         task.id = tasks.length
+        task.start = new Date().toISOString().slice(0, 10);
         tasks.push(task);
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
@@ -2626,6 +2629,7 @@ const getRollLength = (
     loadTheme();
     loadTasks();
 
-    tasks.forEach(addTask);
+    tasksList.innerHTML = tasks.map(
+        q => `<li id="${q.id}" onclick="toTask(event)" >${getTaskTitle(q)}</li>`).join('\n');
 })();
 
