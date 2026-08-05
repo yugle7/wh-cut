@@ -1,6 +1,6 @@
 const GHPATH = '/wh-cut';
 const APP_PREFIX = 'whCut_';
-const VERSION = '1.0.45';
+const VERSION = '1.0.46';
 
 const URLS = [
     `${GHPATH}/`,

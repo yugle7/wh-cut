@@ -65,6 +65,10 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+html, body {
+    overscroll-behavior: none;
+}
+
 #cutting * {
     font-size: clamp(14px, 3vw, 18px)
 }
