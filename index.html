@@ -49,14 +49,14 @@
 <article id="setting" class="hidden">
     <div>
         <label for="task-title" class="hidden">Название задачи</label>
-        <input type="text" name="task-title" class="big" id="task-title" placeholder="Название задачи"
+        <input type="text" class="big" id="task-title" placeholder="Название задачи"
                inputmode="text" autocomplete="new-password" autocapitalize="none" spellcheck="false"/>
     </div>
     <div id="update-task">
 
     </div>
     <div id="task" class="hidden">
-        <form tabindex="0">
+        <form autocomplete="off">
             <div>
                 <label for="task-start">Начало</label>
                 <input type="date" id="task-start" tabindex="1"/>
@@ -79,7 +79,7 @@
     <button id="add-sheet"><span class="big">Лист</span></button>
     <button id="update-sheet"></button>
     <div id="sheet" class="hidden">
-        <form>
+        <form autocomplete="off">
             <section>
                 <label for="sheet-width">Длина</label>
                 <label for="sheet-rotated">Пов-от</label>
@@ -173,7 +173,7 @@
 
     <div class="hidden">
         <div id="scrap">
-            <form>
+            <form autocomplete="off">
                 <section>
                     <label for="scrap-width">Длина</label>
                     <span></span>
@@ -205,7 +205,7 @@
         </div>
 
         <div id="edging">
-            <form>
+            <form autocomplete="off">
                 <section>
                     <label for="edging-line">Линия</label>
                     <span></span>
@@ -224,7 +224,7 @@
         </div>
 
         <div id="roll">
-            <form>
+            <form autocomplete="off">
                 <section>
                     <label for="roll-edging">Кромка</label>
                     <label>Диаметр внутри и снаружи</label>
@@ -250,7 +250,7 @@
         </div>
 
         <div id="piece">
-            <form>
+            <form autocomplete="off">
                 <section>
                     <label for="piece-width">Длина</label>
                     <label for="piece-rotated">Пов-от</label>
