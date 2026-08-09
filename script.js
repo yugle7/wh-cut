@@ -182,6 +182,7 @@ const lineHtml = (line) => {
 }
 
 const valueHtml = (value, unit) => `<span class="unit"><span>${value || 0}</span><span class="fade">${unit}</span></span>`
+const numberStr = (number) => number > 10 ? 1 * number.toFixed(1) : 1 * number.toFixed(2);
 
 const x = iconHtml('x');
 const v = iconHtml('v');
@@ -385,7 +386,7 @@ const toEdgingHtml = (
 
 const toRollHtml = (
     {line, inner, outer, length, thick}
-) => `<div>${lineHtml(line)}${v}${valueHtml(`${inner} - ${outer}`, 'мм')}<span></span>${valueHtml((length / 1000).toFixed(2), 'м')}</div>`;
+) => `<div>${lineHtml(line)}${v}${valueHtml(`${inner} - ${outer}`, 'мм')}<span></span>${valueHtml(numberStr(length / 1000), 'м')}</div>`;
 
 const toPieceHtml = ({width, height, rotated, edging, count, text, extra}) => {
     const {left, up, right, down} = edging;
