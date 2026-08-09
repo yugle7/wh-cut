@@ -61,7 +61,7 @@
                 id="task-title"
                 placeholder="Название задачи"
                 inputmode="text"
-                autocomplete="new-password"
+                autocomplete="off"
                 autocapitalize="none"
                 spellcheck="false"
         />
@@ -71,11 +71,11 @@
         <form autocomplete="off">
             <div>
                 <label for="task-start">Начало</label>
-                <input type="date" id="task-start" tabindex="1"/>
+                <input type="date" id="task-start" tabindex="1" autocomplete="off"/>
             </div>
             <div>
                 <label for="task-finish">Завершение</label>
-                <input type="date" id="task-finish" tabindex="2"/>
+                <input type="date" id="task-finish" tabindex="2" autocomplete="off"/>
             </div>
             <div>
                 <label for="task-kerf">Ширина реза</label>
@@ -85,6 +85,7 @@
                         id="task-kerf"
                         placeholder="мм"
                         tabindex="3"
+                        autocomplete="off"
                 />
             </div>
             <label for="task-material" class="hidden">Материал листа</label>
@@ -93,6 +94,7 @@
                     id="task-material"
                     placeholder="Материал листа"
                     tabindex="4"
+                    autocomplete="off"
             />
             <button
                     type="button"
@@ -316,6 +318,7 @@
                         id="edging-text"
                         placeholder="Описание"
                         tabindex="2"
+                        autocomplete="off"
                 ></textarea>
                 <button
                         type="button"
@@ -516,6 +519,15 @@
                 });
             });
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll("input, textarea").forEach(q => {
+            q.setAttribute("readonly", "readonly");
+            q.addEventListener("focus", function() {
+                this.removeAttribute("readonly");
+            });
+        });
+    });
 </script>
 </body>
 </html>
