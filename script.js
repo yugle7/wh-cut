@@ -843,7 +843,7 @@ const toCreate = (e, toForm) => {
 
     form.scrollIntoView({
         behavior: 'smooth',
-        block: 'start'
+        block: 'nearest'
     });
 }
 
