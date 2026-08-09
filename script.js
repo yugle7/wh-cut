@@ -121,7 +121,7 @@ const pieceEdgingRightInput = document.getElementById('piece-edging-right');
 // 4. Редактор раскроя
 
 const cuttingPage = document.getElementById("cutting");
-const cutButton = document.getElementById("cut");
+const toCutButton = document.getElementById("to-cut");
 const doCutButton = document.getElementById("do-cut");
 
 const clearButton = document.getElementById("clear");
@@ -371,8 +371,8 @@ const dateHtml = () => task.start || task.finish ? `<div><span>${toDate(task.sta
 const materialHtml = () => `<div><span>${task.material || 'Материал'}</span><span>${valueHtml(task.kerf, 'мм')}</span></div>`;
 
 const toSheetHtml = (
-    {width, height, edge, depth}
-) => `<div>${width}${x}${height}${v}${valueHtml(edge, 'мм')}</span><span></span>${valueHtml(depth, 'мм')}</div>`;
+    {width, height, edge, rotated, depth}
+) => `<div>${width}${rotated ? o : x}${height}${v}${valueHtml(edge, 'мм')}</span><span></span>${valueHtml(depth, 'мм')}</div>`;
 
 const toScrapHtml = (
     {width, height, edge, count}
@@ -506,7 +506,8 @@ const updateSheet = () => {
         width: +sheetWidthInput.value,
         height: +sheetHeightInput.value,
         edge: +sheetEdgeInput.value,
-        depth: +sheetDepthInput.value
+        depth: +sheetDepthInput.value,
+        rotated: sheetRotated
     }
     updateSheetButton.innerHTML = toSheetHtml(task.sheet);
 }
@@ -1350,11 +1351,13 @@ const toOverlayCut = () => {
     }, 0);
 }
 
+const canCut = () => task.pieces.some(Boolean) && (task.scraps.some(Boolean) || (task.sheet.width && task.sheet.height));
+
 toCuttingButton.onclick = toCuttingButton.nextElementSibling.onclick = () => {
     toSave();
-    clearCutting();
 
-    if (pieces.length && (task.scraps.some(Boolean) || (task.sheet.width && task.sheet.height))) {
+    if (canCut()) {
+        clearCutting();
         changePage(cuttingPage);
         toOverlayCut();
     } else {
@@ -2382,14 +2385,24 @@ const doCut = (drops, takes) => {
         });
 }
 
-cutButton.onclick = (e) => {
+toCutButton.onclick = (e) => {
     e.preventDefault();
 
     const takes = takesRect();
     const drops = dropsRect();
 
-    // doCut(drops, takes);
     toCut(drops, takes);
+
+    cuttingPage.style.gridTemplateRows = '1fr 6px auto';
+}
+
+doCutButton.onclick = (e) => {
+    e.preventDefault();
+
+    const takes = takesRect();
+    const drops = dropsRect();
+
+    doCut(drops, takes);
 
     cuttingPage.style.gridTemplateRows = '1fr 6px auto';
 }

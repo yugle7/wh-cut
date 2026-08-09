@@ -49,7 +49,8 @@
 <article id="setting" class="hidden">
     <div>
         <label for="task-title" class="hidden">Название задачи</label>
-        <input type="text" class="big" id="task-title" placeholder="Название задачи"/>
+        <input type="text" class="big" id="task-title" placeholder="Название задачи"
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
     </div>
     <div id="update-task">
 
@@ -81,7 +82,7 @@
         <form>
             <section>
                 <label for="sheet-width">Длина</label>
-                <label for="sheet-rotated"></label>
+                <label for="sheet-rotated">Пов-от</label>
                 <label for="sheet-height">Высота</label>
                 <span></span>
                 <label for="sheet-edge">Отступ</label>
@@ -226,24 +227,23 @@
             <form>
                 <section>
                     <label for="roll-edging">Кромка</label>
-                    <label>Диаметр</label>
-                    <label>внутри и снаружи</label>
+                    <label>Диаметр внутри и снаружи</label>
                     <label for="roll-inner" class="hidden">Внутри</label>
                     <label for="roll-outer" class="hidden">Снаружи</label>
                     <span></span>
 
                     <button id="roll-edging" tabindex="1"></button>
-                    <svg class="icon">
-                        <use href="sprite.svg#v"></use>
-                    </svg>
                     <div>
+                        <svg class="icon">
+                            <use href="sprite.svg#v"></use>
+                        </svg>
                         <input type="number" inputmode="numeric" step="0.1" id="roll-inner" placeholder="мм"
                                autocomplete="off" tabindex="2"/>
                         <span class="pad">-</span>
                         <input type="number" inputmode="numeric" step="0.1" id="roll-outer" placeholder="мм"
                                autocomplete="off" tabindex="3"/>
-                        <span></span>
                     </div>
+                    <span></span>
                 </section>
                 <button type="button" id="delete-roll" class="delete" onclick="toDelete(event)">Очистить</button>
             </form>
@@ -322,7 +322,7 @@
             </svg>
         </button>
 
-        <button id="cut">
+        <button id="to-cut">
             <svg>
                 <use href="sprite.svg#cut"></use>
             </svg>
