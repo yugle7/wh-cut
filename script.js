@@ -122,10 +122,12 @@ const pieceEdgingRightInput = document.getElementById('piece-edging-right');
 // 4. Редактор раскроя
 
 const cuttingPage = document.getElementById("cutting");
-const toCutButton = document.getElementById("to-cut");
-const doCutButton = document.getElementById("do-cut");
 
-const clearButton = document.getElementById("clear");
+const fastCutButton = document.getElementById("fast-cut");
+const slowCutButton = document.getElementById("slow-cut");
+
+const clearCutButton = document.getElementById("clear-cut");
+const clearCutLabel = slowCutButton.nextElementSibling;
 
 const downloadCuttingButton = document.getElementById("download-cutting");
 
@@ -1343,7 +1345,8 @@ const clearCutting = () => {
     setTakes();
     setZones();
 
-    doCutButton.classList.add('hidden');
+    slowCutButton.classList.add('hidden');
+    clearCutLabel.classList.add('hidden');
 }
 
 const overlayScreen = document.getElementById('overlay');
@@ -1353,7 +1356,7 @@ overlayScreen.onclick = (e) => {
     e.preventDefault();
 }
 
-const toOverlayCut = () => {
+const overlayCut = (cut) => {
     overlayScreen.style.display = 'flex';
 
     requestAnimationFrame(() => {
@@ -1361,8 +1364,10 @@ const toOverlayCut = () => {
             const takes = takesRect();
             const drops = dropsRect();
 
-            toCut(drops, takes);
-             setTimeout(() => {
+            cut(drops, takes);
+            setTimeout(() => {
+                cuttingPage.style.gridTemplateRows = '1fr 6px auto';
+                clearCutLabel.classList.remove('hidden');
                 overlayScreen.style.display = 'none';
             }, 0);
         });
@@ -1383,7 +1388,7 @@ toCuttingButton.onclick = toCuttingButton.nextElementSibling.onclick = () => {
     if (cuttable) {
         clearCutting();
         changePage(cuttingPage);
-        toOverlayCut();
+        overlayCut(fastCut);
     } else {
         toCuttingButton.firstElementChild.classList.remove('yellow');
         setTimeout(() => toCuttingButton.firstElementChild.classList.add('yellow'), 3000);
@@ -1725,11 +1730,13 @@ const incTakeCount = (take) => {
     console.log('incTakeCount')
     if (take.count === 0) {
         take.html.parentElement.classList.remove('hidden');
+        clearCutButton.classList.add('hidden');
+        slowCutButton.classList.add('hidden');
     }
     take.count++;
     take.html.parentElement.firstElementChild.firstChild.innerText = take.count;
 
-    doCutButton.classList.add('hidden');
+    slowCutButton.classList.add('hidden');
 }
 
 const decTakeCount = (take) => {
@@ -2360,7 +2367,7 @@ const cutVerticalLines = (width, height, takes) => {
     return dst;
 }
 
-const toCut = (drops, takes, n = 7) => {
+const fastCut = (drops, takes, n = 7) => {
     let src = [{busy: 0, free: 0, rects: [], takes}];
 
     for (const [width, height] of drops) {
@@ -2409,19 +2416,20 @@ const doCut = (drops, takes) => {
         });
 }
 
-toCutButton.onclick = (e) => {
+fastCutButton.onclick = (e) => {
     e.preventDefault();
 
     const takes = takesRect();
     const drops = dropsRect();
 
-    toCut(drops, takes);
+    fastCut(drops, takes);
 
     cuttingPage.style.gridTemplateRows = '1fr 6px auto';
 }
 
-doCutButton.onclick = (e) => {
+slowCutButton.onclick = (e) => {
     e.preventDefault();
+    clearCutting();
 
     const takes = takesRect();
     const drops = dropsRect();
@@ -2431,7 +2439,7 @@ doCutButton.onclick = (e) => {
     cuttingPage.style.gridTemplateRows = '1fr 6px auto';
 }
 
-clearButton.onclick = () => clearCutting();
+clearCutButton.onclick = () => clearCutting();
 
 // 5.3 Отобразить раскрой
 

@@ -223,15 +223,15 @@ button div {
 }
 
 
-#no-cut,
-#do-cut {
+label[for="clear-cut"],
+#slow-cut {
     display: block;
     position: fixed;
     color: gray;
-    bottom: 0;
+    bottom: 10px;
     left: 50%;
+    line-height: 1.5;
     transform: translateX(-50%);
-    padding: 12px;
 }
 
 
