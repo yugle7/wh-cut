@@ -520,12 +520,13 @@
             });
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll("input, textarea").forEach(q => {
-            q.setAttribute("readonly", "readonly");
-            q.addEventListener("focus", function() {
-                this.removeAttribute("readonly");
-            });
+    document.querySelectorAll("input, textarea").forEach(q => {
+        q.setAttribute("readonly", "readonly");
+        q.addEventListener("focus", function() {
+            this.removeAttribute("readonly");
+        });
+        q.addEventListener("blur", function() {
+            this.setAttribute("readonly", "readonly");
         });
     });
 </script>
