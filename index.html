@@ -520,14 +520,25 @@
             });
     }
 
-    document.querySelectorAll("input, textarea").forEach(q => {
+    // document.querySelectorAll("input, textarea").forEach(q => {
+    //     q.setAttribute("readonly", "readonly");
+    //     q.addEventListener("focus", function() {
+    //         this.removeAttribute("readonly");
+    //     });
+    //     q.addEventListener("blur", function() {
+    //         this.setAttribute("readonly", "readonly");
+    //     });
+    // });
+
+    const uniq = Math.random().toString(36).slice(2);
+    document.querySelectorAll("input, textarea").forEach(function(q, i) {
+        q.setAttribute("name", "f" + uniq + "_" + i);
         q.setAttribute("readonly", "readonly");
-        q.addEventListener("focus", function() {
-            this.removeAttribute("readonly");
-        });
-        q.addEventListener("blur", function() {
-            this.setAttribute("readonly", "readonly");
-        });
+        function removeReadonly() { q.removeAttribute("readonly"); }
+        function addReadonly() { q.setAttribute("readonly", "readonly"); }
+        q.addEventListener("touchstart", removeReadonly, {passive: true});
+        q.addEventListener("mousedown", removeReadonly);
+        q.addEventListener("blur", addReadonly);
     });
 </script>
 </body>
