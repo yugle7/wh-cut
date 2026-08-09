@@ -2,21 +2,28 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no"/>
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#000000">
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+    />
+    <meta name="mobile-web-app-capable" content="yes"/>
+    <meta name="theme-color" content="#000000"/>
 
     <title>Раскрой</title>
     <link rel="canonical" href="https://yugle7.github.io/wh-cut/"/>
-    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="manifest" href="manifest.webmanifest"/>
     <link rel="stylesheet" href="style.css"/>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
 </head>
 
 <body>
 <article id="main">
     <div id="hello">
-        <a href="https://www.tbank.ru/cf/3sEawgoGUDe" target="_blank" id="say-thank">
+        <a
+                href="https://www.tbank.ru/cf/3sEawgoGUDe"
+                target="_blank"
+                id="say-thank"
+        >
             Сказать спасибо
         </a>
         <button id="change-theme" class="right">
@@ -33,7 +40,6 @@
         <button id="create-task">Создать раскрой</button>
         <ol id="tasks"></ol>
     </div>
-
 </article>
 
 <article id="to-remove-task" class="hidden">
@@ -43,18 +49,24 @@
     <span class="row">
         <button id="yes-remove-task" class="eye">Да</button>
         <button id="no-remove-task" class="eye">Нет</button>
-    </span>
+      </span>
 </article>
 
 <article id="setting" class="hidden">
     <div>
         <label for="task-title" class="hidden">Название задачи</label>
-        <input type="text" class="big" id="task-title" placeholder="Название задачи"
-               inputmode="text" autocomplete="new-password" autocapitalize="none" spellcheck="false"/>
+        <input
+                type="text"
+                class="big"
+                id="task-title"
+                placeholder="Название задачи"
+                inputmode="text"
+                autocomplete="new-password"
+                autocapitalize="none"
+                spellcheck="false"
+        />
     </div>
-    <div id="update-task">
-
-    </div>
+    <div id="update-task"></div>
     <div id="task" class="hidden">
         <form autocomplete="off">
             <div>
@@ -67,14 +79,32 @@
             </div>
             <div>
                 <label for="task-kerf">Ширина реза</label>
-                <input type="number" inputmode="numeric" id="task-kerf" placeholder="мм" tabindex="3"/>
+                <input
+                        type="number"
+                        inputmode="numeric"
+                        id="task-kerf"
+                        placeholder="мм"
+                        tabindex="3"
+                />
             </div>
             <label for="task-material" class="hidden">Материал листа</label>
-            <input type="text" id="task-material" placeholder="Материал листа" tabindex="4"/>
-            <button type="button" id="save-task" class="create" onclick="toSave()">Сохранить</button>
+            <input
+                    type="text"
+                    id="task-material"
+                    placeholder="Материал листа"
+                    tabindex="4"
+            />
+            <button
+                    type="button"
+                    id="save-task"
+                    class="create"
+                    onclick="toSave()"
+            >
+                Сохранить
+            </button>
         </form>
     </div>
-    <br>
+    <br/>
 
     <button id="add-sheet"><span class="big">Лист</span></button>
     <button id="update-sheet"></button>
@@ -89,25 +119,56 @@
                 <span></span>
                 <label for="sheet-depth">Толщина</label>
 
-                <input type="number" inputmode="numeric" id="sheet-width" placeholder="мм"
-                       autocomplete="off" tabindex="1"/>
+                <input
+                        type="number"
+                        inputmode="numeric"
+                        id="sheet-width"
+                        placeholder="мм"
+                        autocomplete="off"
+                        tabindex="1"
+                />
                 <button type="button" id="sheet-rotated" tabindex="2"></button>
-                <input type="number" inputmode="numeric" id="sheet-height" placeholder="мм"
-                       autocomplete="off" tabindex="3"/>
+                <input
+                        type="number"
+                        inputmode="numeric"
+                        id="sheet-height"
+                        placeholder="мм"
+                        autocomplete="off"
+                        tabindex="3"
+                />
                 <svg>
                     <use href="sprite.svg#v"></use>
                 </svg>
-                <input type="number" inputmode="numeric" id="sheet-edge" placeholder="мм"
-                       autocomplete="off" tabindex="4"/>
+                <input
+                        type="number"
+                        inputmode="numeric"
+                        id="sheet-edge"
+                        placeholder="мм"
+                        autocomplete="off"
+                        tabindex="4"
+                />
                 <span></span>
-                <input type="number" inputmode="numeric" id="sheet-depth" placeholder="мм"
-                       autocomplete="off" tabindex="5"/>
+                <input
+                        type="number"
+                        inputmode="numeric"
+                        id="sheet-depth"
+                        placeholder="мм"
+                        autocomplete="off"
+                        tabindex="5"
+                />
             </section>
-            <button type="button" id="save-sheet" class="create" onclick="toSave()">Сохранить</button>
+            <button
+                    type="button"
+                    id="save-sheet"
+                    class="create"
+                    onclick="toSave()"
+            >
+                Сохранить
+            </button>
         </form>
     </div>
 
-    <br>
+    <br/>
     <button id="add-scrap" class="head">
         <span class="big">Обрезки</span>
         <svg class="yellow">
@@ -117,7 +178,7 @@
     <ol id="scraps"></ol>
     <button id="create-scrap" class="create">Добавить</button>
 
-    <br>
+    <br/>
     <button id="add-edging" class="head">
         <span class="big">Кромки</span>
         <svg class="yellow">
@@ -126,7 +187,7 @@
     </button>
     <ol id="edgings"></ol>
     <button id="create-edging" class="create">Добавить</button>
-    <br>
+    <br/>
 
     <button id="add-roll" class="head">
         <span class="big">Рулоны</span>
@@ -136,7 +197,7 @@
     </button>
     <ol id="rolls"></ol>
     <button id="create-roll" class="create">Добавить</button>
-    <br>
+    <br/>
 
     <button id="add-piece" class="head">
         <span class="big">Детали</span>
@@ -146,11 +207,9 @@
     </button>
     <ol id="pieces"></ol>
     <button id="create-piece" class="create">Добавить</button>
-    <br>
+    <br/>
 
-    <button id="remove-task" class="eye">
-        Удалить задание
-    </button>
+    <button id="remove-task" class="eye">Удалить задание</button>
 
     <nav>
         <button id="to-main">
@@ -170,7 +229,6 @@
         </label>
     </nav>
 
-
     <div class="hidden">
         <div id="scrap">
             <form autocomplete="off">
@@ -183,24 +241,54 @@
                     <span></span>
                     <label for="scrap-count">Кол-во</label>
 
-                    <input type="number" inputmode="numeric" id="scrap-width" placeholder="мм"
-                           autocomplete="off" tabindex="1"/>
+                    <input
+                            type="number"
+                            inputmode="numeric"
+                            id="scrap-width"
+                            placeholder="мм"
+                            autocomplete="off"
+                            tabindex="1"
+                    />
                     <svg class="icon">
                         <use href="sprite.svg#x"></use>
                     </svg>
-                    <input type="number" inputmode="numeric" id="scrap-height" placeholder="мм"
-                           autocomplete="off" tabindex="2"/>
+                    <input
+                            type="number"
+                            inputmode="numeric"
+                            id="scrap-height"
+                            placeholder="мм"
+                            autocomplete="off"
+                            tabindex="2"
+                    />
                     <svg class="icon">
                         <use href="sprite.svg#v"></use>
                     </svg>
-                    <input type="number" inputmode="numeric" id="scrap-edge" placeholder="мм"
-                           autocomplete="off" tabindex="3"/>
+                    <input
+                            type="number"
+                            inputmode="numeric"
+                            id="scrap-edge"
+                            placeholder="мм"
+                            autocomplete="off"
+                            tabindex="3"
+                    />
                     <span></span>
-                    <input type="number" inputmode="numeric" id="scrap-count" placeholder="шт"
-                           autocomplete="off" tabindex="4"/>
-
+                    <input
+                            type="number"
+                            inputmode="numeric"
+                            id="scrap-count"
+                            placeholder="шт"
+                            autocomplete="off"
+                            tabindex="4"
+                    />
                 </section>
-                <button type="button" id="delete-scrap" class="delete" onclick="toDelete(event)">Очистить</button>
+                <button
+                        type="button"
+                        id="delete-scrap"
+                        class="delete"
+                        onclick="toDelete(event)"
+                >
+                    Очистить
+                </button>
             </form>
         </div>
 
@@ -213,14 +301,31 @@
 
                     <button id="edging-line" tabindex="1"></button>
                     <span></span>
-                    <input type="number" inputmode="numeric" step="0.1" id="edging-thick" placeholder="мм"
-                           autocomplete="off" tabindex="2"/>
+                    <input
+                            type="number"
+                            inputmode="numeric"
+                            step="0.1"
+                            id="edging-thick"
+                            placeholder="мм"
+                            autocomplete="off"
+                            tabindex="2"
+                    />
                 </section>
                 <label for="edging-text" class="hidden">Описание</label>
-                <textarea id="edging-text" placeholder="Описание" tabindex="2"></textarea>
-                <button type="button" id="delete-edging" class="delete" onclick="toDelete(event)">Очистить</button>
+                <textarea
+                        id="edging-text"
+                        placeholder="Описание"
+                        tabindex="2"
+                ></textarea>
+                <button
+                        type="button"
+                        id="delete-edging"
+                        class="delete"
+                        onclick="toDelete(event)"
+                >
+                    Очистить
+                </button>
             </form>
-
         </div>
 
         <div id="roll">
@@ -237,15 +342,36 @@
                         <svg class="icon">
                             <use href="sprite.svg#v"></use>
                         </svg>
-                        <input type="number" inputmode="numeric" step="0.1" id="roll-inner" placeholder="мм"
-                               autocomplete="off" tabindex="2"/>
+                        <input
+                                type="number"
+                                inputmode="numeric"
+                                step="0.1"
+                                id="roll-inner"
+                                placeholder="мм"
+                                autocomplete="off"
+                                tabindex="2"
+                        />
                         <span class="pad">-</span>
-                        <input type="number" inputmode="numeric" step="0.1" id="roll-outer" placeholder="мм"
-                               autocomplete="off" tabindex="3"/>
+                        <input
+                                type="number"
+                                inputmode="numeric"
+                                step="0.1"
+                                id="roll-outer"
+                                placeholder="мм"
+                                autocomplete="off"
+                                tabindex="3"
+                        />
                     </div>
                     <span></span>
                 </section>
-                <button type="button" id="delete-roll" class="delete" onclick="toDelete(event)">Очистить</button>
+                <button
+                        type="button"
+                        id="delete-roll"
+                        class="delete"
+                        onclick="toDelete(event)"
+                >
+                    Очистить
+                </button>
             </form>
         </div>
 
@@ -259,15 +385,33 @@
                     <label for="piece-extra">Доп.об.</label>
                     <label for="piece-count">Кол-во</label>
 
-                    <input type="number" inputmode="numeric" id="piece-width" placeholder="мм" autocomplete="off"
-                           tabindex="1"/>
+                    <input
+                            type="number"
+                            inputmode="numeric"
+                            id="piece-width"
+                            placeholder="мм"
+                            autocomplete="off"
+                            tabindex="1"
+                    />
                     <button type="button" id="piece-rotated" tabindex="2"></button>
-                    <input type="number" inputmode="numeric" id="piece-height" placeholder="мм" autocomplete="off"
-                           tabindex="3"/>
+                    <input
+                            type="number"
+                            inputmode="numeric"
+                            id="piece-height"
+                            placeholder="мм"
+                            autocomplete="off"
+                            tabindex="3"
+                    />
                     <span></span>
                     <button type="button" id="piece-extra" tabindex="4"></button>
-                    <input type="number" inputmode="numeric" id="piece-count" placeholder="шт" autocomplete="off"
-                           tabindex="5"/>
+                    <input
+                            type="number"
+                            inputmode="numeric"
+                            id="piece-count"
+                            placeholder="шт"
+                            autocomplete="off"
+                            tabindex="5"
+                    />
 
                     <button id="piece-edging-up" tabindex="6"></button>
                     <span></span>
@@ -284,13 +428,23 @@
                     <span></span>
                 </section>
                 <label for="piece-text" class="hidden">Описание</label>
-                <textarea id="piece-text" placeholder="Описание" tabindex="10"></textarea>
-                <button type="button" id="delete-piece" class="delete" onclick="toDelete(event)">Очистить</button>
+                <textarea
+                        id="piece-text"
+                        placeholder="Описание"
+                        tabindex="10"
+                ></textarea>
+                <button
+                        type="button"
+                        id="delete-piece"
+                        class="delete"
+                        onclick="toDelete(event)"
+                >
+                    Очистить
+                </button>
             </form>
         </div>
     </div>
 </article>
-
 
 <article id="cutting" class="hidden">
     <div id="drop"></div>
@@ -333,9 +487,7 @@
             </svg>
         </button>
     </nav>
-    <button id="do-cut" class="eye hidden">
-        Улучшить раскрой
-    </button>
+    <button id="do-cut" class="eye hidden">Улучшить раскрой</button>
 </article>
 
 <div id="print"></div>
@@ -349,12 +501,21 @@
 
 <script>
     if (navigator.serviceWorker) {
-        navigator.serviceWorker.register('/wh-cut/sw.js', {
-            scope: '/wh-cut/',
-            updateViaCache: 'none'
-        }).then(reg => reg.update());
+        navigator.serviceWorker
+            .register("/wh-cut/sw.js", {
+                scope: "/wh-cut/",
+                updateViaCache: "none"
+            })
+            .then((reg) => {
+                reg.update();
+                if (reg.waiting) {
+                    reg.waiting.postMessage("skipWaiting");
+                }
+                navigator.serviceWorker.addEventListener("controllerchange", () => {
+                    window.location.reload();
+                });
+            });
     }
 </script>
-
 </body>
 </html>
