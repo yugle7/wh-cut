@@ -22,6 +22,7 @@ const sun = changeThemeButton.firstElementChild;
 const toMainButton = document.getElementById("to-main");
 const toSettingButton = document.getElementById("to-setting");
 const toCuttingButton = document.getElementById("to-cutting");
+const toCuttingLabel = toCuttingButton.nextElementSibling;
 
 // 3. Настройки задачи раскроя
 
@@ -435,6 +436,8 @@ const setTask = () => {
 
     copyTaskToForm();
     copySheetToForm();
+
+    canCut();
 }
 
 taskTitleInput.onblur = () => {
@@ -770,6 +773,8 @@ const toSave = () => {
         form.remove();
     }
     saveTask();
+    canCut();
+
     form = null;
 }
 
@@ -1352,12 +1357,18 @@ const toOverlayCut = () => {
     }, 0);
 }
 
-const canCut = () => task.pieces.some(Boolean) && (task.scraps.some(Boolean) || (task.sheet.width && task.sheet.height));
+let cuttable;
+
+const canCut = () => {
+    console.log('canCut');
+    cuttable = task.pieces.some(Boolean) && (task.scraps.some(Boolean) || (task.sheet.width && task.sheet.height));
+    cuttable ? toCuttingLabel.classList.remove('hidden') : toCuttingLabel.classList.add('hidden')
+}
 
 toCuttingButton.onclick = toCuttingButton.nextElementSibling.onclick = () => {
     toSave();
 
-    if (canCut()) {
+    if (cuttable) {
         clearCutting();
         changePage(cuttingPage);
         toOverlayCut();
