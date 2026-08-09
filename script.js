@@ -1730,7 +1730,7 @@ const incTakeCount = (take) => {
     console.log('incTakeCount')
     if (take.count === 0) {
         take.html.parentElement.classList.remove('hidden');
-        clearCutButton.classList.add('hidden');
+        clearCutLabel.classList.add('hidden');
         slowCutButton.classList.add('hidden');
     }
     take.count++;
