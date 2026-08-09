@@ -530,7 +530,7 @@ svg:hover {
 }
 
 .row {
-    align-self: center;
+    flex-direction: row;
 }
 
 svg {
@@ -643,6 +643,7 @@ select {
 .center {
     display: flex;
     align-items: center;
+    align-self: center;
 }
 
 .place {
@@ -1120,7 +1121,7 @@ input {
 }
 
 
-#setting > button {
+.header {
     position: relative;
     min-height: 60px;
     width: 100%;
@@ -1174,10 +1175,11 @@ textarea {
     inset: 0;
     background: var(--bg-primary);
     opacity: 0.5;
-    z-index: 11;
+    z-index: 99999;
     display: none;
     justify-content: center;
     align-items: center;
+    pointer-events: auto;
 }
 
 .spinner {

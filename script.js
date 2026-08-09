@@ -358,6 +358,8 @@ let deleteButton;
 let createButton;
 let updateButton;
 
+let addButton;
+
 let clearForm;
 let copyToForm;
 let focusInput;
@@ -551,6 +553,7 @@ const toScrapForm = () => {
     form = scrapForm;
     deleteButton = deleteScrapButton;
     createButton = createScrapButton;
+    addButton = addScrapButton;
     copyToForm = copyScrapToForm;
     focusInput = pieceWidthInput;
     updateItem = updateScrapItem;
@@ -1344,17 +1347,26 @@ const clearCutting = () => {
 }
 
 const overlayScreen = document.getElementById('overlay');
+overlayScreen.onclick = (e) => {
+    console.log('overlayScreen');
+    e.stopPropagation();
+    e.preventDefault();
+}
 
 const toOverlayCut = () => {
     overlayScreen.style.display = 'flex';
 
-    const takes = takesRect();
-    const drops = dropsRect();
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            const takes = takesRect();
+            const drops = dropsRect();
 
-    setTimeout(() => {
-        toCut(drops, takes);
-        overlayScreen.style.display = 'none';
-    }, 0);
+            toCut(drops, takes);
+             setTimeout(() => {
+                overlayScreen.style.display = 'none';
+            }, 0);
+        });
+    });
 }
 
 let cuttable;
