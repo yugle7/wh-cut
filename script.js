@@ -1005,8 +1005,13 @@ pieceEdgingRightInput.onclick = (e) => {
     pieceEdgingRightInput.innerHTML = lineHtml(pieceEdging.right);
 }
 
+function isKeyboardOpen() {
+    return (window.innerHeight - window.visualViewport.height) > 100;
+}
+
 pieceRotatedInput.onclick = (e) => {
     e.preventDefault();
+    if (isKeyboardOpen()) pieceHeightInput.focus();
     pieceRotated = !pieceRotated;
     pieceRotatedInput.innerHTML = pieceRotated ? o : x;
 }
