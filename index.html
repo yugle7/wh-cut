@@ -90,11 +90,14 @@
             </div>
             <label for="task-material" class="hidden">Материал листа</label>
             <input
-                    type="text"
                     id="task-material"
+                    type="text"
                     placeholder="Материал листа"
                     tabindex="4"
                     autocomplete="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    inputmode="text"
             />
             <button
                     type="button"
@@ -246,11 +249,7 @@
                 <use href="sprite.svg#cutting"></use>
             </svg>
         </button>
-        <label for="to-cutting" class="right">Раскроить
-<!--            <svg class="gray">-->
-<!--                <use href="sprite.svg#right"></use>-->
-<!--            </svg>-->
-        </label>
+        <label for="to-cutting" class="right">Раскроить</label>
     </nav>
 
     <div class="hidden">
@@ -473,7 +472,9 @@
 
 <article id="cutting" class="hidden">
     <div id="drop"></div>
-    <div id="gutter"><div></div></div>
+    <div id="gutter">
+        <div></div>
+    </div>
     <div class="wrapper">
         <div id="take"></div>
     </div>
