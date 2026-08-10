@@ -302,7 +302,7 @@ const loadTasks = async () => {
     } else {
         const t = localStorage.getItem('tasks');
         tasks = t ? JSON.parse(t).filter(Boolean) : [];
-        tasks = testTasks;
+        // tasks = testTasks;
 
         tasks.forEach((q, i) => q.id = i);
         tasks.forEach(q => q.rolls = q.rolls || []);
@@ -732,17 +732,6 @@ noRemoveTaskButton.onclick = () => toRemoveTaskPage.classList.add('hidden');
 
 // 2.8 Навигация по форме
 
-const toCreateButton = () => {
-    createButton.classList.add('hidden');
-    deleteButton.innerText = 'Создать';
-    deleteButton.style.color = 'var(--green)';
-}
-
-const toDeleteButton = () => {
-    deleteButton.innerText = 'Очистить';
-    deleteButton.style.color = 'var(--red)';
-}
-
 const updateLink = () => {
     console.log('updateLink');
     if (items[index]) {
@@ -810,7 +799,8 @@ const toEdit = (e, i, f) => {
 
     created = deleted = false;
     f();
-    toDeleteButton();
+    deleteButton.classList.remove('hidden');
+    deleteButton.innerText = 'Очистить';
 
     link = links.children[i];
     item = items[i];
@@ -831,7 +821,7 @@ const toCreate = (e, toForm) => {
     toForm();
 
     created = true;
-    toCreateButton();
+    deleteButton.classList.add('hidden');
     defaultClearForm();
     clearForm();
 

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Моё приложение</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f5f5f5;
+            color: #222;
+        }
+
+        /* Кнопка обратной связи */
+        .feedback-button {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+
+            width: 52px;
+            height: 52px;
+
+            border: 0;
+            border-radius: 50%;
+
+            background: #222;
+            color: white;
+
+            font-size: 22px;
+            cursor: pointer;
+
+            box-shadow: 0 4px 16px rgba(0, 0, 0, .18);
+
+            transition:
+                transform .15s ease,
+                background .15s ease;
+        }
+
+        .feedback-button:hover {
+            transform: scale(1.05);
+            background: #333;
+        }
+
+        .feedback-button:active {
+            transform: scale(.95);
+        }
+
+
+        /* Затемнение */
+        .overlay {
+            position: fixed;
+            inset: 0;
+
+            display: none;
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            background: rgba(0, 0, 0, .35);
+        }
+
+        .overlay.open {
+            display: flex;
+        }
+
+
+        /* Окно */
+        .feedback {
+            position: relative;
+
+            width: min(100%, 400px);
+
+            padding: 24px;
+
+            border-radius: 18px;
+            background: white;
+
+            box-shadow: 0 16px 50px rgba(0, 0, 0, .2);
+        }
+
+        .feedback h2 {
+            margin: 0 0 20px;
+            font-size: 21px;
+        }
+
+
+        /* Закрыть */
+        .close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+
+            width: 32px;
+            height: 32px;
+
+            border: 0;
+            border-radius: 50%;
+
+            background: transparent;
+            color: #777;
+
+            font-size: 22px;
+            line-height: 1;
+
+            cursor: pointer;
+        }
+
+        .close:hover {
+            background: #f0f0f0;
+        }
+
+
+        /* Оценка */
+        .rating {
+            display: flex;
+            gap: 8px;
+
+            margin-bottom: 20px;
+        }
+
+        .rating button {
+            flex: 1;
+
+            height: 42px;
+
+            border: 1px solid #ddd;
+            border-radius: 9px;
+
+            background: white;
+            color: #555;
+
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .rating button:hover {
+            background: #f5f5f5;
+        }
+
+        .rating button.selected {
+            border-color: #222;
+            background: #222;
+            color: white;
+        }
+
+
+        /* Сообщение */
+        textarea {
+            width: 100%;
+            min-height: 110px;
+
+            padding: 12px;
+
+            resize: vertical;
+
+            border: 1px solid #ddd;
+            border-radius: 10px;
+
+            font: inherit;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: #999;
+        }
+
+
+        /* Отправить */
+        .submit {
+            width: 100%;
+
+            margin-top: 14px;
+            padding: 12px;
+
+            border: 0;
+            border-radius: 10px;
+
+            background: #222;
+            color: white;
+
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .submit:hover {
+            background: #333;
+        }
+
+        .submit:disabled {
+            opacity: .5;
+            cursor: default;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Здесь ваше приложение -->
+    <main>
+        <h1>Моё приложение</h1>
+    </main>
+
+
+    <!-- Кнопка обратной связи -->
+    <button
+        class="feedback-button"
+        id="open-feedback"
+        aria-label="Обратная связь"
+        title="Обратная связь"
+    >
+        ↗
+    </button>
+
+
+    <!-- Форма -->
+    <div class="overlay" id="overlay">
+        <div class="feedback">
+
+            <button
+                class="close"
+                id="close-feedback"
+                aria-label="Закрыть"
+            >
+                ×
+            </button>
+
+            <h2>Обратная связь</h2>
+
+            <div class="rating" id="rating">
+                <button type="button" data-rating="1">1</button>
+                <button type="button" data-rating="2">2</button>
+                <button type="button" data-rating="3">3</button>
+                <button type="button" data-rating="4">4</button>
+                <button type="button" data-rating="5">5</button>
+            </div>
+
+            <textarea
+                id="feedback-message"
+                placeholder="Ваше сообщение..."
+            ></textarea>
+
+            <button
+                class="submit"
+                id="submit-feedback"
+                disabled
+            >
+                Отправить
+            </button>
+
+        </div>
+    </div>
+
+
+    <script>
+        const openFeedbackButton = document.getElementById('open-feedback');
+        const closeFeedbackButton = document.getElementById('close-feedback');
+        const overlay = document.getElementById('overlay');
+
+        const rating = document.getElementById('rating');
+        const feedbackMessageText = document.getElementById('feedback-message');
+        const submitFeedbackButton = document.getElementById('submit-feedback');
+
+        let selectedRating = null;
+
+
+        // Открыть
+        openFeedbackButton.addEventListener('click', () => {
+            overlay.classList.add('open');
+            feedbackMessageText.focus();
+        });
+
+
+        // Закрыть
+        function close() {
+            overlay.classList.remove('open');
+        }
+
+        closeFeedbackButton.addEventListener('click', close);
+
+
+        // Закрытие по клику на фон
+        overlay.addEventListener('click', (event) => {
+            if (event.target === overlay) close();
+        });
+
+
+        // Закрытие по Escape
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') close();
+        });
+
+
+        // Выбор оценки
+        rating.addEventListener('click', (event) => {
+            const button = event.target.closest('button');
+            if (!button) return;
+
+            selectedRating = Number(button.dataset.rating);
+
+            rating.querySelectorAll('button').forEach(button => {
+                button.classList.toggle(
+                    'selected',
+                    Number(button.dataset.rating) === selectedRating
+                );
+            });
+
+            updateSubmitState();
+        });
+
+
+        // Можно отправлять после выбора оценки
+        function updateSubmitState() {
+            submitFeedbackButton.disabled = selectedRating === null;
+        }
+
+
+        // Отправка
+        submitFeedbackButton.addEventListener('click', () => {
+            if (selectedRating === null) return;
+
+            const feedback = {
+                id: crypto.randomUUID(),
+                rating: selectedRating,
+                message: feedbackMessageText.value.trim(),
+                createdAt: new Date().toISOString()
+            };
+
+
+            /*
+             * Пока вместо сервера используем localStorage.
+             *
+             * Позже здесь можно сделать:
+             *
+             * await fetch('/api/feedback', {
+             *     method: 'POST',
+             *     headers: {
+             *         'Content-Type': 'application/json'
+             *     },
+             *     body: JSON.stringify(feedback)
+             * });
+             */
+
+            const saved = JSON.parse(
+                localStorage.getItem('feedback') || '[]'
+            );
+
+            saved.push(feedback);
+
+            localStorage.setItem(
+                'feedback',
+                JSON.stringify(saved)
+            );
+
+
+            // Очистка формы
+            selectedRating = null;
+
+            rating.querySelectorAll('button').forEach(button => {
+                button.classList.remove('selected');
+            });
+
+            feedbackMessageText.value = '';
+
+            updateSubmitState();
+
+            // Закрываем окно
+            close();
+        });
+    </script>
+
+</body>
+</html>
