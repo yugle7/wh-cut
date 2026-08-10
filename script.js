@@ -504,6 +504,7 @@ sheetRotatedInput.onclick = (e) => {
     console.log('sheetRotatedInput')
     e.preventDefault();
     e.stopPropagation();
+    if (isKeyboardOpen()) sheetHeightInput.focus();
     sheetRotated = !sheetRotated;
     sheetRotatedInput.innerHTML = sheetRotated ? o : x;
 }
@@ -971,36 +972,42 @@ const createTask = async () => {
 
 rollEdgingInput.onclick = (e) => {
     e.preventDefault();
+    if (isKeyboardOpen()) rollInnerInput.focus();
     edgingLine = getNextLine(true);
     rollEdgingInput.innerHTML = lineHtml(edgingLine);
 }
 
 edgingLineInput.onclick = (e) => {
     e.preventDefault();
+    if (isKeyboardOpen()) edgingThickInput.focus();
     edgingLine = getNextLine(false);
     edgingLineInput.innerHTML = lineHtml(edgingLine);
 }
 
 pieceEdgingUpInput.onclick = (e) => {
     e.preventDefault();
+    if (isKeyboardOpen()) pieceTextInput.focus();
     pieceEdging.up = getNextEdgingLine(pieceEdging.up);
     pieceEdgingUpInput.innerHTML = lineHtml(pieceEdging.up);
 }
 
 pieceEdgingDownInput.onclick = (e) => {
     e.preventDefault();
+    if (isKeyboardOpen()) pieceTextInput.focus();
     pieceEdging.down = getNextEdgingLine(pieceEdging.down);
     pieceEdgingDownInput.innerHTML = lineHtml(pieceEdging.down);
 }
 
 pieceEdgingLeftInput.onclick = (e) => {
     e.preventDefault();
+    if (isKeyboardOpen()) pieceTextInput.focus();
     pieceEdging.left = getNextEdgingLine(pieceEdging.left);
     pieceEdgingLeftInput.innerHTML = lineHtml(pieceEdging.left);
 }
 
 pieceEdgingRightInput.onclick = (e) => {
     e.preventDefault();
+    if (isKeyboardOpen()) pieceTextInput.focus();
     pieceEdging.right = getNextEdgingLine(pieceEdging.right);
     pieceEdgingRightInput.innerHTML = lineHtml(pieceEdging.right);
 }
@@ -1018,6 +1025,7 @@ pieceRotatedInput.onclick = (e) => {
 
 pieceExtraInput.onclick = (e) => {
     e.preventDefault();
+    if (isKeyboardOpen()) pieceCountInput.focus();
     pieceExtra = !pieceExtra;
     pieceExtraInput.innerHTML = iconHtml(pieceExtra ? 'save' : 'cancel');
 }
