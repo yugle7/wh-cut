@@ -491,12 +491,18 @@ const toTaskForm = () => {
     focusInput = taskMaterialInput;
 }
 
-// 2.3 изменение размеров
+// 2.3 Изменение размера
 
-const sizeField = CSS.supports('field-sizing', 'content') ? null : (q) => q.style.maxWidth = (q.value.length || q.placeholder.length) + "ch";
-sizeField && document.querySelectorAll('input[type="number"]').forEach(q => q.addEventListener('input', () => sizeField(q)));
-const sizeFields = () => sizeField && form.querySelectorAll('input[type="number"]').forEach(sizeField);
-if (sizeField) taskTitleInput.style.width = '100%';
+let sizeFields = () => {};
+
+if (!CSS.supports('field-sizing', 'content')) {
+    const sizeField = (q) => q.style.maxWidth = (q.value.length || q.placeholder.length) + "ch";
+    document.querySelectorAll('input[type="number"]').forEach(q => q.addEventListener('input', () => sizeField(q)));
+    sizeFields = () => form.querySelectorAll('input[type="number"]').forEach(sizeField);
+    taskTitleInput.style.width = '100%';
+    taskStartInput.style.margin = 0;
+    taskFinishInput.style.margin = 0;
+}
 
 // 2.3 Обновление листа
 
