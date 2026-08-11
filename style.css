@@ -7,6 +7,8 @@
     --text-max: #2e3134;
     --head: #eae8e5;
 
+    --alpha: rgba(128, 128, 128);
+
     --green: #4aaf8c;
     --green-max: #3fa07b;
     --green-min: #007814;
@@ -169,8 +171,12 @@ textarea {
     outline: none;
     resize: none;
     overflow: hidden;
-    field-sizing: content;
     padding-top: 10px;
+}
+
+textarea,
+input {
+     field-sizing: content;
 }
 
 textarea,
@@ -192,7 +198,6 @@ input[type="number"] {
     appearance: textfield;
     -webkit-appearance: textfield;
     -moz-appearance: textfield;
-    field-sizing: content;
 }
 
 svg {
@@ -856,8 +861,7 @@ th {
 
 @media print {
     @page {
-        margin: 0 !important;
-        margin-bottom: 1cm !important;
+        margin: 0 0 1cm 0 !important;
 
         padding: 1cm 0 0 1cm;
         size: 210mm 297mm; /*A4;*/
@@ -1205,8 +1209,8 @@ nav > label {
     width: 32px;
     height: 32px;
 
-    border: 3px solid rgb(from var(--text) r g b / 0.2);
-    border-top-color: var(--text);
+    border: 3px solid gray;
+    border-top-color: var(--text-max);
     border-radius: 50%;
 
     animation: spin .8s linear infinite;

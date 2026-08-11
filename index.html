@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no"/>
     <meta name="mobile-web-app-capable" content="yes"/>
     <meta name="theme-color" content="#000000"/>
 
@@ -540,17 +540,19 @@
                 });
             });
     }
+</script>
 
-    // document.querySelectorAll("input, textarea").forEach(q => {
-    //     q.setAttribute("readonly", "readonly");
-    //     q.addEventListener("focus", function() {
-    //         this.removeAttribute("readonly");
-    //     });
-    //     q.addEventListener("blur", function() {
-    //         this.setAttribute("readonly", "readonly");
-    //     });
-    // });
+<script>
+    if (!CSS.supports('field-sizing', 'content')) {
+        document.querySelectorAll('input').forEach(input => {
+            const resize = () => {
+                input.style.width = `${input.scrollWidth}px`;
+            };
 
+            input.addEventListener('input', resize);
+            resize();
+        });
+    }
 </script>
 </body>
 </html>
