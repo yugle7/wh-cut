@@ -543,16 +543,11 @@
 </script>
 
 <script>
-    if (!CSS.supports('field-sizing', 'content')) {
-        document.querySelectorAll('input').forEach(input => {
-            const resize = () => {
-                input.style.width = `${input.scrollWidth}px`;
-            };
+    // if (!CSS.supports('field-sizing', 'content')) {
 
-            input.addEventListener('input', resize);
-            // resize();
-        });
-    }
+    // const resize = (q) => q.style.maxWidth = q.value.length || q.placeholder.length + "ch";
+    // document.querySelectorAll('input[type="number"]').forEach(q => q.addEventListener('input', () => resize(q)));
+    // }
 </script>
 </body>
 </html>

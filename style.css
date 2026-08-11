@@ -174,10 +174,6 @@ textarea {
     padding-top: 10px;
 }
 
-textarea,
-input {
-     field-sizing: content;
-}
 
 textarea,
 input {
@@ -1221,4 +1217,10 @@ nav > label {
     to {
         transform: rotate(360deg);
     }
+}
+
+
+textarea,
+input {
+    /*field-sizing: content;*/
 }

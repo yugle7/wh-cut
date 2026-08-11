@@ -403,7 +403,7 @@ const toPieceHtml = ({width, height, rotated, edging, count, text, extra}) => {
     return `<div>${w}${rotated ? o : x}${h}${textHtml(text)}${e}${valueHtml(count, 'шт')}</div>`
 }
 
-const defaultClearForm = () => form && form.querySelectorAll('input,textarea').forEach(q => q.value = '')
+const clearFields = () => form.querySelectorAll('input,textarea').forEach(q => q.value = '')
 
 // 2.2 Заполнение полей задачи
 
@@ -456,6 +456,7 @@ const toUpdate = (e, toForm) => {
 
     toSave();
     toForm();
+    sizeFields();
 
     updateButton.classList.add('hidden');
     form.classList.remove('hidden');
@@ -489,6 +490,12 @@ const toTaskForm = () => {
     form = taskForm;
     focusInput = taskMaterialInput;
 }
+
+// 2.3 изменение размеров
+
+const sizeField = CSS.supports('field-sizing', 'content') ? null : (q) => q.style.maxWidth = (q.value.length || q.placeholder.length) + "ch";
+sizeField && document.querySelectorAll('input[type="number"]').forEach(q => q.addEventListener('input', () => sizeField(q)));
+const sizeFields = () => sizeField && form.querySelectorAll('input[type="number"]').forEach(sizeField);
 
 // 2.3 Обновление листа
 
@@ -774,23 +781,24 @@ const toSave = () => {
 }
 
 const toDelete = (e) => {
-    if (created) {
-        createButton.onclick(e);
-        return;
-    }
+    // if (created) {
+    //     createButton.onclick(e);
+    //     return;
+    // }
     e.preventDefault();
     e.stopPropagation();
 
     deleted = !deleted;
 
     if (deleted) {
-        defaultClearForm();
-        clearForm && clearForm();
+        clearFields();
+        clearForm();
         deleteButton.innerText = 'Как было';
     } else {
         copyToForm(items[index]);
         deleteButton.innerText = 'Очистить';
     }
+    sizeFields();
 }
 
 const toEdit = (e, i, f) => {
@@ -808,10 +816,10 @@ const toEdit = (e, i, f) => {
     index = i;
 
     copyToForm(item);
+    sizeFields();
+
     link.after(form);
     link.classList.add('hidden');
-
-    // focusInput.focus();
 }
 
 const toCreate = (e, toForm) => {
@@ -823,8 +831,10 @@ const toCreate = (e, toForm) => {
 
     created = true;
     deleteButton.classList.add('hidden');
-    defaultClearForm();
+
     clearForm();
+    clearFields();
+    sizeFields();
 
     createItem();
     createLink(index, toForm);
