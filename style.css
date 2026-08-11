@@ -1003,6 +1003,7 @@ li > button {
     display: flex;
     justify-content: space-between;
     width: 100%;
+    min-height: 50px;
     max-width: 600px;
     margin: 0 auto;
     padding: 10px 20px;
