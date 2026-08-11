@@ -496,6 +496,7 @@ const toTaskForm = () => {
 const sizeField = CSS.supports('field-sizing', 'content') ? null : (q) => q.style.maxWidth = (q.value.length || q.placeholder.length) + "ch";
 sizeField && document.querySelectorAll('input[type="number"]').forEach(q => q.addEventListener('input', () => sizeField(q)));
 const sizeFields = () => sizeField && form.querySelectorAll('input[type="number"]').forEach(sizeField);
+if (sizeField) taskTitleInput.style.width = '100%';
 
 // 2.3 Обновление листа
 
