@@ -800,10 +800,10 @@ const toDelete = (e) => {
     if (deleted) {
         clearFields();
         clearForm();
-        deleteButton.innerText = 'Как было';
+        deleteButton.innerText = 'Вернуть';
     } else {
         copyToForm(items[index]);
-        deleteButton.innerText = 'Очистить';
+        deleteButton.innerText = 'Удалить';
     }
     sizeFields();
 }
@@ -816,7 +816,7 @@ const toEdit = (e, i, f) => {
     created = deleted = false;
     f();
     deleteButton.classList.remove('hidden');
-    deleteButton.innerText = 'Очистить';
+    deleteButton.innerText = 'Удалить';
 
     link = links.children[i];
     item = items[i];
