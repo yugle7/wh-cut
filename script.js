@@ -2715,3 +2715,9 @@ tipOverlayScreen.onclick = (e) => {
 document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') closeTip();
 });
+
+
+// 7. Печать на iphone
+
+const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
