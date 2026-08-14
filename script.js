@@ -1447,10 +1447,10 @@ const stopDrag = (e) => {
     cancelDrag();
 }
 
-const dragTake = (x, y, t) => {
+const dragTake = (x, y, r, t) => {
     console.log('dragTake');
 
-    const {left, top, width} = t.getBoundingClientRect();
+    const {left, top, width} = r; //t.getBoundingClientRect();
 
     const i = +t.dataset.i;
     take = takes[i];
@@ -1478,7 +1478,7 @@ const dragTake = (x, y, t) => {
     startMove(x, y, left, top);
 }
 
-const dragDrop = (x, y, t) => {
+const dragDrop = (x, y, r, t) => {
     console.log('dragDrop')
     zone = zones[t.parentElement.dataset.i];
     drag = zone.drags[t.dataset.i];
@@ -1488,7 +1488,7 @@ const dragDrop = (x, y, t) => {
 
     clearDrop();
 
-    const {left, top, width} = t.getBoundingClientRect();
+    const {left, top, width} = r; // t.getBoundingClientRect();
 
     const q = drag.html;
     q.style.width = width + 'px';
@@ -1814,7 +1814,8 @@ const cancelDrag = () => {
 const onPointerDown = (e, f) => {
     console.log('onPointerDown')
     e.preventDefault();
-    down = {x: e.clientX, y: e.clientY, f, t: e.currentTarget};
+    const r = e.currentTarget.getBoundingClientRect();
+    down = {x: e.clientX, y: e.clientY, r, f, t: e.currentTarget};
 }
 
 const toSelect = (q) => {
@@ -1839,9 +1840,9 @@ const tryStartDrag = (e) => {
     console.log('tryStartDrag');
     e.preventDefault();
     if (isDrag(e)) {
-        const {x, y, t, f} = down;
+        const {x, y, r, t, f} = down;
         down = null;
-        f(x, y, t);
+        f(x, y, r, t);
     }
 }
 
