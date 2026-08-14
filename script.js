@@ -1237,14 +1237,13 @@ const createDrag = (drag) => {
     q.dataset.i = zone.drags.length.toString();
     zone.drags.push(drag);
 
-    q.style.position = 'relative';
+    q.style.position = 'absolute';
     q.style.cursor = 'grab';
     q.style.zIndex = '9999';
     q.style.left = p(drag.left / zone.width);
     q.style.top = p(drag.top / zone.height);
     q.style.width = p(drag.width / zone.width);
     q.style.aspectRatio = `${drag.width} / ${drag.height}`;
-    q.style.position = 'absolute';
     q.style.backgroundColor = colors[drag.take]
     q.style.pointerEvents = 'auto';
     q.style.touchAction = 'none';
@@ -1447,10 +1446,10 @@ const stopDrag = (e) => {
     cancelDrag();
 }
 
-const dragTake = (x, y, r, t) => {
+const dragTake = (x, y, t) => {
     console.log('dragTake');
 
-    const {left, top, width} = r; //t.getBoundingClientRect();
+    const {left, top, width} = t.getBoundingClientRect();
 
     const i = +t.dataset.i;
     take = takes[i];
@@ -1463,7 +1462,7 @@ const dragTake = (x, y, r, t) => {
     q.style.width = width + 'px';
     q.style.left = left + 'px';
     q.style.top = top + 'px';
-    q.style.position = 'absolute';
+    q.style.position = 'fixed';
     q.style.cursor = 'grabbing';
     q.style.pointerEvents = 'none';
     q.style.touchAction = 'none';
@@ -1478,7 +1477,7 @@ const dragTake = (x, y, r, t) => {
     startMove(x, y, left, top);
 }
 
-const dragDrop = (x, y, r, t) => {
+const dragDrop = (x, y, t) => {
     console.log('dragDrop')
     zone = zones[t.parentElement.dataset.i];
     drag = zone.drags[t.dataset.i];
@@ -1488,9 +1487,10 @@ const dragDrop = (x, y, r, t) => {
 
     clearDrop();
 
-    const {left, top, width} = r; // t.getBoundingClientRect();
+    const {left, top, width} = t.getBoundingClientRect();
 
     const q = drag.html;
+    q.style.position = 'fixed';
     q.style.width = width + 'px';
     q.style.left = left + 'px';
     q.style.top = top + 'px';
@@ -1588,6 +1588,7 @@ const addDrag = () => {
     drag.top = drag.toTop ? drop.top : drop.top + drop.height - drag.height;
 
     const q = drag.html;
+    q.style.position = 'absolute';
     q.style.cursor = 'grab';
     q.style.left = p(drag.left / zone.width);
     q.style.top = p(drag.top / zone.height);
@@ -1814,8 +1815,7 @@ const cancelDrag = () => {
 const onPointerDown = (e, f) => {
     console.log('onPointerDown')
     e.preventDefault();
-    const r = e.currentTarget.getBoundingClientRect();
-    down = {x: e.clientX, y: e.clientY, r, f, t: e.currentTarget};
+    down = {x: e.clientX, y: e.clientY, f, t: e.currentTarget};
 }
 
 const toSelect = (q) => {
@@ -1840,9 +1840,9 @@ const tryStartDrag = (e) => {
     console.log('tryStartDrag');
     e.preventDefault();
     if (isDrag(e)) {
-        const {x, y, r, t, f} = down;
+        const {x, y, t, f} = down;
         down = null;
-        f(x, y, r, t);
+        f(x, y, t);
     }
 }
 
