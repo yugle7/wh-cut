@@ -127,7 +127,7 @@ const fastCutButton = document.getElementById("fast-cut");
 const slowCutButton = document.getElementById("slow-cut");
 
 const clearCutButton = document.getElementById("clear-cut");
-const clearCutLabel = slowCutButton.nextElementSibling;
+const clearCutLabel = document.querySelector("label[for='clear-cut']");
 
 const downloadCuttingButton = document.getElementById("download-cutting");
 
@@ -493,7 +493,8 @@ const toTaskForm = () => {
 
 // 2.3 Изменение размера
 
-let sizeFields = () => {};
+let sizeFields = () => {
+};
 
 if (!CSS.supports('field-sizing', 'content')) {
     const sizeField = (q) => q.style.maxWidth = (q.value.length || q.placeholder.length) + "ch";
@@ -1365,19 +1366,19 @@ const clearCutting = () => {
     setTakes();
     setZones();
 
-    slowCutButton.classList.add('hidden');
-    clearCutLabel.classList.add('hidden');
+    slowCutButton.remove();
+    clearCutLabel.remove();
 }
 
-const overlayScreen = document.getElementById('overlay');
-overlayScreen.onclick = (e) => {
-    console.log('overlayScreen');
+const cutOverlayScreen = document.getElementById('cut-overlay');
+cutOverlayScreen.onclick = (e) => {
+    console.log('cutOverlayScreen');
     e.stopPropagation();
     e.preventDefault();
 }
 
 const overlayCut = (cut) => {
-    overlayScreen.style.display = 'flex';
+    cutOverlayScreen.style.display = 'flex';
 
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -1387,8 +1388,8 @@ const overlayCut = (cut) => {
             cut(drops, takes);
             setTimeout(() => {
                 cuttingPage.style.gridTemplateRows = '1fr 6px auto';
-                clearCutLabel.classList.remove('hidden');
-                overlayScreen.style.display = 'none';
+                takeArea.appendChild(clearCutLabel);
+                cutOverlayScreen.style.display = 'none';
             }, 0);
         });
     });
@@ -1750,13 +1751,11 @@ const incTakeCount = (take) => {
     console.log('incTakeCount')
     if (take.count === 0) {
         take.html.parentElement.classList.remove('hidden');
-        clearCutLabel.classList.add('hidden');
-        slowCutButton.classList.add('hidden');
+        clearCutLabel.remove();
+        slowCutButton.remove();
     }
     take.count++;
     take.html.parentElement.firstElementChild.firstChild.innerText = take.count;
-
-    slowCutButton.classList.add('hidden');
 }
 
 const decTakeCount = (take) => {
@@ -2417,7 +2416,7 @@ const fastCut = (drops, takes, n = 7) => {
 
 // 5.2 Раскрой на сервере
 
-const doCut = (drops, takes) => {
+const slowCut = (drops, takes) => {
     fetch(ALGO_URL, {
         method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({drops, takes})
     })
@@ -2438,25 +2437,13 @@ const doCut = (drops, takes) => {
 
 fastCutButton.onclick = (e) => {
     e.preventDefault();
-
-    const takes = takesRect();
-    const drops = dropsRect();
-
-    fastCut(drops, takes);
-
-    cuttingPage.style.gridTemplateRows = '1fr 6px auto';
+    overlayCut(fastCut);
 }
 
 slowCutButton.onclick = (e) => {
     e.preventDefault();
     clearCutting();
-
-    const takes = takesRect();
-    const drops = dropsRect();
-
-    doCut(drops, takes);
-
-    cuttingPage.style.gridTemplateRows = '1fr 6px auto';
+    overlayCut(slowCut);
 }
 
 clearCutButton.onclick = () => clearCutting();
@@ -2691,3 +2678,33 @@ const getRollLength = (
         q => `<li id="${q.id}" onclick="toTask(event)" >${getTaskTitle(q)}</li>`).join('\n');
 })();
 
+// 6. Подсказки
+
+const closeTipButton = document.getElementById('close-tip');
+const tipOverlayScreen = document.getElementById('tip-overlay');
+
+const tipModal = document.getElementById('tip');
+
+const openTip = () => tipOverlayScreen.style.display = 'flex';
+
+for (const q of document.getElementsByClassName('to-tip')) {
+    const tip = document.getElementById(q.id.slice(3));
+    q.onclick = (e) => {
+        e.stopPropagation();
+        tipModal.appendChild(tip);
+        openTip();
+    };
+}
+
+const closeTip = () => {
+    tipOverlayScreen.style.display = 'none';
+    tipModal.lastElementChild.remove();
+}
+
+closeTipButton.onclick = closeTip;
+tipOverlayScreen.onclick = (e) => {
+    if (e.target === tipOverlayScreen) closeTip();
+};
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeTip();
+});

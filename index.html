@@ -203,7 +203,13 @@
     <br/>
 
     <div class="header">
-        <span class="big">Бухты</span>
+        <span class="big">Бухты
+            <button id="to-roll-tip" class="to-tip">
+            <svg class="blue">
+                <use href="sprite.svg#tip"></use>
+            </svg>
+        </button>
+        </span>
         <button id="add-roll" class="head">
             <svg class="yellow">
                 <use href="sprite.svg#plus"></use>
@@ -353,7 +359,7 @@
             <form autocomplete="off">
                 <section>
                     <label for="roll-edging">Кромка</label>
-                    <label>Диаметр внутри и снаружи</label>
+                    <label class="left">Диаметр внутри и снаружи</label>
                     <label for="roll-inner" class="hidden">Внутри</label>
                     <label for="roll-outer" class="hidden">Снаружи</label>
                     <span></span>
@@ -511,13 +517,74 @@
         </button>
     </nav>
     <button id="slow-cut" class="eye hidden">Улучшить раскрой</button>
-    <label for="clear-cut" class="eye">Пересобрать вручную</label>
 </article>
 
 <div id="print"></div>
 
-<div id="overlay">
+<div id="cut-overlay">
     <div class="spinner"></div>
+</div>
+
+<div id="tip-overlay">
+    <div id="tip">
+        <button id="close-tip" aria-label="Закрыть">
+            <svg class="menu">
+                <use href="../sprite.svg#x"></use>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<div class="hidden">
+    <label for="clear-cut" class="row">
+        Пересобрать вручную
+        <button id="to-cut-tip" class="to-tip">
+            <svg class="blue">
+                <use href="sprite.svg#tip"></use>
+            </svg>
+        </button>
+    </label>
+
+    <section id="cut-tip">
+        <p>Управление размещением деталей:</p>
+        <p>
+            <svg>
+                <use href="sprite.svg#direction"></use>
+            </svg>
+            — задает направление волокон для новых деталей.
+            Если выбрана деталь, меняет направление реза только у нее
+        </p>
+        <p>
+            <svg>
+                <use href="sprite.svg#rotate"></use>
+            </svg>
+            — поворачивает выбранную деталь на 90°,
+            если для нее разрешен поворот
+        </p>
+        <p>
+            <svg>
+                <use href="sprite.svg#cut"></use>
+            </svg>
+            — автоматически размещает все неразмещенные детали на листах
+        </p>
+        <p>
+            <svg>
+                <use href="sprite.svg#clear"></use>
+            </svg>
+            — убирает все детали с листов и возвращает их в список неразмещенных
+        </p>
+        <small>автоматическое размещение может занять некоторое время</small>
+    </section>
+    <section id="roll-tip">
+        <p>Укажите размеры рулона кромочной ленты:</p>
+        <p><span>Внутренний диаметр</span> — диаметр отверстия втулки (картонного сердечника)</p>
+        <p><span>Внешний диаметр</span> — полный диаметр бухты с намотанной лентой</p>
+        <p><span>Тип кромки</span> — учитывает плотность намотки ленты</p>
+        <small>
+            расчет — приблизительный,
+            рекомендуется брать ленту с запасом
+        </small>
+    </section>
 </div>
 
 <script src="tasks.js"></script>
