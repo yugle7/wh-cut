@@ -736,237 +736,6 @@ input[type="text"] {
     opacity: 0.5;
 }
 
-/* Печать */
-
-#print * {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    line-height: 1.2;
-    font-size: 4mm;
-}
-
-#print {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background: white;
-    display: none;
-}
-
-.rect {
-    box-shadow: inset 0 0 0 1px gray;
-    position: absolute;
-    z-index: 10;
-}
-
-.back {
-    position: absolute;
-    background: white;
-}
-
-.tape {
-    position: absolute;
-    stroke: lightgray;
-    stroke-width: 0.5;
-    z-index: 2;
-    width: auto;
-    height: auto;
-    padding: 0;
-}
-
-.width {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-    line-height: 1;
-}
-
-.height {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: rotate(-90deg) translateX(-50%);
-    transform-origin: left top;
-    z-index: 10;
-    line-height: 1;
-}
-
-.index {
-    color: gray;
-    position: absolute;
-    right: 0;
-    padding: 2px;
-    bottom: 0;
-    z-index: 10;
-}
-
-table {
-    border-collapse: collapse;
-    width: 170mm;
-}
-
-th {
-    white-space: nowrap;
-}
-
-th, td {
-    border: 1px solid black;
-    padding: 1mm 2mm;
-    text-align: center;
-}
-
-.top {
-    vertical-align: top;
-}
-
-th {
-    background-color: var(--head);
-    text-align: center;
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
-}
-
-.page {
-    break-before: page;
-    page-break-before: always;
-    position: relative;
-    width: 190mm;
-    height: 277mm;
-    margin: 0 auto;
-}
-
-.cutting {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    transform-origin: right bottom;
-    transform: rotate(90deg) translateY(100%) translateY(2cm) translateX(-7cm);
-}
-
-.takes {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    transform-origin: right bottom;
-    transform: rotate(90deg) translateY(100%) translateY(2cm) translateX(-1mm);
-    max-width: 5cm;
-}
-
-table {
-    page-break-inside: avoid;
-    break-inside: avoid;
-}
-
-@media print {
-    @page {
-        margin: 0 0 1cm 0 !important;
-
-        padding: 1cm 0 0 1cm;
-        size: 210mm 297mm; /*A4;*/
-    }
-
-    @page {
-        @top-center {
-            content: none;
-        }
-        @bottom-center {
-            content: none;
-        }
-        @bottom-left {
-            content: counter(page);
-            padding-left: 3mm;
-        }
-    }
-
-
-    body * {
-        visibility: hidden;
-    }
-
-    body > *:not(#print) {
-        display: none;
-    }
-
-    .base {
-        width: 100%;
-        height: 100%;
-        background-color: lightgray;
-        print-color-adjust: exact;
-        -webkit-print-color-adjust: exact;
-        z-index: 0;
-    }
-
-    #print {
-        display: flex;
-        flex-direction: column;
-        gap: 1cm;
-        align-items: flex-start;
-    }
-
-    body {
-        margin: 0;
-        padding: 0;
-    }
-
-    #print, #print * {
-        color: black;
-        visibility: visible;
-    }
-
-    #print .gray,
-    #print .gray * {
-        color: gray;
-    }
-
-    .line {
-        width: 40px;
-        height: 4px;
-    }
-}
-
-.task {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0;
-    right: 0;
-    transform-origin: right top;
-    transform: rotate(90deg) translateX(100%) translateY(1cm);
-    width: 100vh;
-}
-
-.signs {
-    display: flex;
-    align-items: end;
-    width: 100%;
-    height: 50%;
-    border-bottom: 1px solid gray;
-}
-
-.sign {
-    display: flex;
-    width: 100%;
-    gap: 15px;
-}
-
-.logo {
-    display: flex;
-    flex-direction: row;
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    align-items: center;
-    transform-origin: right bottom;
-    transform: rotate(90deg) translateY(1.5cm);
-}
-
-td svg {
-    padding: 1mm;
-    height: 1.5em;
-}
-
 /* Формы */
 
 form {
@@ -1289,4 +1058,235 @@ small {
     padding-top: 10px;
     font-size: 14px;
     color: gray;
+}
+
+
+/* Печать */
+
+#print * {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.2;
+    font-size: 4mm;
+}
+
+#print {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: white;
+    display: none;
+}
+
+.rect {
+    box-shadow: inset 0 0 0 1px gray;
+    position: absolute;
+    z-index: 10;
+}
+
+.back {
+    position: absolute;
+    background: white;
+}
+
+.tape {
+    position: absolute;
+    stroke: lightgray;
+    stroke-width: 0.5;
+    z-index: 2;
+    width: auto;
+    height: auto;
+    padding: 0;
+}
+
+.width {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    line-height: 1;
+}
+
+.height {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: rotate(-90deg) translateX(-50%);
+    transform-origin: left top;
+    z-index: 10;
+    line-height: 1;
+}
+
+.index {
+    color: gray;
+    position: absolute;
+    right: 0;
+    padding: 2px;
+    bottom: 0;
+    z-index: 10;
+}
+
+table {
+    border-collapse: collapse;
+    width: 170mm;
+}
+
+th {
+    white-space: nowrap;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 1mm 2mm;
+    text-align: center;
+}
+
+.top {
+    vertical-align: top;
+}
+
+th {
+    background-color: var(--head);
+    text-align: center;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+}
+
+.page {
+    break-before: page;
+    page-break-before: always;
+    position: relative;
+    width: 190mm;
+    height: 277mm;
+    margin: 0 auto;
+}
+
+.cutting {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    transform-origin: right bottom;
+    transform: rotate(90deg) translateY(100%) translateY(2cm) translateX(-7cm);
+}
+
+.takes {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    transform-origin: right bottom;
+    transform: rotate(90deg) translateY(100%) translateY(2cm) translateX(-1mm);
+    max-width: 5cm;
+}
+
+table {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+@media print {
+    @page {
+        margin: 0 0 1cm 0 !important;
+
+        padding: 1cm 0 0 1cm;
+        size: 210mm 297mm;
+    }
+    @page {
+        @top-center {
+            content: none;
+        }
+        @bottom-center {
+            content: none;
+        }
+        @bottom-left {
+            content: counter(page);
+            padding-left: 3mm;
+        }
+    }
+
+
+    body * {
+        visibility: hidden;
+    }
+
+    body > *:not(#print) {
+        display: none;
+    }
+
+    .base {
+        width: 100%;
+        height: 100%;
+        background-color: lightgray;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+        z-index: 0;
+    }
+
+    #print {
+        display: flex;
+        flex-direction: column;
+        gap: 1cm;
+        align-items: flex-start;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    #print, #print * {
+        color: black;
+        visibility: visible;
+    }
+
+    #print .gray,
+    #print .gray * {
+        color: gray;
+    }
+
+    .line {
+        width: 40px;
+        height: 4px;
+    }
+}
+
+.task {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: 0;
+    transform-origin: right top;
+    transform: rotate(90deg) translateX(100%) translateY(1cm);
+    width: 100vh;
+}
+
+.signs {
+    display: flex;
+    align-items: end;
+    width: 100%;
+    height: 50%;
+    border-bottom: 1px solid gray;
+}
+
+.sign {
+    display: flex;
+    width: 100%;
+    gap: 15px;
+}
+
+.logo {
+    display: flex;
+    flex-direction: row;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    transform-origin: right bottom;
+    transform: rotate(90deg) translateY(1.5cm);
+}
+
+td svg {
+    padding: 1mm;
+    height: 1.5em;
 }
