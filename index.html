@@ -108,7 +108,13 @@
     </div>
     <br/>
 
-    <span class="header big">Лист</span>
+    <span class="header big">Лист
+    <button id="to-sheet-tip" class="to-tip">
+            <svg class="blue">
+                <use href="sprite.svg#tip"></use>
+            </svg>
+    </button>
+    </span>
     <button id="update-sheet" class="header"></button>
     <div id="sheet" class="hidden">
         <form autocomplete="off">
@@ -546,7 +552,6 @@
     </label>
 
     <section id="cut-tip">
-        <p>Управление размещением деталей:</p>
         <p>
             <svg>
                 <use href="sprite.svg#direction"></use>
@@ -575,8 +580,8 @@
         </p>
         <small>автоматическое размещение может занять некоторое время</small>
     </section>
+
     <section id="roll-tip">
-        <p>Укажите размеры рулона кромочной ленты:</p>
         <p><span>Внутренний диаметр</span> — диаметр отверстия втулки (картонного сердечника)</p>
         <p><span>Внешний диаметр</span> — полный диаметр бухты с намотанной лентой</p>
         <p><span>Тип кромки</span> — учитывает плотность намотки ленты</p>
@@ -584,6 +589,12 @@
             расчет — приблизительный,
             рекомендуется брать ленту с запасом
         </small>
+    </section>
+
+    <section id="sheet-tip">
+        <p><span>Поворот</span> — указывает, нужно ли учитывать направление волокон материала.
+            Для новых деталей это значение устанавливается по умолчанию при создании</p>
+        <p><span>Отступ</span> — ширина полосы, обрезаемой по краям листа перед распиловкой</p>
     </section>
 </div>
 

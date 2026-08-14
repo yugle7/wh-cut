@@ -670,6 +670,7 @@ select {
 .center {
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .place {
@@ -853,7 +854,7 @@ th {
     max-width: 5cm;
 }
 
-.whole {
+table {
     page-break-inside: avoid;
     break-inside: avoid;
 }
@@ -878,6 +879,7 @@ th {
             padding-left: 3mm;
         }
     }
+
 
     body * {
         visibility: hidden;

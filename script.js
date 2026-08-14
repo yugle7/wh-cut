@@ -302,7 +302,7 @@ const loadTasks = async () => {
     } else {
         const t = localStorage.getItem('tasks');
         tasks = t ? JSON.parse(t).filter(Boolean) : [];
-        // tasks = testTasks;
+        if (!tasks.length) tasks = [helpTask];
 
         tasks.forEach((q, i) => q.id = i);
         tasks.forEach(q => q.rolls = q.rolls || []);
@@ -611,16 +611,22 @@ const toEdgingForm = () => {
 const updateEdgingItem = () => {
     console.log('updateEdgingItem')
     if (edgingLine == null) return;
-    const thick = edgingThickInput.value ? +edgingThickInput.value : null;
 
-    items[index] = thick ? {
-        thick,
-        line: edgingLine,
-        text: edgingTextInput.value
-    } : null;
+    if (edgingThickInput.value) {
+        edgingThicks[edgingLine] = +edgingThickInput.value;
 
-    edgingThicks[edgingLine] = thick;
+        items[index] = {
+            thick: edgingThicks[edgingLine],
+            line: edgingLine,
+            text: edgingTextInput.value
+        };
+
+    } else {
+        edgingThicks[edgingLine] = null;
+        items[index] = null;
+    }
     updateRolls();
+
 }
 
 const updateRolls = () => {
@@ -1923,7 +1929,7 @@ const calc = () => {
 }
 
 const statisticsPdf = () => {
-    return `<table class="whole">
+    return `<table>
     <thead><tr><th>Деталей</th><th>Площадь деталей</th><th>Площадь листов</th><th>Длина реза</th></tr></thead>
     <tbody><td>${valuePdf(piecesCount, 'шт')}</td>
     <td>${valuePdf((piecesArea / 1000000).toFixed(2), 'м²')}</td>
@@ -1945,7 +1951,7 @@ const scrapsPdf = () => {
         return {...q, count};
     }).map(scrapPdf).join('\n')
 
-    return scraps && `<table class="whole">
+    return scraps && `<table>
     <thead><tr><th>Длина</th><th>Ширина</th><th>Отступ</th><th>Кол-во</th><th>Лист</th></tr></thead>
     <tbody>${scraps}</tbody></table>`;
 }
@@ -1953,7 +1959,7 @@ const scrapsPdf = () => {
 const edgingsPdf = () => {
     const edgings = task.edgings.filter(q => q && edgingLengths[q.line]).map(edgingPdf).join('\n');
 
-    return edgings && `<table class="whole">
+    return edgings && `<table>
     <thead><tr><th>Линия</th><th>Толщина</th><th>Длина</th><th>Кромка</th></tr></thead>
     <tbody>${edgings}</tbody></table>`;
 }
@@ -1961,7 +1967,7 @@ const edgingsPdf = () => {
 const rollsPdf = () => {
     const rolls = task.rolls.filter(Boolean).map(rollPdf).join('\n');
 
-    return rolls && `<table class="whole">
+    return rolls && `<table>
     <thead><tr><th>Кромка</th><th>Внутри</th><th>Снаружи</th><th>Длина</th><th>Рулон</th></tr></thead>
     <tbody>${rolls}</tbody></table>`;
 }
