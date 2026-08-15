@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Моё приложение</title>
+
+    <link rel="stylesheet" href="style.css"/>
+
+</head>
+
+<body>
+
+<div id="print"><div class="task">
+    <div class="signs">
+        <div class="sign"><span>Заказ:</span><span>Мой первый раскрой</span></div>
+        <div class="sign"><span>Начало:</span><span>01.06.2026</span></div>
+        <div class="sign"><span>Завершение:</span><span>20.07.2026</span></div>
+        <div style="width: 2cm"></div>
+    </div>
+    <div class="signs">
+        <div class="sign"><span>Материал:</span>Галечный<span id="material"></span></div>
+        <div class="sign"><span>Толщина:</span><span>12 мм</span></div>
+    </div>
+</div><div class="logo">
+    <svg viewBox="0 0 24 24">
+        <rect x="14" y="14" width="8" height="8" rx="2" ry="2" fill="#4aaf8c"></rect>
+        <rect x="14" y="2" width="8" height="9" rx="2" ry="2" fill="#7a82da"></rect>
+        <rect x="2" y="2" width="9" height="7" rx="2" ry="2" fill="#c97b72"></rect>
+        <rect x="2" y="12" width="9" height="10" rx="2" ry="2" fill="#c9a84c"></rect>
+    </svg>
+    <span>whCut</span>
+</div><table>
+    <thead><tr><th>Деталей</th><th>Площадь деталей</th><th>Площадь листов</th><th>Длина реза</th></tr></thead>
+    <tbody><tr><td><span class="just">24 <span class="fade">шт</span></span></td>
+    <td><span class="just">5.45 <span class="fade">м²</span></span></td>
+    <td><span class="just">11.59 <span class="fade">м²</span></span></td>
+    <td><span class="just">40.96 <span class="fade">м</span></span></td></tr></tbody></table><table>
+    <thead><tr><th>Длина</th><th>Ширина</th><th>Отступ</th><th>Кол-во</th><th>Лист</th></tr></thead>
+    <tbody><tr>
+    <td>2800</td>
+    <td>2070</td>
+    <td>10</td>
+    <td>2</td>
+    <td class="name"></td>
+</tr></tbody></table><table>
+    <thead><tr><th>Линия</th><th>Толщина</th><th>Длина</th><th>Кромка</th></tr></thead>
+    <tbody><tr>
+    <td><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"></line></svg></td>
+    <td>2</td>
+    <td class="data"><span class="just">7.0 <span class="fade">м</span></span></td>
+    <td class="name"></td>
+</tr>
+<tr>
+    <td><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></td>
+    <td>0.4</td>
+    <td class="data"><span class="just">8.5 <span class="fade">м</span></span></td>
+    <td class="name"></td>
+</tr></tbody></table><table>
+    <thead><tr><th>Кромка</th><th>Внутри</th><th>Снаружи</th><th>Длина</th><th>Рулон</th></tr></thead>
+    <tbody><tr>
+    <td><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></td>
+    <td>52</td>
+    <td>134</td>
+    <td class="data"><span class="just">29.9 <span class="fade">м</span></span></td>
+    <td class="name"></td>
+</tr></tbody></table><table>
+    <thead><tr><th>#</th><th>Длина</th><th>Ширина</th><th>Кол-во</th>
+    <th>Пов-от</th><th>Деталь</th><th>Доп.об.</th></tr></thead>
+    <tbody><tr>
+    <td>1</td>
+    <td><div class="col"><span>568</span></div></td><td><div class="col"><span>80</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"></line></svg><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td>
+    <td>1</td>
+    <td><svg viewBox="0 0 24 24"><path stroke="var(--green-min)" stroke-width="3" d="M2 12L10 20L22 2"></path></svg></td>
+    <td class="name"></td>
+    <td></td>
+</tr>
+<tr>
+    <td>2</td>
+    <td><div class="col"><span>384</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td><td><div class="col"><span>320</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td>
+    <td>2</td>
+    <td><svg viewBox="0 0 24 24"><path stroke="var(--green-min)" stroke-width="3" d="M2 12L10 20L22 2"></path></svg></td>
+    <td class="name"></td>
+    <td></td>
+</tr>
+<tr>
+    <td>3</td>
+    <td><div class="col"><span>801</span></div></td><td><div class="col"><span>320</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"></line></svg></div></td>
+    <td>6</td>
+    <td><svg viewBox="0 0 24 24"><path stroke="var(--green-min)" stroke-width="3" d="M2 12L10 20L22 2"></path></svg></td>
+    <td class="name"></td>
+    <td></td>
+</tr>
+<tr>
+    <td>4</td>
+    <td><div class="col"><span>802</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td><td><div class="col"><span>80</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"></line></svg></div></td>
+    <td>1</td>
+    <td><svg viewBox="0 0 24 24"><path stroke="var(--green-min)" stroke-width="3" d="M2 12L10 20L22 2"></path></svg></td>
+    <td class="name"></td>
+    <td></td>
+</tr>
+<tr>
+    <td>5</td>
+    <td><div class="col"><span>600</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"></line></svg></div></td><td><div class="col"><span>80</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td>
+    <td>1</td>
+    <td><svg viewBox="0 0 24 24"><path stroke="var(--green-min)" stroke-width="3" d="M2 12L10 20L22 2"></path></svg></td>
+    <td class="name"></td>
+    <td></td>
+</tr>
+<tr>
+    <td>6</td>
+    <td><div class="col"><span>385</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td><td><div class="col"><span>330</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"></line></svg><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td>
+    <td>1</td>
+    <td><svg viewBox="0 0 24 24"><path stroke="var(--green-min)" stroke-width="3" d="M2 12L10 20L22 2"></path></svg></td>
+    <td class="name"></td>
+    <td></td>
+</tr>
+<tr>
+    <td>7</td>
+    <td><div class="col"><span>1030</span></div></td><td><div class="col"><span>330</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"></line></svg></div></td>
+    <td>8</td>
+    <td><svg viewBox="0 0 24 24"><path stroke="var(--green-min)" stroke-width="3" d="M2 12L10 20L22 2"></path></svg></td>
+    <td class="name"></td>
+    <td></td>
+</tr>
+<tr>
+    <td>8</td>
+    <td><div class="col"><span>730</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td><td><div class="col"><span>330</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"></line></svg><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"></line></svg></div></td>
+    <td>2</td>
+    <td><svg viewBox="0 0 24 24"><path stroke="var(--green-min)" stroke-width="3" d="M2 12L10 20L22 2"></path></svg></td>
+    <td class="name"></td>
+    <td></td>
+</tr>
+<tr>
+    <td>9</td>
+    <td><div class="col"><span>280</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td><td><div class="col"><span>330</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td>
+    <td>2</td>
+    <td><svg viewBox="0 0 24 24"><path stroke="var(--green-min)" stroke-width="3" d="M2 12L10 20L22 2"></path></svg></td>
+    <td class="name"></td>
+    <td></td>
+</tr></tbody></table><div class="page"><div class="cutting" style="width: 207mm;height: 153.03214285714284mm;">
+     <div class="base"></div>
+     <svg class="tape" viewBox="0 0 207 153"><line x1="0" y1="0" x2="153" y2="153"></line>
+<line x1="0" y1="5" x2="148" y2="153"></line>
+<line x1="0" y1="10" x2="143" y2="153"></line>
+<line x1="0" y1="15" x2="138" y2="153"></line>
+<line x1="0" y1="20" x2="133" y2="153"></line>
+<line x1="0" y1="25" x2="128" y2="153"></line>
+<line x1="0" y1="30" x2="123" y2="153"></line>
+<line x1="0" y1="35" x2="118" y2="153"></line>
+<line x1="0" y1="40" x2="113" y2="153"></line>
+<line x1="0" y1="45" x2="108" y2="153"></line>
+<line x1="0" y1="50" x2="103" y2="153"></line>
+<line x1="0" y1="55" x2="98" y2="153"></line>
+<line x1="0" y1="60" x2="93" y2="153"></line>
+<line x1="0" y1="65" x2="88" y2="153"></line>
+<line x1="0" y1="70" x2="83" y2="153"></line>
+<line x1="0" y1="75" x2="78" y2="153"></line>
+<line x1="0" y1="80" x2="73" y2="153"></line>
+<line x1="0" y1="85" x2="68" y2="153"></line>
+<line x1="0" y1="90" x2="63" y2="153"></line>
+<line x1="0" y1="95" x2="58" y2="153"></line>
+<line x1="0" y1="100" x2="53" y2="153"></line>
+<line x1="0" y1="105" x2="48" y2="153"></line>
+<line x1="0" y1="110" x2="43" y2="153"></line>
+<line x1="0" y1="115" x2="38" y2="153"></line>
+<line x1="0" y1="120" x2="33" y2="153"></line>
+<line x1="0" y1="125" x2="28" y2="153"></line>
+<line x1="0" y1="130" x2="23" y2="153"></line>
+<line x1="0" y1="135" x2="18" y2="153"></line>
+<line x1="0" y1="140" x2="13" y2="153"></line>
+<line x1="0" y1="145" x2="8" y2="153"></line>
+<line x1="0" y1="150" x2="3" y2="153"></line>
+<line x1="5" y1="0" x2="207" y2="202"></line>
+<line x1="10" y1="0" x2="207" y2="197"></line>
+<line x1="15" y1="0" x2="207" y2="192"></line>
+<line x1="20" y1="0" x2="207" y2="187"></line>
+<line x1="25" y1="0" x2="207" y2="182"></line>
+<line x1="30" y1="0" x2="207" y2="177"></line>
+<line x1="35" y1="0" x2="207" y2="172"></line>
+<line x1="40" y1="0" x2="207" y2="167"></line>
+<line x1="45" y1="0" x2="207" y2="162"></line>
+<line x1="50" y1="0" x2="207" y2="157"></line>
+<line x1="55" y1="0" x2="207" y2="152"></line>
+<line x1="60" y1="0" x2="207" y2="147"></line>
+<line x1="65" y1="0" x2="207" y2="142"></line>
+<line x1="70" y1="0" x2="207" y2="137"></line>
+<line x1="75" y1="0" x2="207" y2="132"></line>
+<line x1="80" y1="0" x2="207" y2="127"></line>
+<line x1="85" y1="0" x2="207" y2="122"></line>
+<line x1="90" y1="0" x2="207" y2="117"></line>
+<line x1="95" y1="0" x2="207" y2="112"></line>
+<line x1="100" y1="0" x2="207" y2="107"></line>
+<line x1="105" y1="0" x2="207" y2="102"></line>
+<line x1="110" y1="0" x2="207" y2="97"></line>
+<line x1="115" y1="0" x2="207" y2="92"></line>
+<line x1="120" y1="0" x2="207" y2="87"></line>
+<line x1="125" y1="0" x2="207" y2="82"></line>
+<line x1="130" y1="0" x2="207" y2="77"></line>
+<line x1="135" y1="0" x2="207" y2="72"></line>
+<line x1="140" y1="0" x2="207" y2="67"></line>
+<line x1="145" y1="0" x2="207" y2="62"></line>
+<line x1="150" y1="0" x2="207" y2="57"></line>
+<line x1="155" y1="0" x2="207" y2="52"></line>
+<line x1="160" y1="0" x2="207" y2="47"></line>
+<line x1="165" y1="0" x2="207" y2="42"></line>
+<line x1="170" y1="0" x2="207" y2="37"></line>
+<line x1="175" y1="0" x2="207" y2="32"></line>
+<line x1="180" y1="0" x2="207" y2="27"></line>
+<line x1="185" y1="0" x2="207" y2="22"></line>
+<line x1="190" y1="0" x2="207" y2="17"></line>
+<line x1="195" y1="0" x2="207" y2="12"></line>
+<line x1="200" y1="0" x2="207" y2="7"></line>
+<line x1="205" y1="0" x2="207" y2="2"></line></svg>
+     <div class="rect" style="left: 0.7392857142857143mm;top: 0.7392857142857143mm;width: 24.396428571428572mm;height: 76.14642857142857mm;"><div class="width" style="font-size: 5mm">330</div><div class="height" style="font-size: 5mm">1030</div><div class="index gray" style="font-size: 3mm;">#7.</div></div><div class="back" style="left: 0.7392857142857143mm;top: 0.7392857142857143mm;width: 24.396428571428572mm;height: 76.14642857142857mm;;z-index: 3"></div>
+<div class="rect" style="left: 25.431428571428572mm;top: 0.7392857142857143mm;width: 24.396428571428572mm;height: 76.14642857142857mm;"><div class="width" style="font-size: 5mm">330</div><div class="height" style="font-size: 5mm">1030</div><div class="index gray" style="font-size: 3mm;">#7.</div></div><div class="back" style="left: 25.431428571428572mm;top: 0.7392857142857143mm;width: 24.396428571428572mm;height: 76.14642857142857mm;;z-index: 3"></div>
+<div class="rect" style="left: 50.12357142857143mm;top: 0.7392857142857143mm;width: 24.396428571428572mm;height: 76.14642857142857mm;"><div class="width" style="font-size: 5mm">330</div><div class="height" style="font-size: 5mm">1030</div><div class="index gray" style="font-size: 3mm;">#7.</div></div><div class="back" style="left: 50.12357142857143mm;top: 0.7392857142857143mm;width: 24.396428571428572mm;height: 76.14642857142857mm;;z-index: 3"></div>
+<div class="rect" style="left: 74.81571428571428mm;top: 0.7392857142857143mm;width: 24.396428571428572mm;height: 76.14642857142857mm;"><div class="width" style="font-size: 5mm">330</div><div class="height" style="font-size: 5mm">1030</div><div class="index gray" style="font-size: 3mm;">#7.</div></div><div class="back" style="left: 74.81571428571428mm;top: 0.7392857142857143mm;width: 24.396428571428572mm;height: 76.14642857142857mm;;z-index: 3"></div>
+<div class="rect" style="left: 99.50785714285713mm;top: 0.7392857142857143mm;width: 24.396428571428572mm;height: 76.14642857142857mm;"><div class="width" style="font-size: 5mm">330</div><div class="height" style="font-size: 5mm">1030</div><div class="index gray" style="font-size: 3mm;">#7.</div></div><div class="back" style="left: 99.50785714285713mm;top: 0.7392857142857143mm;width: 24.396428571428572mm;height: 76.14642857142857mm;;z-index: 3"></div>
+<div class="rect" style="left: 124.2mm;top: 0.7392857142857143mm;width: 24.396428571428572mm;height: 76.14642857142857mm;"><div class="width" style="font-size: 5mm">330</div><div class="height" style="font-size: 5mm">1030</div><div class="index gray" style="font-size: 3mm;">#7.</div></div><div class="back" style="left: 124.2mm;top: 0.7392857142857143mm;width: 24.396428571428572mm;height: 76.14642857142857mm;;z-index: 3"></div>
+<div class="rect" style="left: 148.89214285714286mm;top: 0.7392857142857143mm;width: 24.396428571428572mm;height: 76.14642857142857mm;"><div class="width" style="font-size: 5mm">330</div><div class="height" style="font-size: 5mm">1030</div><div class="index gray" style="font-size: 3mm;">#7.</div></div><div class="back" style="left: 148.89214285714286mm;top: 0.7392857142857143mm;width: 24.396428571428572mm;height: 76.14642857142857mm;;z-index: 3"></div>
+<div class="rect" style="left: 173.5842857142857mm;top: 0.7392857142857143mm;width: 24.396428571428572mm;height: 76.14642857142857mm;"><div class="width" style="font-size: 5mm">330</div><div class="height" style="font-size: 5mm">1030</div><div class="index gray" style="font-size: 3mm;">#7.</div></div><div class="back" style="left: 173.5842857142857mm;top: 0.7392857142857143mm;width: 24.396428571428572mm;height: 76.14642857142857mm;;z-index: 3"></div>
+<div class="rect" style="left: 198.27642857142857mm;top: 0.7392857142857143mm;width: 5.914285714285715mm;height: 59.29071428571429mm;"><div class="width" style="font-size: 2.9571428571428573mm">80</div><div class="height" style="font-size: 4.928571428571429mm">802</div><div class="index gray" style="font-size: 2.9571428571428573mm;">#4.</div></div><div class="back" style="left: 198.27642857142857mm;top: 0.7392857142857143mm;width: 5.914285714285715mm;height: 59.29071428571429mm;;z-index: 3"></div>
+<div class="rect" style="left: 0.7392857142857143mm;top: 77.18142857142857mm;width: 28.4625mm;height: 24.396428571428572mm;"><div class="width" style="font-size: 5mm">385</div><div class="height" style="font-size: 5mm">330</div><div class="index gray" style="font-size: 3mm;">#6.</div></div><div class="back" style="left: 0.7392857142857143mm;top: 77.18142857142857mm;width: 28.4625mm;height: 24.396428571428572mm;;z-index: 3"></div>
+<div class="rect" style="left: 29.4975mm;top: 77.18142857142857mm;width: 59.21678571428571mm;height: 23.65714285714286mm;"><div class="width" style="font-size: 5mm">801</div><div class="height" style="font-size: 5mm">320</div><div class="index gray" style="font-size: 3mm;">#3.</div></div><div class="back" style="left: 29.4975mm;top: 77.18142857142857mm;width: 59.21678571428571mm;height: 23.65714285714286mm;;z-index: 3"></div>
+<div class="rect" style="left: 89.00999999999999mm;top: 77.18142857142857mm;width: 59.21678571428571mm;height: 23.65714285714286mm;"><div class="width" style="font-size: 5mm">801</div><div class="height" style="font-size: 5mm">320</div><div class="index gray" style="font-size: 3mm;">#3.</div></div><div class="back" style="left: 89.00999999999999mm;top: 77.18142857142857mm;width: 59.21678571428571mm;height: 23.65714285714286mm;;z-index: 3"></div>
+<div class="rect" style="left: 148.5225mm;top: 77.18142857142857mm;width: 28.388571428571428mm;height: 23.65714285714286mm;"><div class="width" style="font-size: 5mm">384</div><div class="height" style="font-size: 5mm">320</div><div class="index gray" style="font-size: 3mm;">#2.</div></div><div class="back" style="left: 148.5225mm;top: 77.18142857142857mm;width: 28.388571428571428mm;height: 23.65714285714286mm;;z-index: 3"></div>
+<div class="rect" style="left: 177.2067857142857mm;top: 77.18142857142857mm;width: 28.388571428571428mm;height: 23.65714285714286mm;"><div class="width" style="font-size: 5mm">384</div><div class="height" style="font-size: 5mm">320</div><div class="index gray" style="font-size: 3mm;">#2.</div></div><div class="back" style="left: 177.2067857142857mm;top: 77.18142857142857mm;width: 28.388571428571428mm;height: 23.65714285714286mm;;z-index: 3"></div>
+<div class="rect" style="left: 0.7392857142857143mm;top: 101.87357142857142mm;width: 53.96785714285714mm;height: 24.396428571428572mm;"><div class="width" style="font-size: 5mm">730</div><div class="height" style="font-size: 5mm">330</div><div class="index gray" style="font-size: 3mm;">#8.</div></div><div class="back" style="left: 0.7392857142857143mm;top: 101.87357142857142mm;width: 53.96785714285714mm;height: 24.396428571428572mm;;z-index: 3"></div>
+<div class="rect" style="left: 0.7392857142857143mm;top: 126.56571428571428mm;width: 53.96785714285714mm;height: 24.396428571428572mm;"><div class="width" style="font-size: 5mm">730</div><div class="height" style="font-size: 5mm">330</div><div class="index gray" style="font-size: 3mm;">#8.</div></div><div class="back" style="left: 0.7392857142857143mm;top: 126.56571428571428mm;width: 53.96785714285714mm;height: 24.396428571428572mm;;z-index: 3"></div>
+<div class="rect" style="left: 55.00285714285714mm;top: 101.87357142857142mm;width: 20.7mm;height: 24.396428571428572mm;"><div class="width" style="font-size: 5mm">280</div><div class="height" style="font-size: 5mm">330</div><div class="index gray" style="font-size: 3mm;">#9.</div></div><div class="back" style="left: 55.00285714285714mm;top: 101.87357142857142mm;width: 20.7mm;height: 24.396428571428572mm;;z-index: 3"></div>
+<div class="rect" style="left: 55.00285714285714mm;top: 126.56571428571428mm;width: 20.7mm;height: 24.396428571428572mm;"><div class="width" style="font-size: 5mm">280</div><div class="height" style="font-size: 5mm">330</div><div class="index gray" style="font-size: 3mm;">#9.</div></div><div class="back" style="left: 55.00285714285714mm;top: 126.56571428571428mm;width: 20.7mm;height: 24.396428571428572mm;;z-index: 3"></div>
+<div class="rect" style="left: 75.99857142857142mm;top: 101.87357142857142mm;width: 59.21678571428571mm;height: 23.65714285714286mm;"><div class="width" style="font-size: 5mm">801</div><div class="height" style="font-size: 5mm">320</div><div class="index gray" style="font-size: 3mm;">#3.</div></div><div class="back" style="left: 75.99857142857142mm;top: 101.87357142857142mm;width: 59.21678571428571mm;height: 23.65714285714286mm;;z-index: 3"></div>
+<div class="rect" style="left: 75.99857142857142mm;top: 125.82642857142856mm;width: 59.21678571428571mm;height: 23.65714285714286mm;"><div class="width" style="font-size: 5mm">801</div><div class="height" style="font-size: 5mm">320</div><div class="index gray" style="font-size: 3mm;">#3.</div></div><div class="back" style="left: 75.99857142857142mm;top: 125.82642857142856mm;width: 59.21678571428571mm;height: 23.65714285714286mm;;z-index: 3"></div>
+<div class="rect" style="left: 135.51107142857143mm;top: 101.87357142857142mm;width: 59.21678571428571mm;height: 23.65714285714286mm;"><div class="width" style="font-size: 5mm">801</div><div class="height" style="font-size: 5mm">320</div><div class="index gray" style="font-size: 3mm;">#3.</div></div><div class="back" style="left: 135.51107142857143mm;top: 101.87357142857142mm;width: 59.21678571428571mm;height: 23.65714285714286mm;;z-index: 3"></div>
+<div class="rect" style="left: 135.51107142857143mm;top: 125.82642857142856mm;width: 59.21678571428571mm;height: 23.65714285714286mm;"><div class="width" style="font-size: 5mm">801</div><div class="height" style="font-size: 5mm">320</div><div class="index gray" style="font-size: 3mm;">#3.</div></div><div class="back" style="left: 135.51107142857143mm;top: 125.82642857142856mm;width: 59.21678571428571mm;height: 23.65714285714286mm;;z-index: 3"></div>
+<div class="rect" style="left: 195.02357142857142mm;top: 101.87357142857142mm;width: 5.914285714285715mm;height: 44.357142857142854mm;"><div class="width" style="font-size: 2.9571428571428573mm">80</div><div class="height" style="font-size: 4.928571428571429mm">600</div><div class="index gray" style="font-size: 2.9571428571428573mm;">#5.</div></div><div class="back" style="left: 195.02357142857142mm;top: 101.87357142857142mm;width: 5.914285714285715mm;height: 44.357142857142854mm;;z-index: 3"></div>
+     <div class="rect gray" style="left: 198.27642857142857mm;top: 60.325714285714284mm;width: 5.914285714285715mm;height: 16.56mm;"><div class="width" style="font-size: 2.9571428571428573mm">80</div><div class="height" style="font-size: 3.210612244897959mm">224</div></div><div class="back" style="left: 198.27642857142857mm;top: 60.325714285714284mm;width: 5.914285714285715mm;height: 16.56mm;;z-index: 1"></div>
+<div class="rect gray" style="left: 204.48642857142858mm;top: 0.7392857142857143mm;width: 1.7742857142857142mm;height: 76.14642857142857mm;"></div><div class="back" style="left: 204.48642857142858mm;top: 0.7392857142857143mm;width: 1.7742857142857142mm;height: 76.14642857142857mm;;z-index: 1"></div>
+
+
+<div class="rect gray" style="left: 75.99857142857142mm;top: 149.77928571428572mm;width: 59.21678571428571mm;height: 1.1828571428571428mm;"></div><div class="back" style="left: 75.99857142857142mm;top: 149.77928571428572mm;width: 59.21678571428571mm;height: 1.1828571428571428mm;;z-index: 1"></div>
+<div class="rect gray" style="left: 135.51107142857143mm;top: 149.77928571428572mm;width: 59.21678571428571mm;height: 1.1828571428571428mm;"></div><div class="back" style="left: 135.51107142857143mm;top: 149.77928571428572mm;width: 59.21678571428571mm;height: 1.1828571428571428mm;;z-index: 1"></div>
+<div class="rect gray" style="left: 195.02357142857142mm;top: 146.52642857142857mm;width: 5.914285714285715mm;height: 4.435714285714286mm;"></div><div class="back" style="left: 195.02357142857142mm;top: 146.52642857142857mm;width: 5.914285714285715mm;height: 4.435714285714286mm;;z-index: 1"></div>
+<div class="rect gray" style="left: 201.23357142857142mm;top: 101.87357142857142mm;width: 5.027142857142857mm;height: 49.08857142857143mm;"><div class="width" style="font-size: 2.5135714285714283mm">68</div><div class="height" style="font-size: 4.189285714285714mm">664</div></div><div class="back" style="left: 201.23357142857142mm;top: 101.87357142857142mm;width: 5.027142857142857mm;height: 49.08857142857143mm;;z-index: 1"></div>
+<div class="rect gray" style="left: 0.7392857142857143mm;top: 151.25785714285715mm;width: 205.52142857142857mm;height: 1.035mm;"></div><div class="back" style="left: 0.7392857142857143mm;top: 151.25785714285715mm;width: 205.52142857142857mm;height: 1.035mm;;z-index: 1"></div>
+</div><table class="takes">
+    <thead><tr><th>#</th><th>Длина</th><th>Ширина</th><th>Кол-во</th></tr></thead>
+    <tbody><tr><td>2</td><td><div class="col"><span>384</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td><td><div class="col"><span>320</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td><td>2</td></tr>
+<tr><td>3</td><td><div class="col"><span>801</span></div></td><td><div class="col"><span>320</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"></line></svg></div></td><td>6</td></tr>
+<tr><td>4</td><td><div class="col"><span>802</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td><td><div class="col"><span>80</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"></line></svg></div></td><td>1</td></tr>
+<tr><td>5</td><td><div class="col"><span>600</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"></line></svg></div></td><td><div class="col"><span>80</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td><td>1</td></tr>
+<tr><td>6</td><td><div class="col"><span>385</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td><td><div class="col"><span>330</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"></line></svg><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td><td>1</td></tr>
+<tr><td>7</td><td><div class="col"><span>1030</span></div></td><td><div class="col"><span>330</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"></line></svg></div></td><td>8</td></tr>
+<tr><td>8</td><td><div class="col"><span>730</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td><td><div class="col"><span>330</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"></line></svg><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"></line></svg></div></td><td>2</td></tr>
+<tr><td>9</td><td><div class="col"><span>280</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td><td><div class="col"><span>330</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td><td>2</td></tr></tbody>
+</table></div>
+<div class="page"><div class="cutting" style="width: 207mm;height: 153.03214285714284mm;">
+     <div class="base"></div>
+     <svg class="tape" viewBox="0 0 207 153"><line x1="0" y1="0" x2="153" y2="153"></line>
+<line x1="0" y1="5" x2="148" y2="153"></line>
+<line x1="0" y1="10" x2="143" y2="153"></line>
+<line x1="0" y1="15" x2="138" y2="153"></line>
+<line x1="0" y1="20" x2="133" y2="153"></line>
+<line x1="0" y1="25" x2="128" y2="153"></line>
+<line x1="0" y1="30" x2="123" y2="153"></line>
+<line x1="0" y1="35" x2="118" y2="153"></line>
+<line x1="0" y1="40" x2="113" y2="153"></line>
+<line x1="0" y1="45" x2="108" y2="153"></line>
+<line x1="0" y1="50" x2="103" y2="153"></line>
+<line x1="0" y1="55" x2="98" y2="153"></line>
+<line x1="0" y1="60" x2="93" y2="153"></line>
+<line x1="0" y1="65" x2="88" y2="153"></line>
+<line x1="0" y1="70" x2="83" y2="153"></line>
+<line x1="0" y1="75" x2="78" y2="153"></line>
+<line x1="0" y1="80" x2="73" y2="153"></line>
+<line x1="0" y1="85" x2="68" y2="153"></line>
+<line x1="0" y1="90" x2="63" y2="153"></line>
+<line x1="0" y1="95" x2="58" y2="153"></line>
+<line x1="0" y1="100" x2="53" y2="153"></line>
+<line x1="0" y1="105" x2="48" y2="153"></line>
+<line x1="0" y1="110" x2="43" y2="153"></line>
+<line x1="0" y1="115" x2="38" y2="153"></line>
+<line x1="0" y1="120" x2="33" y2="153"></line>
+<line x1="0" y1="125" x2="28" y2="153"></line>
+<line x1="0" y1="130" x2="23" y2="153"></line>
+<line x1="0" y1="135" x2="18" y2="153"></line>
+<line x1="0" y1="140" x2="13" y2="153"></line>
+<line x1="0" y1="145" x2="8" y2="153"></line>
+<line x1="0" y1="150" x2="3" y2="153"></line>
+<line x1="5" y1="0" x2="207" y2="202"></line>
+<line x1="10" y1="0" x2="207" y2="197"></line>
+<line x1="15" y1="0" x2="207" y2="192"></line>
+<line x1="20" y1="0" x2="207" y2="187"></line>
+<line x1="25" y1="0" x2="207" y2="182"></line>
+<line x1="30" y1="0" x2="207" y2="177"></line>
+<line x1="35" y1="0" x2="207" y2="172"></line>
+<line x1="40" y1="0" x2="207" y2="167"></line>
+<line x1="45" y1="0" x2="207" y2="162"></line>
+<line x1="50" y1="0" x2="207" y2="157"></line>
+<line x1="55" y1="0" x2="207" y2="152"></line>
+<line x1="60" y1="0" x2="207" y2="147"></line>
+<line x1="65" y1="0" x2="207" y2="142"></line>
+<line x1="70" y1="0" x2="207" y2="137"></line>
+<line x1="75" y1="0" x2="207" y2="132"></line>
+<line x1="80" y1="0" x2="207" y2="127"></line>
+<line x1="85" y1="0" x2="207" y2="122"></line>
+<line x1="90" y1="0" x2="207" y2="117"></line>
+<line x1="95" y1="0" x2="207" y2="112"></line>
+<line x1="100" y1="0" x2="207" y2="107"></line>
+<line x1="105" y1="0" x2="207" y2="102"></line>
+<line x1="110" y1="0" x2="207" y2="97"></line>
+<line x1="115" y1="0" x2="207" y2="92"></line>
+<line x1="120" y1="0" x2="207" y2="87"></line>
+<line x1="125" y1="0" x2="207" y2="82"></line>
+<line x1="130" y1="0" x2="207" y2="77"></line>
+<line x1="135" y1="0" x2="207" y2="72"></line>
+<line x1="140" y1="0" x2="207" y2="67"></line>
+<line x1="145" y1="0" x2="207" y2="62"></line>
+<line x1="150" y1="0" x2="207" y2="57"></line>
+<line x1="155" y1="0" x2="207" y2="52"></line>
+<line x1="160" y1="0" x2="207" y2="47"></line>
+<line x1="165" y1="0" x2="207" y2="42"></line>
+<line x1="170" y1="0" x2="207" y2="37"></line>
+<line x1="175" y1="0" x2="207" y2="32"></line>
+<line x1="180" y1="0" x2="207" y2="27"></line>
+<line x1="185" y1="0" x2="207" y2="22"></line>
+<line x1="190" y1="0" x2="207" y2="17"></line>
+<line x1="195" y1="0" x2="207" y2="12"></line>
+<line x1="200" y1="0" x2="207" y2="7"></line>
+<line x1="205" y1="0" x2="207" y2="2"></line></svg>
+     <div class="rect" style="left: 0.7392857142857143mm;top: 0.7392857142857143mm;width: 5.914285714285715mm;height: 41.99142857142857mm;"><div class="width" style="font-size: 2.9571428571428573mm">80</div><div class="height" style="font-size: 4.928571428571429mm">568</div><div class="index gray" style="font-size: 2.9571428571428573mm;">#1.</div></div><div class="back" style="left: 0.7392857142857143mm;top: 0.7392857142857143mm;width: 5.914285714285715mm;height: 41.99142857142857mm;;z-index: 3"></div>
+     <div class="rect gray" style="left: 0.7392857142857143mm;top: 43.02642857142857mm;width: 5.914285714285715mm;height: 109.26642857142856mm;"><div class="width" style="font-size: 2.9571428571428573mm">80</div><div class="height" style="font-size: 4.928571428571429mm">1478</div></div><div class="back" style="left: 0.7392857142857143mm;top: 43.02642857142857mm;width: 5.914285714285715mm;height: 109.26642857142856mm;;z-index: 1"></div>
+<div class="rect gray" style="left: 6.949285714285714mm;top: 0.7392857142857143mm;width: 199.31142857142856mm;height: 151.55357142857142mm;"><div class="width" style="font-size: 5mm">2696</div><div class="height" style="font-size: 5mm">2050</div></div><div class="back" style="left: 6.949285714285714mm;top: 0.7392857142857143mm;width: 199.31142857142856mm;height: 151.55357142857142mm;;z-index: 1"></div>
+</div><table class="takes">
+    <thead><tr><th>#</th><th>Длина</th><th>Ширина</th><th>Кол-во</th></tr></thead>
+    <tbody><tr><td>1</td><td><div class="col"><span>568</span></div></td><td><div class="col"><span>80</span><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"></line></svg><svg class="line" viewBox="0 0 60 5"><line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"></line></svg></div></td><td>1</td></tr></tbody>
+</table></div></div>
+
+</body>
+</html>

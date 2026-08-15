@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Моё приложение</title>
+
+
+    <style>
+        #print * {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.2;
+            font-size: 4mm;
+        }
+
+        #print {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: white;
+            display: block;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th {
+            white-space: nowrap;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 1mm 2mm;
+            text-align: center;
+        }
+
+        th {
+            background-color: gray;
+            text-align: center;
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .break {
+            break-before: page;
+            page-break-before: always;
+            width: 100%;
+            height: 100%;
+        }
+
+        .page {
+            position: relative;
+            width: 190mm;
+            height: 277mm;
+            /*border: 1px solid green;*/
+        }
+
+        .cutting {
+            position: absolute;
+            left: 0;
+            top: 0;
+            transform-origin: left top;
+            border: 1px solid red;
+            /*transform: rotate(90deg) translateY(-180mm) translateX(1.5cm);*/
+            transform: rotate(90deg) translateY(-180mm);
+        }
+
+        .takes {
+            position: absolute;
+            left: 0;
+            top: 0;
+            transform-origin: left top;
+            transform: rotate(90deg) translateY(-180mm) translateX(222mm);
+            max-width: 5cm;
+        }
+
+        .task {
+            position: absolute;
+            left: 0;
+            top: 0;
+            transform-origin: left top;
+            /*transform: rotate(90deg) translateY(-200mm) translateX(1.5cm);*/
+            transform: rotate(90deg) translateY(-200mm);
+            width: 277mm;
+            height: 1cm;
+        }
+
+        .table {
+            width: 180mm;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr {
+            page-break-inside: avoid;
+            break-inside: avoid;
+            -webkit-column-break-inside: avoid; /* для Safari */
+        }
+
+        table {
+            page-break-inside: avoid;
+            break-inside: avoid;
+            -webkit-column-break-inside: avoid;
+        }
+
+        tr {
+            orphans: 3;
+            widows: 3;
+        }
+
+        @media print {
+            @page {
+                margin: 1cm;
+                size: A4 portrait;
+
+                @bottom-left {
+                    content: counter(page) "/" counter(pages);
+                    font-size: 10pt;
+                    font-family: sans-serif;
+                }
+            }
+
+
+            body * {
+                visibility: hidden;
+            }
+
+            body > *:not(#print) {
+                display: none;
+            }
+
+            .base {
+                width: 100%;
+                height: 100%;
+                background-color: lightgray;
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+                z-index: 1;
+            }
+
+            #print {
+                display: block;
+            }
+
+            html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #print, #print * {
+                color: black;
+                visibility: visible;
+            }
+
+            #print .gray,
+            #print .gray * {
+                color: gray;
+            }
+        }
+
+
+        .signs {
+            width: 100%;
+            height: 5mm;
+            border-bottom: 1px solid gray;
+        }
+
+        td svg {
+            padding: 1mm;
+            height: 1.5em;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="print">
+    <div class="break">
+        <div class="page">
+            <div class="task">
+                <div class="signs"></div>
+                <div class="signs"></div>
+            </div>
+
+            <div class="table">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>A</th>
+                        <th>B</th>
+                        <th>C</th>
+                        <th>D</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><span class="just">1 <span class="fade">шт</span></span></td>
+                        <td><span class="just">2 <span class="fade">м²</span></span></td>
+                        <td><span class="just">3 <span class="fade">м²</span></span></td>
+                        <td><span class="just">4 <span class="fade">м</span></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <br>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>A</th>
+                        <th>B</th>
+                        <th>C</th>
+                        <th>D</th>
+                        <th>E</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td class="name"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!--            <div class="number">1/3</div>-->
+        </div>
+    </div>
+
+    <div class="break">
+        <div class="page">
+            <div class="task">
+                <div class="signs"></div>
+                <div class="signs"></div>
+            </div>
+
+            <div class="table">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>A</th>
+                        <th>B</th>
+                        <th>C</th>
+                        <th>D</th>
+                        <th>E</th>
+                        <th>F</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                            <div class="col"><span>568</span></div>
+                        </td>
+                        <td>
+                            <div class="col"><span>80</span></div>
+                        </td>
+                        <td>1</td>
+                        <td>
+                        </td>
+                        <td class="name"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>
+                            <div class="col"><span>384</span></div>
+                        </td>
+                        <td>
+                            <div class="col"><span>320</span></div>
+                        </td>
+                        <td>2</td>
+                        <td></td>
+                        <td class="name"></td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!--            <div class="number">2/3</div>-->
+        </div>
+    </div>
+
+    <div class="break">
+        <div class="page">
+            <div class="task">
+                <div class="signs"></div>
+                <div class="signs"></div>
+            </div>
+
+            <div class="cutting" style="width: 197mm;height: 153mm;">
+                <div class="base"></div>
+            </div>
+            <table class="takes">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Длина</th>
+                    <th>Высота</th>
+                    <th>Пов-от</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>
+                        <div class="col"><span>568</span></div>
+                    </td>
+                    <td>
+                        <div class="col"><span>80</span>
+                        </div>
+                    </td>
+                    <td>1</td>
+                </tr>
+                </tbody>
+            </table>
+            <!--            <div class="number">3/3</div>-->
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
