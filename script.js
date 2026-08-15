@@ -195,12 +195,8 @@ const oHtml = (i) => `<svg class="icon" onclick="rotatePiece(${i})">${spriteHtml
 
 // 3. PDF
 
-const A4 = {
-    width: 297, height: 210
-}
-
 const A = {
-    width: A4.width - 90, height: A4.height - 40
+    width: 212, height: 170
 }
 
 // Состояние
@@ -1929,19 +1925,18 @@ const calc = () => {
     });
 }
 
-const statisticsPdf = () => {
-    return `<table>
+const statisticsPdf = () => `<table>
     <thead><tr><th>Деталей</th><th>Площадь деталей</th><th>Площадь листов</th><th>Длина реза</th></tr></thead>
     <tbody><td>${valuePdf(piecesCount, 'шт')}</td>
     <td>${valuePdf((piecesArea / 1000000).toFixed(2), 'м²')}</td>
     <td>${valuePdf((scrapsArea / 1000000).toFixed(2), 'м²')}</td>
-    <td>${valuePdf((cutsLength / 1000).toFixed(2), 'м')}</td></tbody>`
-}
+    <td>${valuePdf((cutsLength / 1000).toFixed(2), 'м')}</td></tbody></table>`
+
 
 // 4.1. Загрузка
 
-const cuttingsPdf = () => getCuts().map(toScale).map(
-    ({w, h, drops, drags}) => `<div class="page">${cuttingPdf(w, h, drops, drags)}${takesPdf(drags)}</div>`
+const cuttingsPdf = (task) => getCuts().map(toScale).map(
+    ({w, h, drops, drags}) => `<div class="break block"><div class="page">${task}${cuttingPdf(w, h, drops, drags)}${takesPdf(drags)}</div></div>`
 ).join('\n');
 
 const getScalePdf = () => Math.min(A.width / task.width, A.height / task.height);
@@ -1976,10 +1971,10 @@ const rollsPdf = () => {
 const piecesPdf = () => {
     const t = pieces.map(piecePdf).join('\n');
 
-    return t && `<table>
+    return t && `<div class="table"><table>
     <thead><tr><th>#</th><th>Длина</th><th>Ширина</th><th>Кол-во</th>
     <th>Пов-от</th><th>Деталь</th><th>Доп.об.</th></tr></thead>
-    <tbody>${t}</tbody></table>`;
+    <tbody>${t}</tbody></table></div>`;
 }
 
 const getLogo = () => `<div class="logo">
@@ -1992,24 +1987,42 @@ const getLogo = () => `<div class="logo">
     <span>whCut</span>
 </div>`;
 
-const getSigns = () => `<div class="task">
+const getSigns = (logo) => `<div class="task">
     <div class="signs">
-        <div class="sign"><span>Заказ:</span><span>${task.title || ''}</span></div>
-        <div class="sign"><span>Начало:</span><span>${toDate(task.start)}</span></div>
-        <div class="sign"><span>Завершение:</span><span>${toDate(task.finish)}</span></div>
-        <div style="width: 2cm"></div>
+        <div class="sign"><span class="gray">Заказ:</span><span>${task.title || ''}</span></div>
+        <div class="sign"><span class="gray">Начало:</span><span>${toDate(task.start)}</span></div>
+        <div class="sign"><span class="gray">Завершение:</span><span>${toDate(task.finish)}</span></div>
+        ${logo}
     </div>
     <div class="signs">
-        <div class="sign"><span>Материал:</span>${task.material || ''}<span id="material"></span></div>
-        <div class="sign"><span>Толщина:</span><span>${task.sheet.depth || ''} мм</span></div>
+        <div class="sign"><span class="gray">Материал:</span>${task.material || ''}<span id="material"></span></div>
+        <div class="sign"><span class="gray">Толщина:</span><span>${task.sheet.depth || ''} мм</span></div>
     </div>
 </div>`
 
 
+const taskPdf = (task) => `<div class="block"><div class="page">${task}${statisticsPdf()}${scrapsPdf()}${edgingsPdf()}${rollsPdf()}</div></div>`;
+
 downloadCuttingButton.onclick = () => {
     calc();
     scalePdf = getScalePdf();
-    printPage.innerHTML = getSigns() + getLogo() + statisticsPdf() + scrapsPdf() + edgingsPdf() + rollsPdf() + piecesPdf() + cuttingsPdf();
+
+    const task = getSigns(getLogo());
+    printPage.innerHTML = `<div class="block"><div class="page">
+        ${task}
+        <div class="table">
+            ${statisticsPdf()}<br><br>
+            ${scrapsPdf()}<br><br>
+            ${edgingsPdf()}<br><br>
+            ${rollsPdf()}
+        </div>
+    </div></div>
+    <div class="break block"><div class="page">
+        ${task}
+        ${piecesPdf()}
+    </div></div>
+    ${cuttingsPdf(task)}`;
+
     window.print();
 }
 
@@ -2142,10 +2155,10 @@ const toCount = (t) => {
 const takesPdf = (drags) => {
     const takes = toCount(drags).map(([i, count]) => takePdf(+i, count)).join('\n');
 
-    return `<table class="takes">
+    return `<div class="takes"><table>
     <thead><tr><th>#</th><th>Длина</th><th>Ширина</th><th>Кол-во</th></tr></thead>
     <tbody>${takes}</tbody>
-</table>`;
+</table></div>`;
 }
 
 const cuttingPdf = (w, h, drops, drags) => `<div class="cutting" style="${getSizeStyle(w, h)}">
