@@ -1097,6 +1097,7 @@ table {
     page-break-inside: avoid;
     break-inside: avoid;
     -webkit-column-break-inside: avoid;
+    border: 0;
 }
 
 th {
