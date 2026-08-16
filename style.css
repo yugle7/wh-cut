@@ -1091,6 +1091,7 @@ small {
 table {
     border-collapse: collapse;
     width: 100%;
+    max-width: 100%;
     page-break-inside: avoid;
     break-inside: avoid;
     -webkit-column-break-inside: avoid;
@@ -1160,7 +1161,6 @@ th, td {
     height: 11mm;
     /*box-shadow: inset 0 0 0 1px purple;*/
 }
-
 
 
 .signs {
@@ -1333,8 +1333,9 @@ td svg {
 
 @supports (-webkit-appearance:none) {
     @page {
-       margin-top: 1cm;
+        margin-top: 1cm;
     }
+
     .page {
         height: 284mm;
 
@@ -1342,11 +1343,9 @@ td svg {
 
     .task {
         width: 285mm;
-    box-shadow: inset 0 0 0 1px purple;
     }
 
     .takes {
-        max-width: 62mm;
-    box-shadow: inset 0 0 0 1px orange;
+        max-width: 63mm;
     }
 }
