@@ -1113,16 +1113,6 @@ th, td {
     text-align: center;
 }
 
-th:not(:last-child),
-td:not(:last-child) {
-    min-width: min-content;
-}
-
-th:last-child,
-td:last-child {
-    width: 100%;
-    min-width: 0;
-}
 
 .break {
     break-before: page;
@@ -1134,6 +1124,7 @@ td:last-child {
     display: block;
     width: 100%;
     height: 100%;
+    background: white;
 }
 
 .page {
@@ -1336,10 +1327,6 @@ td svg {
         height: 100%;
         margin: 0;
         padding: 0;
-    }
-
-    html {
-        background-color: white;
     }
 }
 

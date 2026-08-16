@@ -2159,9 +2159,10 @@ const toCount = (t) => {
 
 const takesPdf = (drags) => {
     const takes = toCount(drags).map(([i, count]) => takePdf(+i, count)).join('\n');
+    const n = isIOS ? 'Кол.': 'Кол-во';
 
     return `<div class="takes"><table>
-    <thead><tr><th>#</th><th>Длина</th><th>Ширина</th><th>Кол-во</th></tr></thead>
+    <thead><tr><th>#</th><th>Длина</th><th>Ширина</th><th>${n}</th></tr></thead>
     <tbody>${takes}</tbody>
 </table></div>`;
 }
