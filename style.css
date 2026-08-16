@@ -1325,6 +1325,10 @@ td svg {
         margin: 0;
         padding: 0;
     }
+
+    html {
+        background-color: white;
+    }
 }
 
 @supports (-webkit-appearance:none) {
@@ -1332,14 +1336,17 @@ td svg {
        margin-top: 1cm;
     }
     .page {
-        height: 285mm;
+        height: 284mm;
+
     }
 
     .task {
         width: 285mm;
+    box-shadow: inset 0 0 0 1px purple;
     }
 
     .takes {
         max-width: 62mm;
+    box-shadow: inset 0 0 0 1px orange;
     }
 }
