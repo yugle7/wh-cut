@@ -27,26 +27,14 @@
 
             width: 52px;
             height: 52px;
-
             border: 0;
-            border-radius: 50%;
-
-            background: #222;
-            color: white;
-
-            font-size: 22px;
+            background: transparent;
             cursor: pointer;
-
-            box-shadow: 0 4px 16px rgba(0, 0, 0, .18);
-
-            transition:
-                transform .15s ease,
-                background .15s ease;
+            transition: transform .15s ease;
         }
 
         .feedback-button:hover {
             transform: scale(1.05);
-            background: #333;
         }
 
         .feedback-button:active {
@@ -204,178 +192,178 @@
 
 <body>
 
-    <!-- Здесь ваше приложение -->
-    <main>
-        <h1>Моё приложение</h1>
-    </main>
+<!-- Здесь ваше приложение -->
+<main>
+    <h1>Моё приложение</h1>
+</main>
 
 
-    <!-- Кнопка обратной связи -->
-    <button
+<!-- Кнопка обратной связи -->
+<button
         class="feedback-button"
         id="open-feedback"
         aria-label="Обратная связь"
         title="Обратная связь"
-    >
-        ↗
-    </button>
+>
+    Оставить отзыв
+</button>
 
 
-    <!-- Форма -->
-    <div class="overlay" id="overlay">
-        <div class="feedback">
+<!-- Форма -->
+<div class="overlay" id="overlay">
+    <div class="feedback">
 
-            <button
+        <button
                 class="close"
                 id="close-feedback"
                 aria-label="Закрыть"
-            >
-                ×
-            </button>
+        >
+            ×
+        </button>
 
-            <h2>Обратная связь</h2>
+        <h2>Обратная связь</h2>
 
-            <div class="rating" id="rating">
-                <button type="button" data-rating="1">1</button>
-                <button type="button" data-rating="2">2</button>
-                <button type="button" data-rating="3">3</button>
-                <button type="button" data-rating="4">4</button>
-                <button type="button" data-rating="5">5</button>
-            </div>
+        <div class="rating" id="rating">
+            <button type="button" data-rating="1">1</button>
+            <button type="button" data-rating="2">2</button>
+            <button type="button" data-rating="3">3</button>
+            <button type="button" data-rating="4">4</button>
+            <button type="button" data-rating="5">5</button>
+        </div>
 
-            <textarea
+        <textarea
                 id="feedback-message"
                 placeholder="Ваше сообщение..."
-            ></textarea>
+        ></textarea>
 
-            <button
+        <button
                 class="submit"
                 id="submit-feedback"
                 disabled
-            >
-                Отправить
-            </button>
+        >
+            Отправить
+        </button>
 
-        </div>
     </div>
+</div>
 
 
-    <script>
-        const openFeedbackButton = document.getElementById('open-feedback');
-        const closeFeedbackButton = document.getElementById('close-feedback');
-        const overlay = document.getElementById('overlay');
+<script>
+    const openFeedbackButton = document.getElementById('open-feedback');
+    const closeFeedbackButton = document.getElementById('close-feedback');
+    const overlay = document.getElementById('overlay');
 
-        const rating = document.getElementById('rating');
-        const feedbackMessageText = document.getElementById('feedback-message');
-        const submitFeedbackButton = document.getElementById('submit-feedback');
+    const rating = document.getElementById('rating');
+    const feedbackMessageText = document.getElementById('feedback-message');
+    const submitFeedbackButton = document.getElementById('submit-feedback');
 
-        let selectedRating = null;
-
-
-        // Открыть
-        openFeedbackButton.addEventListener('click', () => {
-            overlay.classList.add('open');
-            feedbackMessageText.focus();
-        });
+    let selectedRating = null;
 
 
-        // Закрыть
-        function close() {
-            overlay.classList.remove('open');
-        }
-
-        closeFeedbackButton.addEventListener('click', close);
-
-
-        // Закрытие по клику на фон
-        overlay.addEventListener('click', (event) => {
-            if (event.target === overlay) close();
-        });
+    // Открыть
+    openFeedbackButton.addEventListener('click', () => {
+        overlay.classList.add('open');
+        feedbackMessageText.focus();
+    });
 
 
-        // Закрытие по Escape
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') close();
-        });
+    // Закрыть
+    function close() {
+        overlay.classList.remove('open');
+    }
+
+    closeFeedbackButton.addEventListener('click', close);
 
 
-        // Выбор оценки
-        rating.addEventListener('click', (event) => {
-            const button = event.target.closest('button');
-            if (!button) return;
-
-            selectedRating = Number(button.dataset.rating);
-
-            rating.querySelectorAll('button').forEach(button => {
-                button.classList.toggle(
-                    'selected',
-                    Number(button.dataset.rating) === selectedRating
-                );
-            });
-
-            updateSubmitState();
-        });
+    // Закрытие по клику на фон
+    overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) close();
+    });
 
 
-        // Можно отправлять после выбора оценки
-        function updateSubmitState() {
-            submitFeedbackButton.disabled = selectedRating === null;
-        }
+    // Закрытие по Escape
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') close();
+    });
 
 
-        // Отправка
-        submitFeedbackButton.addEventListener('click', () => {
-            if (selectedRating === null) return;
+    // Выбор оценки
+    rating.addEventListener('click', (event) => {
+        const button = event.target.closest('button');
+        if (!button) return;
 
-            const feedback = {
-                id: crypto.randomUUID(),
-                rating: selectedRating,
-                message: feedbackMessageText.value.trim(),
-                createdAt: new Date().toISOString()
-            };
+        selectedRating = Number(button.dataset.rating);
 
-
-            /*
-             * Пока вместо сервера используем localStorage.
-             *
-             * Позже здесь можно сделать:
-             *
-             * await fetch('/api/feedback', {
-             *     method: 'POST',
-             *     headers: {
-             *         'Content-Type': 'application/json'
-             *     },
-             *     body: JSON.stringify(feedback)
-             * });
-             */
-
-            const saved = JSON.parse(
-                localStorage.getItem('feedback') || '[]'
+        rating.querySelectorAll('button').forEach(button => {
+            button.classList.toggle(
+                'selected',
+                Number(button.dataset.rating) === selectedRating
             );
-
-            saved.push(feedback);
-
-            localStorage.setItem(
-                'feedback',
-                JSON.stringify(saved)
-            );
-
-
-            // Очистка формы
-            selectedRating = null;
-
-            rating.querySelectorAll('button').forEach(button => {
-                button.classList.remove('selected');
-            });
-
-            feedbackMessageText.value = '';
-
-            updateSubmitState();
-
-            // Закрываем окно
-            close();
         });
-    </script>
+
+        updateSubmitState();
+    });
+
+
+    // Можно отправлять после выбора оценки
+    function updateSubmitState() {
+        submitFeedbackButton.disabled = selectedRating === null;
+    }
+
+
+    // Отправка
+    submitFeedbackButton.addEventListener('click', () => {
+        if (selectedRating === null) return;
+
+        const feedback = {
+            id: crypto.randomUUID(),
+            rating: selectedRating,
+            message: feedbackMessageText.value.trim(),
+            createdAt: new Date().toISOString()
+        };
+
+
+        /*
+         * Пока вместо сервера используем localStorage.
+         *
+         * Позже здесь можно сделать:
+         *
+         * await fetch('/api/feedback', {
+         *     method: 'POST',
+         *     headers: {
+         *         'Content-Type': 'application/json'
+         *     },
+         *     body: JSON.stringify(feedback)
+         * });
+         */
+
+        const saved = JSON.parse(
+            localStorage.getItem('feedback') || '[]'
+        );
+
+        saved.push(feedback);
+
+        localStorage.setItem(
+            'feedback',
+            JSON.stringify(saved)
+        );
+
+
+        // Очистка формы
+        selectedRating = null;
+
+        rating.querySelectorAll('button').forEach(button => {
+            button.classList.remove('selected');
+        });
+
+        feedbackMessageText.value = '';
+
+        updateSubmitState();
+
+        // Закрываем окно
+        close();
+    });
+</script>
 
 </body>
 </html>

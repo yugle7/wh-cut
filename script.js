@@ -992,42 +992,42 @@ const createTask = async () => {
 
 rollEdgingInput.onclick = (e) => {
     e.preventDefault();
-    if (isKeyboardOpen()) rollInnerInput.focus();
+    if (isKeyboardOpen()) rollInnerInput.focus({preventScroll: true});
     edgingLine = getNextLine(true);
     rollEdgingInput.innerHTML = lineHtml(edgingLine);
 }
 
 edgingLineInput.onclick = (e) => {
     e.preventDefault();
-    if (isKeyboardOpen()) edgingThickInput.focus();
+    if (isKeyboardOpen()) edgingThickInput.focus({preventScroll: true});
     edgingLine = getNextLine(false);
     edgingLineInput.innerHTML = lineHtml(edgingLine);
 }
 
 pieceEdgingUpInput.onclick = (e) => {
     e.preventDefault();
-    if (isKeyboardOpen()) pieceTextInput.focus();
+    if (isKeyboardOpen()) pieceWidthInput.focus({preventScroll: true});
     pieceEdging.up = getNextEdgingLine(pieceEdging.up);
     pieceEdgingUpInput.innerHTML = lineHtml(pieceEdging.up);
 }
 
 pieceEdgingDownInput.onclick = (e) => {
     e.preventDefault();
-    if (isKeyboardOpen()) pieceTextInput.focus();
+    if (isKeyboardOpen()) pieceWidthInput.focus({preventScroll: true});
     pieceEdging.down = getNextEdgingLine(pieceEdging.down);
     pieceEdgingDownInput.innerHTML = lineHtml(pieceEdging.down);
 }
 
 pieceEdgingLeftInput.onclick = (e) => {
     e.preventDefault();
-    if (isKeyboardOpen()) pieceTextInput.focus();
+    if (isKeyboardOpen()) pieceHeightInput.focus({preventScroll: true});
     pieceEdging.left = getNextEdgingLine(pieceEdging.left);
     pieceEdgingLeftInput.innerHTML = lineHtml(pieceEdging.left);
 }
 
 pieceEdgingRightInput.onclick = (e) => {
     e.preventDefault();
-    if (isKeyboardOpen()) pieceTextInput.focus();
+    if (isKeyboardOpen()) pieceHeightInput.focus({preventScroll: true});
     pieceEdging.right = getNextEdgingLine(pieceEdging.right);
     pieceEdgingRightInput.innerHTML = lineHtml(pieceEdging.right);
 }
@@ -1038,14 +1038,14 @@ function isKeyboardOpen() {
 
 pieceRotatedInput.onclick = (e) => {
     e.preventDefault();
-    if (isKeyboardOpen()) pieceHeightInput.focus();
+    if (isKeyboardOpen()) pieceHeightInput.focus({preventScroll: true});
     pieceRotated = !pieceRotated;
     pieceRotatedInput.innerHTML = pieceRotated ? o : x;
 }
 
 pieceExtraInput.onclick = (e) => {
     e.preventDefault();
-    if (isKeyboardOpen()) pieceCountInput.focus();
+    if (isKeyboardOpen()) pieceCountInput.focus({preventScroll: true});
     pieceExtra = !pieceExtra;
     pieceExtraInput.innerHTML = iconHtml(pieceExtra ? 'save' : 'cancel');
 }
@@ -1936,7 +1936,12 @@ const statisticsPdf = () => `<table>
 // 4.1. Загрузка
 
 const cuttingsPdf = (task) => getCuts().map(toScale).map(
-    ({w, h, drops, drags}) => `<div class="break block"><div class="page">${task}${cuttingPdf(w, h, drops, drags)}${takesPdf(drags)}</div></div>`
+    ({
+         w,
+         h,
+         drops,
+         drags
+     }) => `<div class="break block"><div class="page">${task}${cuttingPdf(w, h, drops, drags)}${takesPdf(drags)}</div></div>`
 ).join('\n');
 
 const getScalePdf = () => Math.min(A.width / task.width, A.height / task.height);
