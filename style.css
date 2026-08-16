@@ -1096,6 +1096,13 @@ table {
     break-inside: avoid;
     -webkit-column-break-inside: avoid;
     border: 0;
+
+    table-layout: fixed;
+}
+
+td {
+    overflow: hidden;
+    word-break: break-word;
 }
 
 th {
