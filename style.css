@@ -1330,7 +1330,7 @@ td svg {
 
 @supports (-webkit-appearance:none) {
     @page {
-       margin: revert;
+       margin-top: 1cm;
     }
     .page {
         height: 285mm;
