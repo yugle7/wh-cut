@@ -1075,7 +1075,7 @@ small {
     height: 100%;
     margin: 0;
     padding: 0;
-    background: white;
+    background-color: white !important;
     display: none;
 }
 
@@ -1324,7 +1324,6 @@ td svg {
         height: 100%;
         margin: 0;
         padding: 0;
-        background-color: white;
     }
 }
 
@@ -1341,6 +1340,6 @@ td svg {
     }
 
     .takes {
-        max-width: 63mm;
+        max-width: 62mm;
     }
 }
