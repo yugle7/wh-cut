@@ -1888,7 +1888,7 @@ document.addEventListener('pointercancel', onDragEnd);
 
 // 4.1 Вычисление статистики
 
-const valuePdf = (value, unit) => `<span class="just">${value} <span class="fade">${unit}</span></span>`
+const valuePdf = (value, unit) => `<span class="just">${value} <span class="gray">${unit}</span></span>`
 
 const edgingLengths = Array(edgingIcons.length).fill(0);
 

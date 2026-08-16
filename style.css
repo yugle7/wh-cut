@@ -1079,9 +1079,6 @@ small {
     display: none;
 }
 
-.gray {
-    opacity: 0.7;
-}
 
 .fade {
     opacity: 0.5;
@@ -1178,6 +1175,7 @@ th, td {
     }
 }
 
+
 .signs {
     display: flex;
     width: 100%;
@@ -1201,7 +1199,8 @@ th, td {
 
 .logo > span {
     font-size: 9mm !important;
-    opacity: 0.8;
+    color: dimgray !important;
+    print-color-adjust: exact;
 }
 
 .logo > svg {
@@ -1293,9 +1292,16 @@ td svg {
     height: 2mm;
 }
 
+.gray *,
+.gray {
+    print-color-adjust: exact;
+    color: gray !important;
+}
+
 @media print {
     @page {
         size: A4 portrait;
+        margin: 2cm 1cm;
         @bottom-left {
             content: counter(page) "/" counter(pages);
             color: gray;
