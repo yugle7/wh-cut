@@ -1331,3 +1331,10 @@ td svg {
         padding: 0;
     }
 }
+
+@supports (-webkit-touch-callout: none) {
+  @media print {
+    .page { height: 284mm; }
+    .task { width: 284mm; }
+  }
+}
