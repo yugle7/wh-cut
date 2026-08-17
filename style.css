@@ -1333,12 +1333,12 @@ td svg {
     }
 }
 
-/*@supports (-webkit-touch-callout: none) {*/
-/*    .page {*/
-/*        height: 284mm;*/
-/*    }*/
+@supports (-webkit-touch-callout: none) {
+    .page {
+        height: 284mm;
+    }
 
-/*    .task {*/
-/*        width: 284mm;*/
-/*    }*/
-/*}*/
+    .task {
+        width: 284mm;
+    }
+}
