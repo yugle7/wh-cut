@@ -1131,13 +1131,14 @@ th, td {
     position: relative;
     width: 209mm;
     height: 292mm;
+    overflow: hidden;
     /*box-shadow: inset 0 0 0 1px green;*/
 }
 
 .cutting {
     position: absolute;
     left: 0;
-    top: 0;
+    top: 1mm;
     transform-origin: left top;
     transform: rotate(90deg) translateY(-184mm);
     /*box-shadow: inset 0 0 0 1px red;*/
@@ -1148,8 +1149,9 @@ th, td {
     left: 0;
     top: 0;
     transform-origin: left top;
-    transform: rotate(90deg) translateY(-184mm) translateX(222mm);
-    width: 7cm;
+    transform: rotate(90deg) translateY(-184mm) translateX(calc(292mm - 100%));
+    max-width: 70mm;
+    min-width: 63mm;
     height: 184mm;
     /*box-shadow: inset 0 0 0 1px blue;*/
 }
@@ -1291,7 +1293,7 @@ td svg {
 @media print {
     @page {
         size: A4 portrait;
-        margin: 19mm 1cm;
+        margin: 1cm;
         @bottom-left {
             content: counter(page) "/" counter(pages);
             color: gray;
@@ -1327,24 +1329,5 @@ td svg {
         height: 100%;
         margin: 0;
         padding: 0;
-    }
-}
-
-@supports (-webkit-appearance:none) {
-    @page {
-        margin-top: 1cm;
-    }
-
-    .page {
-        height: 284mm;
-
-    }
-
-    .task {
-        width: 285mm;
-    }
-
-    .takes {
-        max-width: 63mm;
     }
 }

@@ -1888,7 +1888,7 @@ document.addEventListener('pointercancel', onDragEnd);
 
 // 4.1 Вычисление статистики
 
-const valuePdf = (value, unit) => `<span class="just">${value} <span class="gray">${unit}</span></span>`
+const valuePdf = (value, unit) => `<span class="just">${+value} <span class="gray">${unit}</span></span>`
 
 const edgingLengths = Array(edgingIcons.length).fill(0);
 
@@ -2078,7 +2078,7 @@ const rollPdf = ({line, inner, outer, length}) => `<tr>
 const scrapPdf = ({width, height, edge, count, text}) => `<tr>
     <td>${width}</td>
     <td>${height}</td>
-    <td>${edge || 0}</td>
+    <td>${valuePdf(edge, 'мм')}</td>
     <td>${count}</td>
     <td class="name">${text || ""}</td>
 </tr>`;
