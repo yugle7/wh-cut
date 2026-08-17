@@ -372,22 +372,31 @@ const dateHtml = () => task.start || task.finish ? `<div><span>${toDate(task.sta
 
 const materialHtml = () => `<div><span>${task.material || 'Материал'}</span><span>${valueHtml(task.kerf, 'мм')}</span></div>`;
 
-const toSheetHtml = (
-    {width, height, edge, rotated, depth}
-) => `<div>${width}${rotated ? o : x}${height}${v}${valueHtml(edge, 'мм')}</span><span></span>${valueHtml(depth, 'мм')}</div>`;
+const toSheetHtml = ({
+                         width,
+                         height,
+                         edge,
+                         rotated,
+                         depth
+                     }) => `<div>${width}${rotated ? o : x}${height}${v}${valueHtml(edge, 'мм')}</span><span></span>${valueHtml(depth, 'мм')}</div>`;
 
-const toScrapHtml = (
-    {width, height, edge, count}
-) => `<div>${width}${x}${height}${v}${valueHtml(edge, 'мм')}<span></span>${valueHtml(count, 'шт')}</div>`;
+const toScrapHtml = ({
+                         width,
+                         height,
+                         edge,
+                         count
+                     }) => `<div>${width}${x}${height}${v}${valueHtml(edge, 'мм')}<span></span>${valueHtml(count, 'шт')}</div>`;
 
 const textHtml = (text) => `<div class="text">${text || ''}</div>`;
-const toEdgingHtml = (
-    {line, thick, text}
-) => `<div>${lineHtml(line)}${textHtml(text)}${valueHtml(thick, 'мм')}</div>`;
+const toEdgingHtml = ({line, thick, text}) => `<div>${lineHtml(line)}${textHtml(text)}${valueHtml(thick, 'мм')}</div>`;
 
-const toRollHtml = (
-    {line, inner, outer, length, thick}
-) => `<div>${lineHtml(line)}${v}${valueHtml(`${inner} - ${outer}`, 'мм')}<span></span>${valueHtml(numberStr(length / 1000), 'м')}</div>`;
+const toRollHtml = ({
+                        line,
+                        inner,
+                        outer,
+                        length,
+                        thick
+                    }) => `<div>${lineHtml(line)}${v}${valueHtml(`${inner} - ${outer}`, 'мм')}<span></span>${valueHtml(numberStr(length / 1000), 'м')}</div>`;
 
 const toPieceHtml = ({width, height, rotated, edging, count, text, extra}) => {
     const {left, up, right, down} = edging;
@@ -421,18 +430,10 @@ const setTask = () => {
 
     task.edgings.forEach(({line, thick}) => (edgingThicks[line] = thick));
 
-    scrapsList.innerHTML = task.scraps.map(
-        (q, i) => `<li><button type="button" onclick="toEdit(event, ${i}, toScrapForm)">${toScrapHtml(q)}</button></li>`
-    ).join('\n')
-    edgingsList.innerHTML = task.edgings.map(
-        (q, i) => `<li><button type="button" onclick="toEdit(event, ${i}, toEdgingForm)">${toEdgingHtml(q)}</button></li>`
-    ).join('\n')
-    rollsList.innerHTML = task.rolls.map(
-        (q, i) => `<li><button type="button" onclick="toEdit(event, ${i}, toRollForm)">${toRollHtml(q)}</button></li>`
-    ).join('\n')
-    piecesList.innerHTML = task.pieces.map(
-        (q, i) => `<li><button type="button" onclick="toEdit(event, ${i}, toPieceForm)">${toPieceHtml(q)}</button></li>`
-    ).join('\n');
+    scrapsList.innerHTML = task.scraps.map((q, i) => `<li><button type="button" onclick="toEdit(event, ${i}, toScrapForm)">${toScrapHtml(q)}</button></li>`).join('\n')
+    edgingsList.innerHTML = task.edgings.map((q, i) => `<li><button type="button" onclick="toEdit(event, ${i}, toEdgingForm)">${toEdgingHtml(q)}</button></li>`).join('\n')
+    rollsList.innerHTML = task.rolls.map((q, i) => `<li><button type="button" onclick="toEdit(event, ${i}, toRollForm)">${toRollHtml(q)}</button></li>`).join('\n')
+    piecesList.innerHTML = task.pieces.map((q, i) => `<li><button type="button" onclick="toEdit(event, ${i}, toPieceForm)">${toPieceHtml(q)}</button></li>`).join('\n');
 
     copyTaskToForm();
     copySheetToForm();
@@ -612,9 +613,7 @@ const updateEdgingItem = () => {
         edgingThicks[edgingLine] = +edgingThickInput.value;
 
         items[index] = {
-            thick: edgingThicks[edgingLine],
-            line: edgingLine,
-            text: edgingTextInput.value
+            thick: edgingThicks[edgingLine], line: edgingLine, text: edgingTextInput.value
         };
 
     } else {
@@ -720,11 +719,7 @@ const updatePieceItem = () => {
     const count = +pieceCountInput.value || 1;
 
     items[index] = !width || !height ? null : {
-        width, height, count,
-        rotated: pieceRotated,
-        edging: pieceEdging,
-        text: pieceTextInput.value,
-        extra: pieceExtra
+        width, height, count, rotated: pieceRotated, edging: pieceEdging, text: pieceTextInput.value, extra: pieceExtra
     };
 }
 
@@ -855,8 +850,7 @@ const toCreate = (e, toForm) => {
     focusInput.focus();
 
     form.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest'
+        behavior: 'smooth', block: 'nearest'
     });
 }
 
@@ -1163,8 +1157,12 @@ const setTakes = () => {
         width, height, rotated, count
     }));
 
-    takeArea.innerHTML = takes.map(
-        ({width, height, rotated, count}, i) => takeHtml(width, height, rotated, count, i)).join('');
+    takeArea.innerHTML = takes.map(({
+                                        width,
+                                        height,
+                                        rotated,
+                                        count
+                                    }, i) => takeHtml(width, height, rotated, count, i)).join('');
 
     takeArea.childNodes.forEach((q, i) => {
         q = q.children[1];
@@ -1259,11 +1257,7 @@ const dropJson = (width, height, edge) => ({
 });
 
 const zoneJson = ({width, height, edge}, i = -1) => ({
-    width,
-    height,
-    i,
-    drops: [dropJson(width, height, edge || 0)],
-    drags: []
+    width, height, i, drops: [dropJson(width, height, edge || 0)], drags: []
 });
 
 const getDrops = () => {
@@ -1854,8 +1848,7 @@ function onDragStart(e) {
     e.preventDefault();
     gutter.classList.add('active');
     start = {
-        y: e.clientY,
-        height: takeArea.getBoundingClientRect().height
+        y: e.clientY, height: takeArea.getBoundingClientRect().height
     }
     document.body.style.cursor = 'row-resize';
     document.body.style.userSelect = 'none';
@@ -1935,14 +1928,9 @@ const statisticsPdf = () => `<table>
 
 // 4.1. Загрузка
 
-const cuttingsPdf = (task) => getCuts().map(toScale).map(
-    ({
-         w,
-         h,
-         drops,
-         drags
-     }) => `<div class="break block"><div class="page">${task}${cuttingPdf(w, h, drops, drags)}${takesPdf(drags)}</div></div>`
-).join('\n');
+const cuttingsPdf = (task) => getCuts().map(toScale).map(({
+                                                              w, h, drops, drags
+                                                          }) => `<div class="break block"><div class="page">${task}${cuttingPdf(w, h, drops, drags)}${takesPdf(drags)}</div></div>`).join('\n');
 
 const getScalePdf = () => Math.min(A.width / task.width, A.height / task.height);
 
@@ -2033,11 +2021,7 @@ downloadCuttingButton.onclick = () => {
 
 // 4.2 Постановка задачи
 
-const lines = [
-    '<line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"/>',
-    '<line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"/>',
-    '<path stroke="var(--yellow-min)" d="M 2 3 Q 5 2, 7 2 Q 10 2, 12 3 Q 14 4, 17 4 Q 20 4, 22 3 Q 25 2, 27 2 Q 30 2, 32 3 Q 35 4, 37 4 Q 40 4, 42 3 Q 45 2, 47 2 Q 50 2, 52 3 Q 55 4, 57 4 L 58 4"/>'
-];
+const lines = ['<line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3"/>', '<line stroke="var(--yellow-min)" x1="2" y1="3" x2="58" y2="3" stroke-dasharray="8 8"/>', '<path stroke="var(--yellow-min)" d="M 2 3 Q 5 2, 7 2 Q 10 2, 12 3 Q 14 4, 17 4 Q 20 4, 22 3 Q 25 2, 27 2 Q 30 2, 32 3 Q 35 4, 37 4 Q 40 4, 42 3 Q 45 2, 47 2 Q 50 2, 52 3 Q 55 4, 57 4 L 58 4"/>'];
 
 const linePdf = (line) => line == null ? '' : `<svg class="line" viewBox="0 0 60 5">${lines[line]}</svg>`;
 
@@ -2159,7 +2143,7 @@ const toCount = (t) => {
 
 const takesPdf = (drags) => {
     const takes = toCount(drags).map(([i, count]) => takePdf(+i, count)).join('\n');
-    const n = isIOS ? 'Кол.': 'Кол-во';
+    const n = isIOS ? 'Кол.' : 'Кол-во';
 
     return `<div class="takes"><table>
     <thead><tr><th>#</th><th>Длина</th><th>Ширина</th><th>${n}</th></tr></thead>
@@ -2189,13 +2173,17 @@ const toScale = ({width, height, drops, drags}) => ({
 
 // 5. Автоматический раскрой
 
-const takesRect = () => takes.filter(
-    ({count}) => count > 0).map(
-    ({width, height, rotated, count}) => [width + task.kerf, height + task.kerf, rotated, count]);
+const takesRect = () => takes.filter(({count}) => count > 0).map(({
+                                                                      width,
+                                                                      height,
+                                                                      rotated,
+                                                                      count
+                                                                  }) => [width + task.kerf, height + task.kerf, rotated, count]);
 
-const dropsRect = () => zones.flatMap(
-    ({drops}) => drops.filter(({busy}) => busy === false)).map(
-    ({width, height}) => [width + task.kerf, height + task.kerf]);
+const dropsRect = () => zones.flatMap(({drops}) => drops.filter(({busy}) => busy === false)).map(({
+                                                                                                      width,
+                                                                                                      height
+                                                                                                  }) => [width + task.kerf, height + task.kerf]);
 
 // 5.1 Раскрой на клиенте
 
@@ -2555,20 +2543,16 @@ const addCut = (drop, rects, create = true) => {
     const W = left + width - L
 
     const l = {
-        drop: [left, top, width - W, height],
-        rects: rects.filter(q => q[0] < L)
+        drop: [left, top, width - W, height], rects: rects.filter(q => q[0] < L)
     };
     const r = {
-        drop: [L, top, W, height],
-        rects: rects.filter(q => q[0] >= L)
+        drop: [L, top, W, height], rects: rects.filter(q => q[0] >= L)
     };
     const t = {
-        drop: [left, top, width, height - H],
-        rects: rects.filter(q => q[1] < T)
+        drop: [left, top, width, height - H], rects: rects.filter(q => q[1] < T)
     };
     const b = {
-        drop: [left, T, width, H],
-        rects: rects.filter(q => q[1] >= T)
+        drop: [left, T, width, H], rects: rects.filter(q => q[1] >= T)
     };
 
     if (W && H) {
@@ -2612,10 +2596,7 @@ const getScore = ([L, T, W, H], rects) => {
         if (right > r) r = right;
         if (bottom > b) b = bottom;
     }
-    return Math.max(
-        W * Math.max(t - T, B - b),
-        H * Math.max(l - L, R - r)
-    )
+    return Math.max(W * Math.max(t - T, B - b), H * Math.max(l - L, R - r))
 }
 
 const addRects = (rects, drops) => {
@@ -2690,9 +2671,7 @@ const blurAutoSave = async (update) => {
 
 // 5. Рулоны
 
-const getRollLength = (
-    inner, outer, thick
-) => Math.floor(Math.PI * (outer * outer - inner * inner) / 4 / thick);
+const getRollLength = (inner, outer, thick) => Math.floor(Math.PI * (outer * outer - inner * inner) / 4 / thick);
 
 // Начальная загрузка
 
@@ -2700,8 +2679,7 @@ const getRollLength = (
     loadTheme();
     loadTasks();
 
-    tasksList.innerHTML = tasks.map(
-        q => `<li id="${q.id}" onclick="toTask(event)" >${getTaskTitle(q)}</li>`).join('\n');
+    tasksList.innerHTML = tasks.map(q => `<li id="${q.id}" onclick="toTask(event)" >${getTaskTitle(q)}</li>`).join('\n');
 })();
 
 // 6. Подсказки
@@ -2738,5 +2716,6 @@ document.addEventListener('keydown', (event) => {
 
 // 7. Печать на iphone
 
-const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+if (isIOS) document.documentElement.style.setProperty('--size', '284mm');
