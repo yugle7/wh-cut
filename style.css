@@ -516,14 +516,6 @@ div {
     padding: 13px;
 }
 
-.logo svg {
-    width: 2.5rem;
-    min-width: 2.5rem;
-    height: 2.5rem;
-    padding: 0.5rem;
-    stroke: transparent;
-}
-
 #cutting .icon {
     width: 2rem;
     min-width: 2rem;
@@ -1190,7 +1182,7 @@ th, td {
     align-items: center;
     width: max-content;
     align-self: self-end;
-    gap: 2mm;
+    gap: 1mm;
 }
 
 .logo > span {
@@ -1202,7 +1194,7 @@ th, td {
 .logo > svg {
     width: 15mm;
     height: 15mm;
-    padding: 1mm;
+    padding: 2mm;
     stroke: transparent;
 }
 
