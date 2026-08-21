@@ -133,6 +133,7 @@ button {
 #say-thank {
     padding: 25px;
     color: gray;
+    font-size: 14px;
 }
 
 #say-thank:hover {
