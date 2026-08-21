@@ -1971,7 +1971,7 @@ const piecesPdf = () => {
 }
 
 const getLogo = () => `<div class="logo">
-    <svg viewBox="0 0 24 24">
+    <svg viewBox="0 0 24 24" stroke-width="3">
         <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="#4aaf8c" fill="none"/>
         <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="#7a82da" stroke-dasharray="20 100" stroke-dashoffset="-22" fill="none"/>
         <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="#c97b72" stroke-dasharray="17 100" stroke-dashoffset="-5" fill="none"/>
