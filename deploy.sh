@@ -7,5 +7,5 @@ rsvg-convert -w 192 -h 192 icon.svg -o icons/icon-192.png
 rsvg-convert -w 512 -h 512 icon.svg -o icons/icon-512.png
 
 # с фоном
-rsvg-convert -w 192 -h 192 icon-maskable.svg -o icons/icon-maskable-192.png
-rsvg-convert -w 512 -h 512 icon-maskable.svg -o icons/icon-maskable-512.png
+rsvg-convert -w 192 -h 192 icon-maskable.svg -o icons/icon-192-maskable.png
+rsvg-convert -w 512 -h 512 icon-maskable.svg -o icons/icon-512-maskable.png
