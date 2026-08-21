@@ -1,6 +1,6 @@
 const GHPATH = "/wh-cut";
 const APP_PREFIX = "whCut_";
-const VERSION = "1.0.102";
+const VERSION = "1.0.103";
 
 const URLS = [
     `${GHPATH}/`,
@@ -10,7 +10,12 @@ const URLS = [
     `${GHPATH}/script.js`,
     `${GHPATH}/sprite.svg`,
     `${GHPATH}/icon.svg`,
-    `${GHPATH}/favicon.svg`
+    `${GHPATH}/favicon.svg`,
+
+    `${GHPATH}/icons/icon-192.png`,
+    `${GHPATH}icons/icon-512.png`,
+    `${GHPATH}icons/icon-192-maskable.png`,
+    `${GHPATH}icons/icon-512-maskable.png`
 ];
 
 const CACHE_NAME = APP_PREFIX + VERSION;

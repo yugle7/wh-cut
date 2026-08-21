@@ -1972,10 +1972,11 @@ const piecesPdf = () => {
 
 const getLogo = () => `<div class="logo">
     <svg viewBox="0 0 24 24">
-        <rect x="14" y="14" width="8" height="8" rx="2" ry="2" fill="#4aaf8c"/>
-        <rect x="14" y="2" width="8" height="9" rx="2" ry="2" fill="#7a82da"/>
-        <rect x="2" y="2" width="9" height="7" rx="2" ry="2" fill="#c97b72"/>
-        <rect x="2" y="12" width="9" height="10" rx="2" ry="2" fill="#c9a84c"/>
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="#4aaf8c" fill="none"/>
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="#7a82da" stroke-dasharray="20 100" stroke-dashoffset="-22" fill="none"/>
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="#c97b72" stroke-dasharray="17 100" stroke-dashoffset="-5" fill="none"/>
+        <line x1="10" y1="10" x2="23" y2="10" stroke="#c9a84c"/>
+        <line x1="10" y1="1" x2="10" y2="23" stroke="#c9a84c"/>
     </svg>
     <span>whCut</span>
 </div>`;
@@ -2718,4 +2719,4 @@ document.addEventListener('keydown', (event) => {
 
 const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-if (isIOS) document.documentElement.style.setProperty('--size', '284mm');
+if (isIOS) htmlElement.style.setProperty('--size', '284mm');

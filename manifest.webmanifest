@@ -1,16 +1,108 @@
 {
+  "id": "/wh-cut/",
   "name": "Раскрой",
   "short_name": "whCut",
-  "description": "Приложения для раскроя",
+  "description": "Автоматический и ручной раскрой ЛДСП и других листовых материалов для мебельщиков и раскройщиков.",
   "scope": "/wh-cut/",
   "start_url": "/wh-cut/",
   "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#262728",
+  "theme_color": "#262728",
+  "lang": "ru",
+  "dir": "ltr",
+  "categories": ["business", "productivity", "utilities"],
   "icons": [
-      {
-      "src": "/wh-cut/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+    {
+      "src": "/wh-cut/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/wh-cut/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/wh-cut/icons/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/wh-cut/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "/wh-cut/screenshots/main.webp",
+      "type": "image/webp",
+      "sizes": "750x1334",
+      "form_factor": "narrow",
+      "platform": "play",
+      "label": "Выбор и создание раскроя"
+    },
+    {
+      "src": "/wh-cut/screenshots/setting.webp",
+      "type": "image/webp",
+      "sizes": "750x1334",
+      "form_factor": "narrow",
+      "platform": "play",
+      "label": "Настройки раскроя"
+    },
+    {
+      "src": "/wh-cut/screenshots/pieces.webp",
+      "type": "image/webp",
+      "sizes": "750x1334",
+      "form_factor": "narrow",
+      "platform": "play",
+      "label": "Список деталей"
+    },
+    {
+      "src": "/wh-cut/screenshots/edit.webp",
+      "type": "image/webp",
+      "sizes": "750x1334",
+      "form_factor": "narrow",
+      "platform": "play",
+      "label": "Изменение детали"
+    },
+    {
+      "src": "/wh-cut/screenshots/cutting.webp",
+      "type": "image/webp",
+      "sizes": "750x1334",
+      "form_factor": "narrow",
+      "platform": "play",
+      "label": "Автоматический раскрой"
+    },
+    {
+      "src": "/wh-cut/screenshots/cut.webp",
+      "type": "image/webp",
+      "sizes": "750x1334",
+      "form_factor": "narrow",
+      "platform": "play",
+      "label": "Ручной раскрой"
+    },
+    {
+      "src": "/wh-cut/screenshots/tips.webp",
+      "type": "image/webp",
+      "sizes": "750x1334",
+      "form_factor": "narrow",
+      "platform": "play",
+      "label": "Управление раскроем"
+    },
+    {
+      "src": "/wh-cut/screenshots/print.webp",
+      "type": "image/webp",
+      "sizes": "750x1334",
+      "form_factor": "narrow",
+      "platform": "play",
+      "label": "Печать результата"
+    }
+  ],
+  "prefer_related_applications": false
 }
