@@ -357,12 +357,16 @@ label[for="to-cutting"] {
     top: 0;
     left: 0;
     width: 100%;
+    max-width: 400px;
+    padding: 20px;
     height: 100%;
     z-index: 10;
     background: var(--bg-primary);
     display: flex;
     flex-direction: column;
     justify-content: center;
+    text-align: center;
+    gap: 10px;
 }
 
 
@@ -390,11 +394,14 @@ p > svg {
     padding: 0;
 }
 
+.wide {
+    width: 100%;
+}
+
 .big {
     display: flex;
     color: var(--green);
     font-size: 26px;
-    width: 100%;
 }
 
 .medium {
@@ -1047,8 +1054,11 @@ p {
     padding-bottom: 10px;
 }
 
-p > span {
+p > span:first-child {
     color: var(--blue);
+}
+
+p > span {
     display: inline;
 }
 

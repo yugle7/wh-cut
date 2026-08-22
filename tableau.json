@@ -1,0 +1,9 @@
+{
+  "version": "0.1",
+  "api_version": 1,
+  "layout": {
+    "logo": "https://yugle7.github.io/wh-cut/icons/icon-192.png",
+    "color": "#262728",
+    "show_title": false
+  }
+}

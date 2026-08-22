@@ -1,6 +1,25 @@
 const DATA_URL = ""; // https://d5ds1trsppqs2rog97qd.cmxivbes.apigw.yandexcloud.net";
 const ALGO_URL = "https://d5d313gii5f4ak4h4arg.wnq2w1o5.apigw.yandexcloud.net";
 
+// Язык
+
+let S;
+
+const setLanguage = () => {
+    const language = navigator.language?.toLowerCase().startsWith('ru') ? 'ru' : 'en';
+    document.documentElement.lang = language;
+    S = translations[language];
+
+    document.querySelectorAll('[data-i18n]').forEach(q => q.textContent = S[q.dataset.i18n]);
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(q => q.placeholder = S[q.dataset.i18nPlaceholder]);
+    document.querySelectorAll('[data-i18n-title]').forEach(q => q.title = S[q.dataset.i18nTitle]);
+    document.querySelectorAll('[data-i18n-aria-label]').forEach(q => q.title = S[q.dataset.i18nAriaLabel]);
+    document.querySelectorAll('[data-i18n-aria-label]').forEach(q => q.setAttribute('aria-label', S[q.dataset.i18nAriaLabel]));
+
+    testTask.material = S.testMaterial;
+    testTask.title = S.testTitle;
+}
+
 // Элементы
 
 const htmlElement = document.documentElement;
@@ -151,16 +170,6 @@ const printPage = document.getElementById('print');
 const edgingIcons = ['line', 'dash', 'wave'];
 const edgingThicks = Array(edgingIcons.length).fill(null);
 
-const defaultTask = {
-    title: "",
-    kerf: 4,
-    sheet: {width: 2800, height: 2070, edge: null, depth: 16},
-    scraps: [],
-    rolls: [],
-    edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.4}],
-    pieces: [],
-};
-
 
 const toDate = (isoDate) => {
     if (!isoDate) return '';
@@ -298,7 +307,7 @@ const loadTasks = async () => {
     } else {
         const t = localStorage.getItem('tasks');
         tasks = t ? JSON.parse(t).filter(Boolean) : [];
-        if (!tasks.length) tasks = [helpTask];
+        if (!tasks.length) tasks = [testTask];
 
         tasks.forEach((q, i) => q.id = i);
         tasks.forEach(q => q.rolls = q.rolls || []);
@@ -310,6 +319,10 @@ const loadTasks = async () => {
         });
     }
 };
+
+const setTasks = () => {
+    tasksList.innerHTML = tasks.map(q => `<li id="${q.id}" onclick="toTask(event)" >${getTaskTitle(q)}</li>`).join('\n');
+}
 
 // 1.3 Изменение темы
 
@@ -370,33 +383,22 @@ let toHtml;
 
 const dateHtml = () => task.start || task.finish ? `<div><span>${toDate(task.start)}</span><span class="fade">${toDate(task.finish)}</span></div>` : '';
 
-const materialHtml = () => `<div><span>${task.material || 'Материал'}</span><span>${valueHtml(task.kerf, 'мм')}</span></div>`;
+const materialHtml = () => `<div><span>${task.material || S.material}</span><span>${valueHtml(task.kerf, S.mm)}</span></div>`;
 
-const toSheetHtml = ({
-                         width,
-                         height,
-                         edge,
-                         rotated,
-                         depth
-                     }) => `<div>${width}${rotated ? o : x}${height}${v}${valueHtml(edge, 'мм')}</span><span></span>${valueHtml(depth, 'мм')}</div>`;
+const toSheetHtml = (
+    {width, height, edge, rotated, depth}
+) => `<div>${width}${rotated ? o : x}${height}${v}${valueHtml(edge, S.mm)}</span><span></span>${valueHtml(depth, S.mm)}</div>`;
 
-const toScrapHtml = ({
-                         width,
-                         height,
-                         edge,
-                         count
-                     }) => `<div>${width}${x}${height}${v}${valueHtml(edge, 'мм')}<span></span>${valueHtml(count, 'шт')}</div>`;
+const toScrapHtml = (
+    {width, height, edge, count}
+) => `<div>${width}${x}${height}${v}${valueHtml(edge, S.mm)}<span></span>${valueHtml(count, S.pcs)}</div>`;
 
 const textHtml = (text) => `<div class="text">${text || ''}</div>`;
-const toEdgingHtml = ({line, thick, text}) => `<div>${lineHtml(line)}${textHtml(text)}${valueHtml(thick, 'мм')}</div>`;
+const toEdgingHtml = ({line, thick, text}) => `<div>${lineHtml(line)}${textHtml(text)}${valueHtml(thick, S.mm)}</div>`;
 
-const toRollHtml = ({
-                        line,
-                        inner,
-                        outer,
-                        length,
-                        thick
-                    }) => `<div>${lineHtml(line)}${v}${valueHtml(`${inner} - ${outer}`, 'мм')}<span></span>${valueHtml(numberStr(length / 1000), 'м')}</div>`;
+const toRollHtml = (
+    {line, inner, outer, length, thick}
+) => `<div>${lineHtml(line)}${v}${valueHtml(`${inner} - ${outer}`, S.mm)}<span></span>${valueHtml(numberStr(length / 1000), S.m)}</div>`;
 
 const toPieceHtml = ({width, height, rotated, edging, count, text, extra}) => {
     const {left, up, right, down} = edging;
@@ -405,7 +407,7 @@ const toPieceHtml = ({width, height, rotated, edging, count, text, extra}) => {
     const h = `<div class="col"><span>${height}</span>${lineHtml(left)}${lineHtml(right)}</div>`;
     const e = extra ? iconHtml('save', 'green') : `<span></span>`;
 
-    return `<div>${w}${rotated ? o : x}${h}${textHtml(text)}${e}${valueHtml(count, 'шт')}</div>`
+    return `<div>${w}${rotated ? o : x}${h}${textHtml(text)}${e}${valueHtml(count, S.pcs)}</div>`
 }
 
 const clearFields = () => form.querySelectorAll('input,textarea').forEach(q => q.value = '')
@@ -729,7 +731,7 @@ removeTaskButton.onclick = () => {
     if (!task) return;
 
     if (task.pieces.some(Boolean) || task.scraps.some(Boolean)) {
-        toRemoveTaskPage.children[2].innerText = getTaskTitle(task);
+        toRemoveTaskPage.children[1].innerText = getTaskTitle(task);
         toRemoveTaskPage.classList.remove('hidden');
     } else {
         removeTask();
@@ -798,10 +800,10 @@ const toDelete = (e) => {
     if (deleted) {
         clearFields();
         clearForm();
-        deleteButton.innerText = 'Вернуть';
+        deleteButton.innerText = S.revert;
     } else {
         copyToForm(items[index]);
-        deleteButton.innerText = 'Удалить';
+        deleteButton.innerText = S.delete;
     }
     sizeFields();
 }
@@ -814,7 +816,7 @@ const toEdit = (e, i, f) => {
     created = deleted = false;
     f();
     deleteButton.classList.remove('hidden');
-    deleteButton.innerText = 'Удалить';
+    deleteButton.innerText = S.delete;
 
     link = links.children[i];
     item = items[i];
@@ -1130,7 +1132,7 @@ const getColors = n => [...Array(n)].map((_, i) => `hsl(${i / n * 360}, var(--sa
 
 const takeSizesHtml = (width, height, rotated, i) => `<button class="sizes">${widthHeightHtml(width, height, rotated, i)}</button>`;
 const takePieceHtml = (width, height, i) => `<div class="piece" style="width: ${d(width / task.width)}; aspect-ratio: ${width} / ${height}; background-color: ${colors[i]}" data-i="${i}"></div>`;
-const takeCountHtml = (count) => `${valueHtml(count, 'шт')}`;
+const takeCountHtml = (count) => `${valueHtml(count, S.pcs)}`;
 
 const takeHtml = (width, height, rotated, count, i) => `<div class="take">
     ${takeCountHtml(count)}
@@ -1157,12 +1159,9 @@ const setTakes = () => {
         width, height, rotated, count
     }));
 
-    takeArea.innerHTML = takes.map(({
-                                        width,
-                                        height,
-                                        rotated,
-                                        count
-                                    }, i) => takeHtml(width, height, rotated, count, i)).join('');
+    takeArea.innerHTML = takes.map((
+        {width, height, rotated, count},
+        i) => takeHtml(width, height, rotated, count, i)).join('');
 
     takeArea.childNodes.forEach((q, i) => {
         q = q.children[1];
@@ -1919,18 +1918,18 @@ const calc = () => {
 }
 
 const statisticsPdf = () => `<table>
-    <thead><tr><th>Деталей</th><th>Площадь деталей</th><th>Площадь листов</th><th>Длина реза</th></tr></thead>
-    <tbody><td>${valuePdf(piecesCount, 'шт')}</td>
-    <td>${valuePdf((piecesArea / 1000000).toFixed(2), 'м²')}</td>
-    <td>${valuePdf((scrapsArea / 1000000).toFixed(2), 'м²')}</td>
-    <td>${valuePdf((cutsLength / 1000).toFixed(2), 'м')}</td></tbody></table>`
+    <thead><tr><th>${S.piecesCount}</th><th>${S.piecesArea}</th><th>${S.scrapsArea}</th><th>${S.cutsLength}</th></tr></thead>
+    <tbody><td>${valuePdf(piecesCount, S.pcs)}</td>
+    <td>${valuePdf((piecesArea / 1000000).toFixed(2), S.m2)}</td>
+    <td>${valuePdf((scrapsArea / 1000000).toFixed(2), S.m2)}</td>
+    <td>${valuePdf((cutsLength / 1000).toFixed(2), S.m)}</td></tbody></table>`
 
 
 // 4.1. Загрузка
 
-const cuttingsPdf = (task) => getCuts().map(toScale).map(({
-                                                              w, h, drops, drags
-                                                          }) => `<div class="break block"><div class="page">${task}${cuttingPdf(w, h, drops, drags)}${takesPdf(drags)}</div></div>`).join('\n');
+const cuttingsPdf = (task) => getCuts().map(toScale).map((
+    {w, h, drops, drags}
+) => `<div class="break block"><div class="page">${task}${cuttingPdf(w, h, drops, drags)}${takesPdf(drags)}</div></div>`).join('\n');
 
 const getScalePdf = () => Math.min(A.width / task.width, A.height / task.height);
 
@@ -1941,7 +1940,7 @@ const scrapsPdf = () => {
     }).map(scrapPdf).join('\n')
 
     return scraps && `<table>
-    <thead><tr><th>Длина</th><th>Ширина</th><th>Отступ</th><th>Кол-во</th><th>Лист</th></tr></thead>
+    <thead><tr><th>${S.length}</th><th>${S.width}</th><th>${S.edge}</th><th>${S.quantity}</th><th>${S.sheet}</th></tr></thead>
     <tbody>${scraps}</tbody></table>`;
 }
 
@@ -1949,7 +1948,7 @@ const edgingsPdf = () => {
     const edgings = task.edgings.filter(q => q && edgingLengths[q.line]).map(edgingPdf).join('\n');
 
     return edgings && `<table>
-    <thead><tr><th>Линия</th><th>Толщина</th><th>Длина</th><th>Кромка</th></tr></thead>
+    <thead><tr><th>${S.line}</th><th>${S.thickness}</th><th>${S.length}</th><th>${S.edging}</th></tr></thead>
     <tbody>${edgings}</tbody></table>`;
 }
 
@@ -1957,7 +1956,7 @@ const rollsPdf = () => {
     const rolls = task.rolls.filter(Boolean).map(rollPdf).join('\n');
 
     return rolls && `<table>
-    <thead><tr><th>Кромка</th><th>Внутри</th><th>Снаружи</th><th>Длина</th><th>Рулон</th></tr></thead>
+    <thead><tr><th>${S.edging}</th><th>${S.inner}</th><th>${S.outer}</th><th>${S.length}</th><th>${S.roll}</th></tr></thead>
     <tbody>${rolls}</tbody></table>`;
 }
 
@@ -1965,8 +1964,8 @@ const piecesPdf = () => {
     const t = pieces.map(piecePdf).join('\n');
 
     return t && `<div class="table"><table>
-    <thead><tr><th>#</th><th>Длина</th><th>Ширина</th><th>Кол-во</th>
-    <th>Пов-от</th><th>Деталь</th><th>Доп.об.</th></tr></thead>
+    <thead><tr><th>#</th><th>${S.length}</th><th>${S.width}</th><th>${S.quantity}</th>
+    <th>${S.rotation}</th><th>${S.piece}</th><th>${S.extra}</th></tr></thead>
     <tbody>${t}</tbody></table></div>`;
 }
 
@@ -1983,14 +1982,14 @@ const getLogo = () => `<div class="logo">
 
 const getSigns = (logo) => `<div class="task">
     <div class="signs">
-        <div class="sign"><span class="gray">Заказ:</span><span>${task.title || ''}</span></div>
-        <div class="sign"><span class="gray">Начало:</span><span>${toDate(task.start)}</span></div>
-        <div class="sign"><span class="gray">Завершение:</span><span>${toDate(task.finish)}</span></div>
+        <div class="sign"><span class="gray">${S.task}:</span><span>${task.title || ''}</span></div>
+        <div class="sign"><span class="gray">${S.start}:</span><span>${toDate(task.start)}</span></div>
+        <div class="sign"><span class="gray">${S.finish}:</span><span>${toDate(task.finish)}</span></div>
         ${logo}
     </div>
     <div class="signs">
         <div class="sign"><span class="gray">Материал:</span>${task.material || ''}<span id="material"></span></div>
-        <div class="sign"><span class="gray">Толщина:</span><span>${task.sheet.depth || ''} мм</span></div>
+        <div class="sign"><span class="gray">Толщина:</span><span>${task.sheet.depth || ''} ${S.mm}</span></div>
     </div>
 </div>`
 
@@ -2048,7 +2047,7 @@ const piecePdf = ({width, height, count, rotated, text, extra, edging}, i) => `<
 const edgingPdf = ({line, thick, text, length}, i) => `<tr>
     <td>${linePdf(line)}</td>
     <td>${thick}</td>
-    <td class="data">${valuePdf((edgingLengths[line] / 1000).toFixed(1), 'м')}</td>
+    <td class="data">${valuePdf((edgingLengths[line] / 1000).toFixed(1), S.m)}</td>
     <td class="name">${text || ""}</td>
 </tr>`;
 
@@ -2056,14 +2055,14 @@ const rollPdf = ({line, inner, outer, length}) => `<tr>
     <td>${linePdf(line)}</td>
     <td>${inner}</td>
     <td>${outer}</td>
-    <td class="data">${valuePdf((length / 1000).toFixed(1), 'м')}</td>
+    <td class="data">${valuePdf((length / 1000).toFixed(1), S.m)}</td>
     <td class="name"></td>
 </tr>`;
 
 const scrapPdf = ({width, height, edge, count, text}) => `<tr>
     <td>${width}</td>
     <td>${height}</td>
-    <td>${valuePdf(edge, 'мм')}</td>
+    <td>${valuePdf(edge, S.mm)}</td>
     <td>${count}</td>
     <td class="name">${text || ""}</td>
 </tr>`;
@@ -2144,10 +2143,9 @@ const toCount = (t) => {
 
 const takesPdf = (drags) => {
     const takes = toCount(drags).map(([i, count]) => takePdf(+i, count)).join('\n');
-    const n = isIOS ? 'Кол.' : 'Кол-во';
 
     return `<div class="takes"><table>
-    <thead><tr><th>#</th><th>Длина</th><th>Ширина</th><th>${n}</th></tr></thead>
+    <thead><tr><th>#</th><th>${S.length}</th><th>${S.width}</th><th>${S.quantity}</th></tr></thead>
     <tbody>${takes}</tbody>
 </table></div>`;
 }
@@ -2174,17 +2172,11 @@ const toScale = ({width, height, drops, drags}) => ({
 
 // 5. Автоматический раскрой
 
-const takesRect = () => takes.filter(({count}) => count > 0).map(({
-                                                                      width,
-                                                                      height,
-                                                                      rotated,
-                                                                      count
-                                                                  }) => [width + task.kerf, height + task.kerf, rotated, count]);
+const takesRect = () => takes.filter(({count}) => count > 0).map(
+    ({width, height, rotated, count}) => [width + task.kerf, height + task.kerf, rotated, count]);
 
-const dropsRect = () => zones.flatMap(({drops}) => drops.filter(({busy}) => busy === false)).map(({
-                                                                                                      width,
-                                                                                                      height
-                                                                                                  }) => [width + task.kerf, height + task.kerf]);
+const dropsRect = () => zones.flatMap(({drops}) => drops.filter(({busy}) => busy === false)).map(
+    ({width, height}) => [width + task.kerf, height + task.kerf]);
 
 // 5.1 Раскрой на клиенте
 
@@ -2426,6 +2418,10 @@ const fastCut = (drops, takes, n = 7) => {
         if (src.length > n) src.length = n;
     }
     const rects = src[0].rects;
+    console.log('rects');
+    console.log(rects);
+    console.log('drops');
+    console.log(drops);
     addRects(rects, drops);
 }
 
@@ -2674,15 +2670,6 @@ const blurAutoSave = async (update) => {
 
 const getRollLength = (inner, outer, thick) => Math.floor(Math.PI * (outer * outer - inner * inner) / 4 / thick);
 
-// Начальная загрузка
-
-(function () {
-    loadTheme();
-    loadTasks();
-
-    tasksList.innerHTML = tasks.map(q => `<li id="${q.id}" onclick="toTask(event)" >${getTaskTitle(q)}</li>`).join('\n');
-})();
-
 // 6. Подсказки
 
 const closeTipButton = document.getElementById('close-tip');
@@ -2717,6 +2704,50 @@ document.addEventListener('keydown', (event) => {
 
 // 7. Печать на iphone
 
-const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const setPrint = () => {
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (isIOS) htmlElement.style.setProperty('--size', '284mm');
+}
 
-if (isIOS) htmlElement.style.setProperty('--size', '284mm');
+// 8. Сохранение раскроя
+
+const saveCutting = () => {
+    task.zones = zones.map(({width, height, drags, drops}) => {
+        const drop = drops[0];
+        return {
+            key: drop.width + ' ' + drop.height,
+            drags: drags
+                .filter(({html}) => html)
+                .map(({left, top, width, height, rotated, take}) => [
+                    left - drop.left, top - drop.top, width, height, rotated, take
+                ]),
+            drops: drops
+                .filter(({html}) => html)
+                .map(({left, top, width, height, busy}) => [
+                    left - drop.left, top - drop.top, width, height, busy
+                ])
+        }
+    });
+    task.takes = takes.map(({width, height, rotated}) => [width, height, rotated]);
+}
+
+const loadCutting = () => {
+    // сопоставить детали из takes и task.takes с учетом количества
+    for (zone of zones) {
+        const drop = zone.drops[0];
+        const key = drop.width + ' ' + drop.height;
+        // найти зону с тем же key из task.zones и если деталей хватает
+        // если зона найдена, то распределить детали и обновить их остатки
+        // а зону из task.zones пометить использованной
+    }
+}
+
+// Начальная загрузка
+
+    (function () {
+        loadTheme();
+        setLanguage();
+        loadTasks();
+        setTasks();
+        setPrint();
+    })();
