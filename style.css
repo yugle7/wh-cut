@@ -727,6 +727,10 @@ input[type="text"] {
     width: 100%;
 }
 
+input[type="search"]::-webkit-search-cancel-button {
+    display: none;
+}
+
 .fade {
     opacity: 0.5;
 }
