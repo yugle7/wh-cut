@@ -34,7 +34,7 @@ cd ~/android/wh-cut
 1. Обновить версию:
 
 ```bash
-bubblewrap update --appVersionName="1.0.1"
+bubblewrap update --appVersionName="1.0.2"
 ```
 
 `versionCode` увеличится автоматически.
