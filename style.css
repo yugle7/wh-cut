@@ -130,21 +130,28 @@ button {
     justify-content: space-between;
 }
 
-#say-thank {
-    padding: 25px;
+.link {
+    padding: 14px 16px 16px 14px;
+
     color: gray;
     font-size: 14px;
 }
 
-#say-thank:hover {
+.link:hover {
     color: var(--yellow);
+}
+
+.ask {
+    position: fixed;
+    right: 0;
+    bottom: 0;
 }
 
 .content {
     width: 100%;
     max-width: 700px;
     margin: 0 auto;
-    padding: 10px;
+    padding: 10px 10px 70px;
 }
 
 button:focus {

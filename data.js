@@ -35,6 +35,7 @@ const defaultTask = {
 
 const translations = {
     ru: {
+        mailTo: "Написать мне",
         testTitle: 'Мой первый раскрой',
         testMaterial: 'Галечный',
 
@@ -127,6 +128,7 @@ const translations = {
     },
 
     en: {
+        mailTo: "Write to me",
         testTitle: 'My First Cutting Plan',
         testMaterial: 'Pebble',
 
