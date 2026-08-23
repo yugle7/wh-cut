@@ -6,6 +6,10 @@ const ALGO_URL = "https://d5d313gii5f4ak4h4arg.wnq2w1o5.apigw.yandexcloud.net";
 let S;
 
 const setLanguage = () => {
+    alert(JSON.stringify({
+        language: navigator.language,
+        languages: navigator.languages
+    }));
     const language = navigator.language?.toLowerCase().startsWith('ru') ? 'ru' : 'en';
     document.documentElement.lang = language;
     S = translations[language];
@@ -13,7 +17,6 @@ const setLanguage = () => {
     document.querySelectorAll('[data-i18n]').forEach(q => q.textContent = S[q.dataset.i18n]);
     document.querySelectorAll('[data-i18n-placeholder]').forEach(q => q.placeholder = S[q.dataset.i18nPlaceholder]);
     document.querySelectorAll('[data-i18n-title]').forEach(q => q.title = S[q.dataset.i18nTitle]);
-    document.querySelectorAll('[data-i18n-aria-label]').forEach(q => q.title = S[q.dataset.i18nAriaLabel]);
     document.querySelectorAll('[data-i18n-aria-label]').forEach(q => q.setAttribute('aria-label', S[q.dataset.i18nAriaLabel]));
 
     testTask.material = S.testMaterial;
