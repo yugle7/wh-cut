@@ -355,27 +355,32 @@ label[for="to-cutting"] {
     align-self: center;
 }
 
-#to-remove-task button {
-    padding: 10px;
-}
-
-#to-remove-task {
+.modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    max-width: 400px;
-    padding: 20px;
     height: 100%;
     z-index: 10;
     background: var(--bg-primary);
+
+}
+
+.modal > div {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: center;
     gap: 10px;
+    margin: auto;
 }
 
+.modal button {
+    padding: 10px;
+}
 
 /* Заголовки */
 

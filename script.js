@@ -728,7 +728,7 @@ removeTaskButton.onclick = () => {
     if (!task) return;
 
     if (task.pieces.some(Boolean) || task.scraps.some(Boolean)) {
-        toRemoveTaskPage.children[1].innerText = getTaskTitle(task);
+        toRemoveTaskPage.querySelector('[data-key="title"]').innerText = getTaskTitle(task);
         toRemoveTaskPage.classList.remove('hidden');
     } else {
         removeTask();
