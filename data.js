@@ -40,7 +40,7 @@ const translations = {
         testMaterial: "Галечный",
 
         support: "Сказать спасибо",
-        cutting: "Раскрой",
+        appName: "Раскрой",
         createTask: "Создать раскрой",
         material: "Материал",
 
@@ -133,7 +133,7 @@ const translations = {
         testMaterial: "Pebble",
 
         support: "Say thanks",
-        cutting: "Cutting Plans",
+        appName: "Cutting Planner",
         createTask: "Create cutting plan",
         material: "Material",
 
