@@ -30,7 +30,7 @@ const defaultTask = {
     scraps: [],
     rolls: [],
     edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.4}],
-    pieces: [],
+    pieces: []
 };
 
 const translations = {

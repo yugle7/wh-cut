@@ -217,6 +217,9 @@ let page = mainPage;
 let tasks = [];
 let task = null;
 
+let toLeft = true;
+let toTop = true;
+
 // 2. Параметры задачи
 
 let form = null;
@@ -310,7 +313,6 @@ const loadTasks = async () => {
         if (!tasks.length) tasks = [testTask];
 
         tasks.forEach((q, i) => q.id = i);
-        tasks.forEach(q => q.rolls = q.rolls || []);
 
         tasks.forEach(q => {
             q.scraps = q.scraps.filter(Boolean);
@@ -363,7 +365,10 @@ changeThemeButton.onclick = () => {
 
 // 2. Настройки задачи раскроя
 
-toSettingButton.onclick = () => changePage(settingPage);
+toSettingButton.onclick = () => {
+    changePage(settingPage);
+    saveCut();
+}
 
 let deleteButton;
 let createButton;
@@ -951,8 +956,8 @@ const saveTask = async () => {
     if (title !== document.title) {
         document.getElementById(task.id).innerText = document.title = title;
     }
-
 }
+
 
 const removeTask = async () => {
     document.getElementById(task.id).remove();
@@ -1222,10 +1227,7 @@ const createDrag = (drag) => {
     console.log('createDrag')
 
     const q = drag.html = document.createElement('DIV');
-    drag.toLeft = drag.toTop = true;
-
     setTake(drag);
-    drag.drop = zone.drops.length;
 
     q.dataset.i = zone.drags.length.toString();
     zone.drags.push(drag);
@@ -1403,7 +1405,7 @@ toCuttingButton.onclick = toCuttingButton.nextElementSibling.onclick = () => {
     if (cuttable) {
         clearCutting();
         changePage(cuttingPage);
-        overlayCut(fastCut);
+        loadCut() || overlayCut(fastCut);
     } else {
         toCuttingButton.firstElementChild.classList.remove('yellow');
         setTimeout(() => toCuttingButton.firstElementChild.classList.add('yellow'), 3000);
@@ -1528,10 +1530,10 @@ const sizeHtml = (width, height, w, h) => {
 const addDrop = (drop) => {
     const q = drop.html = document.createElement('DIV');
     q.classList.add('drop');
-    drop.busy = false;
 
     q.dataset.i = zone.drops.length.toString();
     zone.drops.push(drop);
+    drop.busy = false;
 
     q.style.left = p(drop.left / zone.width);
     q.style.top = p(drop.top / zone.height);
@@ -1547,11 +1549,11 @@ const addDrop = (drop) => {
 }
 
 const addRightDrop = () => {
-    const r = {width: drop.width - drag.width - task.kerf};
+    const r = {width: drop.width - drag.width - task.kerf, busy: false};
     if (r.width > 0) {
         r.height = drag.cutDirection ? drop.height : drag.height;
 
-        r.left = drag.toLeft ? drop.left + drag.width + task.kerf : drop.left;
+        r.left = toLeft ? drop.left + drag.width + task.kerf : drop.left;
         r.top = drag.cutDirection ? drop.top : drag.top;
 
         addDrop(r);
@@ -1559,7 +1561,7 @@ const addRightDrop = () => {
 }
 
 const addLeftDrop = () => {
-    const r = {height: drop.height - drag.height - task.kerf};
+    const r = {height: drop.height - drag.height - task.kerf, busy: false};
     if (r.height > 0) {
         r.width = drag.cutDirection ? drag.width : drop.width;
 
@@ -1573,8 +1575,8 @@ const addLeftDrop = () => {
 const addDrag = () => {
     console.log('addDrag')
 
-    drag.left = drag.toLeft ? drop.left : drop.left + drop.width - drag.width;
-    drag.top = drag.toTop ? drop.top : drop.top + drop.height - drag.height;
+    drag.left = toLeft ? drop.left : drop.left + drop.width - drag.width;
+    drag.top = toTop ? drop.top : drop.top + drop.height - drag.height;
 
     const q = drag.html;
     q.style.position = 'absolute';
@@ -1616,18 +1618,6 @@ const canDropDrag = () => {
     return false;
 }
 
-const findDropCorner = () => {
-    console.log('findDropCorner');
-
-    let r = drag.html.getBoundingClientRect();
-    const x = r.left + r.width / 2;
-    const y = r.top + r.height / 2;
-
-    r = drop.html.getBoundingClientRect();
-    drag.toLeft = true; // x - r.left <= r.right - x;
-    drag.toTop = true; // y - r.top <= r.bottom - y;
-}
-
 const dropDrag = (e) => {
     if (!move) return;
     console.log('dropDrag')
@@ -1644,7 +1634,6 @@ const dropDrag = (e) => {
     drop = zone.drops[drag.drop];
 
     if (canDropDrag()) {
-        findDropCorner();
         cutDrop();
     } else {
         cancelDrag();
@@ -1910,7 +1899,7 @@ const calc = () => {
 
     cutsLength = 0;
     scrapsArea = 0;
-    getCuts().forEach(({width, height, drags, drops}) => {
+    getCuttings().forEach(({width, height, drags, drops}) => {
         scrapsArea += width * height;
         drags.forEach(({html, width, height}) => html && html.isConnected && (cutsLength += width + height));
         drops.forEach(({html, width, height}) => html && html.isConnected && (cutsLength += width + height));
@@ -1927,14 +1916,14 @@ const statisticsPdf = () => `<table>
 
 // 4.1. Загрузка
 
-const cuttingsPdf = (task) => getCuts().map(toScale).map((
+const cuttingsPdf = (task) => getCuttings().map(toScale).map((
     {w, h, drops, drags}
 ) => `<div class="break block"><div class="page">${task}${cuttingPdf(w, h, drops, drags)}${takesPdf(drags)}</div></div>`).join('\n');
 
 const getScalePdf = () => Math.min(A.width / task.width, A.height / task.height);
 
 const scrapsPdf = () => {
-    const scraps = toCount(getCuts()).map(([i, count]) => {
+    const scraps = toCount(getCuttings()).map(([i, count]) => {
         const q = i < 0 ? task.sheet : task.scraps[i];
         return {...q, count};
     }).map(scrapPdf).join('\n')
@@ -2157,7 +2146,7 @@ const cuttingPdf = (w, h, drops, drags) => `<div class="cutting" style="${getSiz
      ${dropsPdf(drops)}
 </div>`;
 
-const getCuts = () => zones.filter(({drags}) => drags.some(q => q.html));
+const getCuttings = () => zones.filter(({drags}) => drags.some(q => q.html));
 
 const toScale = ({width, height, drops, drags}) => ({
     w: width * scalePdf,
@@ -2418,10 +2407,6 @@ const fastCut = (drops, takes, n = 7) => {
         if (src.length > n) src.length = n;
     }
     const rects = src[0].rects;
-    console.log('rects');
-    console.log(rects);
-    console.log('drops');
-    console.log(drops);
     addRects(rects, drops);
 }
 
@@ -2495,12 +2480,12 @@ const findVerticalCut = (rects) => findCut(rects.map(([left, top, width, height]
 
 const findHorizontalCut = (rects) => findCut(rects.map(([left, top, width, height]) => [top, top + height]).sort((a, b) => a[0] - b[0] || b[1] - a[1]));
 
-const asDrop = ([left, top, width, height], busy = false) => ({
+const asDrop = ([left, top, width, height], busy) => ({
     left: left + drop.left, top: top + drop.top, width: width - task.kerf, height: height - task.kerf, busy
 });
 
 const asDrag = ([l, t, w, h]) => ({
-    left: l + drop.left, top: t + drop.top, width: w - task.kerf, height: h - task.kerf
+    left: l + drop.left, top: t + drop.top, width: w - task.kerf, height: h - task.kerf, drop: zone.drops.length
 });
 
 const findDrag = ([left, top, width, height], rects) => {
@@ -2523,7 +2508,7 @@ const findDrag = ([left, top, width, height], rects) => {
 const addCut = (drop, rects, create = true) => {
     console.log('addCut')
     if (!rects.length) {
-        createDrop(asDrop(drop));
+        createDrop(asDrop(drop, false));
         return;
     }
     if (create) {
@@ -2711,43 +2696,92 @@ const setPrint = () => {
 
 // 8. Сохранение раскроя
 
-const saveCutting = () => {
-    task.zones = zones.map(({width, height, drags, drops}) => {
-        const drop = drops[0];
-        return {
-            key: drop.width + ' ' + drop.height,
-            drags: drags
-                .filter(({html}) => html)
-                .map(({left, top, width, height, rotated, take}) => [
-                    left - drop.left, top - drop.top, width, height, rotated, take
-                ]),
-            drops: drops
-                .filter(({html}) => html)
-                .map(({left, top, width, height, busy}) => [
-                    left - drop.left, top - drop.top, width, height, busy
-                ])
-        }
-    });
-    task.takes = takes.map(({width, height, rotated}) => [width, height, rotated]);
+const getKey = ({width, height, rotated}) => {
+    const r = rotated ? ' ' : '-';
+    return rotated && width < height ? height + r + width : width + r + height;
 }
 
-const loadCutting = () => {
-    // сопоставить детали из takes и task.takes с учетом количества
+const getCounter = () => new Proxy({}, {
+    get(obj, prop) {
+        if (!(prop in obj)) obj[prop] = 0;
+        return obj[prop];
+    }
+});
+
+const saveCut = () => {
+    console.log('saveCut');
+
+    task.cut = getCuttings().map(({drags, drops}) => {
+        drags = drags.filter(({html}) => html);
+
+        const drop = drops[0];
+        const l = drop.left;
+        const t = drop.top;
+
+        const keys = drags.map(({take}) => getKey(takes[take]));
+        const counts = getCounter();
+        keys.forEach(k => counts[k]++);
+
+        drops = drags.map(({drop}) => drops[drop]).concat(drops.filter(({busy}) => busy === false));
+        drops = drops.map(({left, top, width, height, busy}) => [left - l, top - t, width, height, busy])
+        drags = drags.map(({left, top, width, height}) => [left - l, top - t, width, height]);
+
+        return {key: getKey(drop), counts: Object.entries(counts), drags, drops}
+    });
+
+    if (task.cut.length === 0) delete task.cut;
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+const getCutting = (key, counts) => {
+    for (q of task.cut) {
+        if (q.key == key && q.counts.every(([k, c]) => c <= counts[k])) {
+            q.counts.forEach(([k, c]) => counts[k] -= c);
+            delete q.key;
+            return q;
+        }
+    }
+}
+
+const loadCut = () => {
+    if (!task.cut) return false;
+    console.log('loadCut');
+    let ok = false;
+
+    const counts = getCounter();
+    pieces.forEach(q => counts[getKey(q)] += q.count);
+
     for (zone of zones) {
         const drop = zone.drops[0];
-        const key = drop.width + ' ' + drop.height;
-        // найти зону с тем же key из task.zones и если деталей хватает
-        // если зона найдена, то распределить детали и обновить их остатки
-        // а зону из task.zones пометить использованной
+        const key = getKey(drop);
+
+        const cutting = getCutting(key, counts);
+        if (cutting) {
+            if (cutting.drags.length > 1) ok = true;
+
+            drop.html.remove();
+            zone.drops.length = 0;
+
+            const l = drop.left;
+            const t = drop.top;
+
+            cutting.drops.forEach(([left, top, width, height, busy]) =>
+                createDrop({left: left + l, top: top + t, width, height, busy})
+            );
+            cutting.drags.forEach(([left, top, width, height], i) =>
+                createDrag({left: left + l, top: top + t, width, height, drop: i})
+            );
+        }
     }
+    return ok;
 }
 
 // Начальная загрузка
 
-    (function () {
-        loadTheme();
-        setLanguage();
-        loadTasks();
-        setTasks();
-        setPrint();
-    })();
+(function () {
+    loadTheme();
+    setLanguage();
+    loadTasks();
+    setTasks();
+    setPrint();
+})();
