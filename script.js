@@ -6,10 +6,6 @@ const ALGO_URL = "https://d5d313gii5f4ak4h4arg.wnq2w1o5.apigw.yandexcloud.net";
 let S;
 
 const setLanguage = () => {
-    alert(JSON.stringify({
-        language: navigator.language,
-        languages: navigator.languages
-    }));
     const language = navigator.language?.toLowerCase().startsWith('ru') ? 'ru' : 'en';
     document.documentElement.lang = language;
     S = translations[language];
