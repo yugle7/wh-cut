@@ -1,4 +1,3 @@
-const DATA_URL = ""; // https://d5ds1trsppqs2rog97qd.cmxivbes.apigw.yandexcloud.net";
 const ALGO_URL = "https://d5d313gii5f4ak4h4arg.wnq2w1o5.apigw.yandexcloud.net";
 
 // Язык
@@ -302,23 +301,17 @@ const addTask = () => {
 // 1.2 Получение данных
 
 const loadTasks = async () => {
-    if (DATA_URL) {
-        const response = await fetch(DATA_URL);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        tasks = await response.json();
-    } else {
-        const t = localStorage.getItem('tasks');
-        tasks = t ? JSON.parse(t).filter(Boolean) : [];
-        if (!tasks.length) tasks = [testTask];
+    const t = localStorage.getItem('tasks');
+    tasks = t ? JSON.parse(t).filter(Boolean) : [];
+    if (!tasks.length) tasks = [testTask];
 
-        tasks.forEach((q, i) => q.id = i);
+    tasks.forEach((q, i) => q.id = i);
 
-        tasks.forEach(q => {
-            q.scraps = q.scraps.filter(Boolean);
-            q.edgings = q.edgings.filter(Boolean);
-            q.pieces = q.pieces.filter(Boolean);
-        });
-    }
+    tasks.forEach(q => {
+        q.scraps = q.scraps.filter(Boolean);
+        q.edgings = q.edgings.filter(Boolean);
+        q.pieces = q.pieces.filter(Boolean);
+    });
 };
 
 const setTasks = () => {
@@ -931,26 +924,12 @@ const toCreateItem = () => {
 // 2.10 Отправка и получение данных
 
 const loadTask = async (id) => {
-    if (DATA_URL) {
-        const url = new URL(DATA_URL);
-        url.searchParams.set("task_id", id)
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        task = await response.json();
-    } else {
-        task = tasks[id];
-    }
+    task = tasks[id];
 }
 
 const saveTask = async () => {
     console.log('saveTask');
-    if (DATA_URL) {
-        const url = new URL(DATA_URL);
-        url.searchParams.set("task", JSON.stringify(task))
-        await fetch(url);
-    } else {
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-    }
+    localStorage.setItem('tasks', JSON.stringify(tasks));
     const title = getTaskTitle(task);
     if (title !== document.title) {
         document.getElementById(task.id).innerText = document.title = title;
@@ -961,31 +940,17 @@ const saveTask = async () => {
 const removeTask = async () => {
     document.getElementById(task.id).remove();
     changePage(mainPage);
-    if (DATA_URL) {
-        const url = new URL(DATA_URL);
-        url.searchParams.set("task_id", '-' + task.id)
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    } else {
-        tasks[task.id] = null;
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-    }
+    tasks[task.id] = null;
+    localStorage.setItem('tasks', JSON.stringify(tasks));
     task = form = null;
 }
 
 const createTask = async () => {
-    if (DATA_URL) {
-        const url = new URL(DATA_URL);
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        task = await response.json();
-    } else {
-        task = structuredClone(defaultTask);
-        task.id = tasks.length
-        task.start = new Date().toISOString().slice(0, 10);
-        tasks.push(task);
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-    }
+    task = structuredClone(defaultTask);
+    task.id = tasks.length
+    task.start = new Date().toISOString().slice(0, 10);
+    tasks.push(task);
+    localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
 // 2.10 Изменения настроек
@@ -2611,20 +2576,7 @@ async function editTask(update) {
     const signal = abortController.signal;
 
     try {
-        if (DATA_URL) {
-            const response = await fetch(DATA_URL, {
-                method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(update)
-            });
-            if (!response.ok) {
-                console.error('updateTask: HTTP', response.status);
-                return false;
-            }
-            await response.json();
-            return true;
-        } else {
-            localStorage.setItem('tasks', JSON.stringify(tasks));
-        }
-
+        localStorage.setItem('tasks', JSON.stringify(tasks));
 
     } catch (error) {
         if (error.name === 'AbortError') {
