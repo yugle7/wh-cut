@@ -4,6 +4,9 @@ out
 src
 dst
 tmp
+dev
+feature_graphic
+screenshots
 .env
 .venv
 catboost_info
