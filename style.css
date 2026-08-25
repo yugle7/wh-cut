@@ -350,6 +350,7 @@ label[for="to-cutting"] {
 label[for="clear-cut"] > span {
     font-size: 16px !important;
     padding-top: 6px;
+    padding-bottom: 10px;
 }
 
 #remove-task {
