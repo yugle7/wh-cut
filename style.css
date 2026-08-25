@@ -347,6 +347,11 @@ label[for="to-cutting"] {
     padding: 10px 20px 10px 10px;
 }
 
+label[for="clear-cut"] > span {
+    font-size: 16px !important;
+    padding-top: 6px;
+}
+
 #remove-task {
     color: var(--red);
     padding: 10px;
