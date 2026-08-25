@@ -856,7 +856,7 @@ const toCreate = (e, toForm) => {
 // 2.9 Кнопки создания
 
 createScrapButton.onclick = addScrapButton.onclick = (e) => toCreate(e, toScrapForm);
-createEdgingButton.onclick = addEdgingButton.onclick = (e) => toCreate(e, toEdgingForm);
+createEdgingButton.onclick = addEdgingButton.onclick = (e) => edgingThicks.every(Boolean) || toCreate(e, toEdgingForm);
 createRollButton.onclick = addRollButton.onclick = (e) => toCreate(e, toRollForm);
 createPieceButton.onclick = addPieceButton.onclick = (e) => toCreate(e, toPieceForm);
 
