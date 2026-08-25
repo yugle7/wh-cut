@@ -98,6 +98,7 @@ const translations = {
         revert: "Вернуть",
         close: "Закрыть",
 
+        toCut: "Собрать раскрой",
         fastCut: "Раскроить",
         slowCut: "Улучшить раскрой",
         manualCut: "Пересобрать вручную",
@@ -191,6 +192,7 @@ const translations = {
         revert: "Revert",
         close: "Close",
 
+        toCut: "Go to layout",
         fastCut: "Create layout",
         slowCut: "Optimize cut",
         manualCut: "Manual cut",

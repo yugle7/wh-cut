@@ -27,6 +27,8 @@
     --saturation: 40%;
     --lightness: 40%;
     --drop-width: 0;
+
+    --border: var(--blue);
 }
 
 [data-theme="dark"] {
@@ -46,6 +48,8 @@
     --red-max: #e07468;
     --yellow: #d4b45f;
     --yellow-max: #e8c85a;
+
+    --border: var(--yellow);
 }
 
 * {
@@ -293,6 +297,7 @@ a, li {
 
 .yellow {
     stroke: var(--yellow);
+    color: var(--yellow);
 }
 
 .black {
@@ -353,12 +358,28 @@ label[for="clear-cut"] > span {
     padding-bottom: 10px;
 }
 
-#remove-task {
-    color: var(--red);
+.action {
     padding: 10px;
     font-size: 16px;
-    width: fit-content !important;
-    align-self: center;
+}
+
+
+.button {
+    border-color: var(--border);
+    color: var(--border);
+    border: 2px solid;
+    padding: 15px 20px;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    width: 100%;
+    opacity: 0.9;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.button:hover {
+    opacity: 1;
+    transform: scale(1.01);
 }
 
 .modal {
@@ -595,28 +616,6 @@ svg {
     padding-bottom: 10px;
 }
 
-
-#create-task {
-    display: block;
-    opacity: 1;
-    padding: 16px 32px;
-    font-size: 1.1rem;
-    text-align: center;
-    width: 100%;
-    background: var(--green);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    transition: all 0.3s;
-}
-
-
-#create-task:hover {
-    background: var(--green-max);
-    transform: scale(1.01);
-}
-
-
 select {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -785,8 +784,16 @@ li > button {
     padding: 10px 20px;
 }
 
+.setting {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
 #task-title {
-    /*width: fit-content;*/
     width: max-content;
     display: inline-block;
     min-width: 100px;

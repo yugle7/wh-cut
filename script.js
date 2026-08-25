@@ -37,9 +37,8 @@ const sun = changeThemeButton.firstElementChild;
 // 2. Навигация
 
 const toMainButton = document.getElementById("to-main");
-const toSettingButton = document.getElementById("to-setting");
-const toCuttingButton = document.getElementById("to-cutting");
-const toCuttingLabel = toCuttingButton.nextElementSibling;
+const toSettingIcon = document.getElementById("to-setting");
+const toCuttingIcon = document.getElementById("to-cutting");
 
 // 3. Настройки задачи раскроя
 
@@ -49,6 +48,9 @@ const removeTaskButton = document.getElementById("remove-task");
 const yesRemoveTaskButton = document.getElementById("yes-remove-task");
 const noRemoveTaskButton = document.getElementById("no-remove-task");
 const toRemoveTaskPage = document.getElementById("to-remove-task");
+
+const toCuttingLabel = toCuttingIcon.nextElementSibling;
+const toCuttingButton = removeTaskButton.previousElementSibling;
 
 // 3.1 Задача
 
@@ -357,7 +359,7 @@ changeThemeButton.onclick = () => {
 
 // 2. Настройки задачи раскроя
 
-toSettingButton.onclick = () => {
+toSettingIcon.onclick = () => {
     changePage(settingPage);
     saveCut();
 }
@@ -1360,10 +1362,16 @@ let cuttable;
 const canCut = () => {
     console.log('canCut');
     cuttable = task.pieces.some(Boolean) && (task.scraps.some(Boolean) || (task.sheet.width && task.sheet.height));
-    cuttable ? toCuttingLabel.classList.remove('hidden') : toCuttingLabel.classList.add('hidden')
+    if (cuttable) {
+        toCuttingLabel.classList.remove('hidden')
+        toCuttingButton.classList.remove('hidden')
+    } else {
+        toCuttingLabel.classList.add('hidden')
+        toCuttingButton.classList.add('hidden')
+    }
 }
 
-toCuttingButton.onclick = toCuttingButton.nextElementSibling.onclick = () => {
+toCuttingIcon.onclick = toCuttingLabel.onclick = toCuttingButton.onclick = () => {
     toSave();
 
     if (cuttable) {
@@ -1371,8 +1379,8 @@ toCuttingButton.onclick = toCuttingButton.nextElementSibling.onclick = () => {
         changePage(cuttingPage);
         loadCut() || overlayCut(fastCut);
     } else {
-        toCuttingButton.firstElementChild.classList.remove('yellow');
-        setTimeout(() => toCuttingButton.firstElementChild.classList.add('yellow'), 3000);
+        toCuttingIcon.firstElementChild.classList.remove('yellow');
+        setTimeout(() => toCuttingIcon.firstElementChild.classList.add('yellow'), 3000);
     }
 }
 
