@@ -6,25 +6,44 @@
 
     <meta
         name="description"
-        content="Privacy Policy for Cutting Planner (Раскрой)"
+        content="Privacy Policy for Cutting Planner (whCut)"
     />
 
     <meta name="theme-color" content="#eae8e5"/>
 
-    <title>Privacy Policy — Cutting Planner</title>
+    <title>Privacy Policy for Cutting Planner (whCut)</title>
 
     <style>
         :root {
-            color-scheme: light;
             --bg: #f7f6f4;
-            --bg-secondary: #fcfbfa;
-            --text: #262728;
-            --text-secondary: #666;
-            --link: #4aaf8c;
+            --text: #4d5156;
+            --head: white;
+            --line: #e7e7e7;
+            --fade: #fafafa;
+
+            --green: #4aaf8c;
+            --blue: #7a82da;
+            --red: #c97b72;
+            --yellow: #c9a84c;
+
+            --accent: var(--blue);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #2a2a2a;
+                --text: #c8c8c8;
+                --head: #333333;
+                --line: #444444;
+                --fade: #363636;
+
+                --accent: var(--yellow);
+            }
         }
 
         * {
             box-sizing: border-box;
+            font-weight: normal;
         }
 
         html,
@@ -36,25 +55,14 @@
         body {
             background: var(--bg);
             color: var(--text);
-            font-family:
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                Roboto,
-                sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             line-height: 1.6;
         }
 
         main {
             width: min(720px, calc(100% - 32px));
             margin: 0 auto;
-            padding: 40px 0 60px;
-        }
-
-        article {
-            background: var(--bg-secondary);
-            padding: 28px;
-            border-radius: 16px;
+            padding: 40px 0;
         }
 
         h1 {
@@ -65,7 +73,7 @@
 
         h2 {
             margin: 28px 0 10px;
-            font-size: 19px;
+            font-size: 22px;
             line-height: 1.3;
         }
 
@@ -73,25 +81,96 @@
             margin: 10px 0;
         }
 
+        ul {
+            margin: 10px 0;
+            padding-left: 24px;
+        }
+
         .updated {
-            color: var(--text-secondary);
+            opacity: .7;
             font-size: 14px;
             margin-bottom: 28px;
         }
 
         a {
-            color: var(--link);
+            color: var(--accent);
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                color-scheme: dark;
-                --bg: #2a2b2c;
-                --bg-secondary: #464748;
-                --text: #f2f2f2;
-                --text-secondary: #bbb;
-                --link: #72c6a6;
+        article {
+            padding: 20px;
+        }
+
+        @media (max-width: 600px) {
+            main {
+                width: min(100% - 20px, 720px);
+                padding: 40px 0;
             }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            body {
+                padding-top: 24px;
+            }
+        }
+
+        nav {
+            position: fixed;
+            right: 10px;
+            top: 0;
+            z-index: 9999;
+        }
+
+        button {
+            font: inherit;
+            border: 0;
+            background: none;
+            color: inherit;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            padding: 10px;
+        }
+
+        #back {
+            position: fixed;
+            top: 8px;
+            left: 10px;
+            z-index: 9999;
+
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: var(--accent);
+            opacity: 0.6;
+            color: var(--bg);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+            text-decoration: none;
+            transition: background 0.2s ease, transform 0.15s ease;
+        }
+
+        button:active {
+            transform: scale(0.92);
+        }
+
+        .selected {
+            color: var(--accent);
+        }
+
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
@@ -99,50 +178,97 @@
 <body>
 
 <main>
-    <article>
+    <button id="back" onclick="goBack()" aria-label="Back">
+        <svg
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        >
+            <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+    </button>
 
+    <nav>
+        <button class="selected" data-id="eng">Eng</button>
+        <button data-id="rus">Рус</button>
+    </nav>
+
+    <article id="eng">
         <h1>Privacy Policy</h1>
 
         <div class="updated">
-            Cutting Planner (Раскрой)
+            Cutting Planner (whCut)
         </div>
 
         <p>
-            This Privacy Policy explains how the Cutting Planner
+            This Privacy Policy explains how the Cutting Planner (whCut)
             application handles user data.
         </p>
-
 
         <h2>1. Information Stored on Your Device</h2>
 
         <p>
-            Cutting Planner does not require user registration.
+            Cutting Planner does not require registration or a user account.
         </p>
 
         <p>
-            Cutting plans and application data, including task names,
-            sheet dimensions, part dimensions, quantities, offcuts,
-            edge banding, rolls and other cutting parameters, are
-            stored locally on your device.
+            All information entered into the application is stored
+            locally on your device. This may include:
+        </p>
+
+        <ul>
+            <li>cutting plans and task names;</li>
+            <li>sheet dimensions;</li>
+            <li>part dimensions and quantities;</li>
+            <li>offcuts;</li>
+            <li>edge banding, rolls, and other cutting parameters;</li>
+            <li>notes and other information you choose to enter.</li>
+        </ul>
+
+        <p>
+            The application can operate offline, except when you request
+            an automatic cutting calculation.
         </p>
 
         <p>
-            The developer does not require or maintain a user account
-            for the application.
+            The developer does not have access to information stored
+            locally in the application.
         </p>
 
-
-        <h2>2. Cutting Calculations</h2>
+        <h2>2. Data Collection and Analytics</h2>
 
         <p>
-            Cutting Planner can use a remote calculation service to
-            generate optimized cutting plans.
+            Cutting Planner does not intentionally collect personal data.
+        </p>
+
+        <p>
+            The application does not use analytics, advertising trackers,
+            or user profiling.
+        </p>
+
+        <p>
+            The application does not intentionally send your cutting plans,
+            task names, notes, or other locally stored information to the
+            developer or any third party, except for the calculation data
+            described in Section 3.
+        </p>
+
+        <h2>3. Cutting Calculations and Remote Service</h2>
+
+        <p>
+            Cutting Planner can use a remote calculation service to generate
+            optimized cutting plans.
         </p>
 
         <p>
             When you request an automatic cutting calculation, the
-            application sends the data required for the calculation
-            to a server hosted on Yandex Cloud.
+            application sends the data required for the calculation to a
+            server hosted on Yandex Cloud.
         </p>
 
         <p>
@@ -153,38 +279,30 @@
             <li>sheet dimensions;</li>
             <li>part dimensions;</li>
             <li>part quantities;</li>
-            <li>part rotation settings;</li>
+            <li>part rotation settings.</li>
         </ul>
 
         <p>
-            The calculation service processes this information to
-            calculate the requested cutting plan and returns the
-            calculation result to the application.
+            The calculation service processes this information to calculate
+            the requested cutting plan and returns the calculation result
+            to the application.
         </p>
 
         <p>
-            The application does not intentionally send your name,
-            email address, phone number, payment information, or
-            other directly identifying information as part of the
-            cutting calculation request.
-        </p>
-
-
-        <h2>3. Yandex Cloud</h2>
-
-        <p>
-            Cutting calculations are performed using a service hosted
-            on Yandex Cloud.
+            The application does not intentionally send your name, email
+            address, phone number, payment information, or other directly
+            identifying information as part of the cutting calculation
+            request.
         </p>
 
         <p>
-            Data transmitted to the calculation service is sent over
-            an encrypted HTTPS connection.
+            Data transmitted to the calculation service is sent over an
+            encrypted HTTPS connection.
         </p>
 
         <p>
             Yandex Cloud is a third-party infrastructure provider.
-            Its processing of data is subject to Yandex Cloud's
+            Its processing of technical data is subject to Yandex Cloud's
             applicable terms and policies.
         </p>
 
@@ -196,46 +314,48 @@
                 rel="noopener noreferrer"
             >
                 yandex.cloud
-            </a>.
+            </a>
         </p>
-
 
         <h2>4. Data Sharing</h2>
 
         <p>
-            The developer does not sell user data and does not use
-            cutting plan data for advertising or user profiling.
+            The developer does not sell user data and does not use cutting
+            plan data for advertising or user profiling.
         </p>
 
         <p>
-            Data required for automatic cutting calculations is
-            transmitted to the calculation service solely to provide
-            the requested functionality.
+            Data required for automatic cutting calculations is transmitted
+            to the calculation service solely to provide the requested
+            functionality.
         </p>
 
+        <p>
+            Because the application stores cutting plans and other entered
+            information locally and does not transmit them to the developer,
+            the developer does not have a copy of your locally stored data.
+        </p>
 
         <h2>5. Donations</h2>
 
         <p>
-            The application contains an optional "Say thanks" link
-            that allows users to voluntarily support the developer.
+            Cutting Planner contains an optional "Say thanks" link that
+            allows users to voluntarily support the developer.
         </p>
 
         <p>
-            The link opens a third-party payment service provided
-            by T-Bank.
+            When you select the link, the application opens a third-party
+            payment service provided by T-Bank.
         </p>
 
         <p>
-            The application does not collect or store payment card
-            details, bank account information, or other payment
-            information.
+            The application does not collect or store payment card details,
+            bank account information, or other payment information.
         </p>
 
         <p>
-            Any information processed by T-Bank when you use its
-            services is subject to T-Bank's own privacy policy and
-            terms.
+            Any information processed by T-Bank when you use its services
+            is subject to T-Bank's own privacy policy and terms.
         </p>
 
         <p>
@@ -248,7 +368,6 @@
             </a>
         </p>
 
-
         <h2>6. Data Security</h2>
 
         <p>
@@ -257,57 +376,333 @@
         </p>
 
         <p>
-            Data stored locally by the application is subject to the
-            security mechanisms provided by the operating system and
+            Data stored locally by the application is protected by the
+            security mechanisms provided by your operating system and
             browser.
         </p>
 
+        <p>
+            No method of electronic storage or transmission can be
+            guaranteed to be completely secure. Users should protect access
+            to their device and use the security features provided by their
+            operating system.
+        </p>
 
         <h2>7. Data Deletion</h2>
 
         <p>
-            Cutting plans and other application data stored locally
-            can be deleted by clearing the application's data or
-            uninstalling the application.
+            Your locally stored Cutting Planner data can be deleted using
+            the application's data reset functionality.
         </p>
 
         <p>
-            The application does not provide user accounts or a
-            developer-managed account database.
+            You can also delete the data by clearing the application's data
+            or uninstalling the application.
         </p>
 
+        <p>
+            Because the developer does not receive or store your locally
+            stored cutting plans or other entered information, there is no
+            developer-managed copy of this data to delete.
+        </p>
 
         <h2>8. Children's Privacy</h2>
 
         <p>
-            Cutting Planner is a general-purpose productivity tool
-            and is not specifically directed at children.
+            Cutting Planner is a general-purpose productivity and calculation
+            application and is not specifically directed at children.
         </p>
-
 
         <h2>9. Changes to This Privacy Policy</h2>
 
         <p>
-            This Privacy Policy may be updated if the application's
-            data handling practices change.
+            This Privacy Policy may be updated if the application's data
+            handling practices change.
         </p>
 
         <p>
             The latest version will always be available at this URL.
         </p>
 
-
         <h2>10. Contact</h2>
 
         <p>
             If you have questions about this Privacy Policy or the
-            application's handling of data, please contact the
-            developer using the contact information provided on the
-            application's Google Play listing.
+            application's handling of data, please contact the developer
+            using the contact information provided on the application's
+            Google Play listing.
+        </p>
+    </article>
+
+    <article id="rus" class="hidden">
+        <h1>Политика конфиденциальности</h1>
+
+        <div class="updated">
+            Это Раскрой (whCut)
+        </div>
+
+        <p>
+            Настоящая Политика конфиденциальности объясняет, как приложение
+            «Это Раскрой» обрабатывает пользовательские данные.
         </p>
 
+        <h2>1. Информация, хранящаяся на устройстве</h2>
+
+        <p>
+            Для работы «Это Раскрой» не требуется регистрация или учетная
+            запись.
+        </p>
+
+        <p>
+            Вся информация, введенная в приложение, хранится локально на
+            вашем устройстве. Она может включать:
+        </p>
+
+        <ul>
+            <li>планы раскроя и названия заданий;</li>
+            <li>размеры листов;</li>
+            <li>размеры и количества деталей;</li>
+            <li>обрезки;</li>
+            <li>кромку, рулоны и другие параметры раскроя;</li>
+            <li>заметки и другую информацию, которую вы решите добавить.</li>
+        </ul>
+
+        <p>
+            Приложение может работать в автономном режиме, за исключением
+            случаев, когда вы запрашиваете автоматический расчет раскроя.
+        </p>
+
+        <p>
+            Разработчик не имеет доступа к информации, хранящейся локально
+            в приложении.
+        </p>
+
+        <h2>2. Сбор данных и аналитика</h2>
+
+        <p>
+            «Это Раскрой» намеренно не собирает персональные данные.
+        </p>
+
+        <p>
+            Приложение не использует аналитику, рекламные трекеры или
+            профилирование пользователей.
+        </p>
+
+        <p>
+            Приложение намеренно не передает ваши планы раскроя, названия
+            заданий, заметки или другую локально хранящуюся информацию
+            разработчику или третьим лицам, за исключением данных для
+            расчета, описанных в разделе 3.
+        </p>
+
+        <h2>3. Расчет раскроя и удаленный сервис</h2>
+
+        <p>
+            «Это Раскрой» может использовать удаленный сервис расчета для
+            построения оптимизированных планов раскроя.
+        </p>
+
+        <p>
+            Когда вы запрашиваете автоматический расчет раскроя, приложение
+            отправляет данные, необходимые для расчета, на сервер,
+            размещенный в Yandex Cloud.
+        </p>
+
+        <p>
+            Эти данные могут включать:
+        </p>
+
+        <ul>
+            <li>размеры листов;</li>
+            <li>размеры деталей;</li>
+            <li>количества деталей;</li>
+            <li>настройки поворота деталей.</li>
+        </ul>
+
+        <p>
+            Сервис расчета обрабатывает эту информацию, чтобы рассчитать
+            запрошенный план раскроя, и возвращает результат расчета
+            в приложение.
+        </p>
+
+        <p>
+            Приложение намеренно не отправляет ваше имя, адрес электронной
+            почты, номер телефона, платежную информацию или другие
+            непосредственно идентифицирующие сведения в составе запроса
+            на расчет раскроя.
+        </p>
+
+        <p>
+            Данные, передаваемые в сервис расчета, отправляются по
+            зашифрованному соединению HTTPS.
+        </p>
+
+        <p>
+            Yandex Cloud является сторонним поставщиком инфраструктуры.
+            Обработка технических данных на его стороне регулируется
+            применимыми условиями и политиками Yandex Cloud.
+        </p>
+
+        <p>
+            Подробнее о Yandex Cloud можно узнать на
+            <a
+                href="https://yandex.cloud/"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                yandex.cloud
+            </a>
+        </p>
+
+        <h2>4. Передача данных</h2>
+
+        <p>
+            Разработчик не продает данные пользователей и не использует
+            данные планов раскроя для рекламы или профилирования
+            пользователей.
+        </p>
+
+        <p>
+            Данные, необходимые для автоматического расчета раскроя,
+            передаются в сервис расчета исключительно для предоставления
+            запрошенной функциональности.
+        </p>
+
+        <p>
+            Поскольку приложение хранит планы раскроя и другую введенную
+            информацию локально и не передает их разработчику,
+            у разработчика нет копии ваших локально хранящихся данных.
+        </p>
+
+        <h2>5. Пожертвования</h2>
+
+        <p>
+            В «Это Раскрой» присутствует необязательная ссылка
+            «Поблагодарить», позволяющая пользователям добровольно
+            поддержать разработчика.
+        </p>
+
+        <p>
+            При выборе этой ссылки приложение открывает сторонний платежный
+            сервис T-Bank.
+        </p>
+
+        <p>
+            Приложение не собирает и не хранит данные банковских карт,
+            банковских счетов или другую платежную информацию.
+        </p>
+
+        <p>
+            Любая информация, обрабатываемая T-Bank при использовании его
+            сервисов, регулируется собственной политикой конфиденциальности
+            и условиями T-Bank.
+        </p>
+
+        <p>
+            <a
+                href="https://www.tbank.ru/privacy/"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Политика конфиденциальности T-Bank
+            </a>
+        </p>
+
+        <h2>6. Безопасность данных</h2>
+
+        <p>
+            Данные, передаваемые между приложением и удаленным сервисом
+            расчета, отправляются по HTTPS.
+        </p>
+
+        <p>
+            Данные, хранящиеся локально в приложении, защищаются механизмами
+            безопасности, предоставляемыми операционной системой и браузером
+            вашего устройства.
+        </p>
+
+        <p>
+            Ни один способ электронного хранения или передачи данных не
+            может гарантировать абсолютную безопасность. Пользователь должен
+            защищать доступ к своему устройству и использовать
+            предусмотренные операционной системой средства безопасности.
+        </p>
+
+        <h2>7. Удаление данных</h2>
+
+        <p>
+            Ваши локально сохраненные данные «Это Раскрой» можно удалить
+            с помощью функции сброса данных в приложении.
+        </p>
+
+        <p>
+            Также данные можно удалить путем очистки данных приложения или
+            удаления приложения.
+        </p>
+
+        <p>
+            Поскольку разработчик не получает и не хранит ваши локально
+            сохраненные планы раскроя или другую введенную информацию,
+            отдельной копии этих данных на стороне разработчика не существует.
+        </p>
+
+        <h2>8. Конфиденциальность детей</h2>
+
+        <p>
+            «Это Раскрой» является приложением общего назначения для
+            расчетов и продуктивности и не предназначено специально для
+            детей.
+        </p>
+
+        <h2>9. Изменения в Политике конфиденциальности</h2>
+
+        <p>
+            Настоящая Политика конфиденциальности может обновляться при
+            изменении способов обработки данных приложением.
+        </p>
+
+        <p>
+            Актуальная версия Политики конфиденциальности всегда будет
+            доступна по этому URL.
+        </p>
+
+        <h2>10. Контакты</h2>
+
+        <p>
+            Если у вас есть вопросы о настоящей Политике конфиденциальности
+            или об обработке данных приложением, свяжитесь с разработчиком,
+            используя контактную информацию, указанную на странице приложения
+            в Google Play.
+        </p>
     </article>
 </main>
+
+<script>
+    function goBack() {
+        if (window.history.length > 1) {
+            window.history.back();
+            return;
+        }
+
+        window.location.href = 'https://yugle7.github.io/wh-cut/';
+    }
+
+    const nav = document.querySelector('nav');
+    let language = nav.firstElementChild;
+
+    nav.onclick = (e) => {
+        const button = e.target.closest('button');
+        if (!button || button === language) return;
+
+        language.classList.remove('selected');
+        document.getElementById(language.dataset.id).classList.add('hidden');
+
+        language = button;
+
+        document.getElementById(language.dataset.id).classList.remove('hidden');
+        language.classList.add('selected');
+    };
+</script>
 
 </body>
 </html>

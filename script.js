@@ -5,7 +5,7 @@ const ALGO_URL = "https://d5d313gii5f4ak4h4arg.wnq2w1o5.apigw.yandexcloud.net";
 let S;
 
 const setLanguage = () => {
-    const language = navigator.language?.toLowerCase().startsWith('ru') ? 'ru' : 'en';
+    const language = navigator.language?.toLowerCase().startsWith('en') ? 'ru' : 'en';
     document.documentElement.lang = language;
     S = translations[language];
 
@@ -145,6 +145,8 @@ const cuttingPage = document.getElementById("cutting");
 
 const fastCutButton = document.getElementById("fast-cut");
 const slowCutButton = document.getElementById("slow-cut");
+
+const clearCuttingButton = document.getElementById("clear-cutting");
 
 const downloadCuttingButton = document.getElementById("download-cutting");
 
@@ -2408,6 +2410,8 @@ slowCutButton.onclick = (e) => {
     clearCutting();
     overlayCut(slowCut);
 }
+
+clearCuttingButton.onclick = clearCutting;
 
 // 5.3 Отобразить раскрой
 
