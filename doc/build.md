@@ -19,6 +19,8 @@ https://USERNAME.github.io/PROJECT/
 ```bash
 rsvg-convert -w 192 -h 192 icon-maskable.svg -o icons/icon-192-maskable.png
 rsvg-convert -w 512 -h 512 icon-maskable.svg -o icons/icon-512-maskable.png
+rsvg-convert -w 192 -h 192 icon.svg -o icons/icon-192.png
+rsvg-convert -w 512 -h 512 icon.svg -o icons/icon-512.png
 ```
 
 
@@ -207,138 +209,6 @@ packageName: io.github.yugle7.whcut
 
 ---
 
-## 8. Загрузить AAB в Google Play
-
-Создать приложение в Google Play Console.
-
-Сначала использовать:
-
-```text
-Testing → Internal testing
-```
-
-Создать release и загрузить:
-
-```text
-app-release-bundle.aab
-```
-
-После загрузки Google Play использует **Google Play App Signing**.
-
----
-
-## 9. Получить Google Play App Signing SHA-256
-
-В новом интерфейсе:
-
-```text
-Protected with Play
-→ Play Store protection
-→ Manage Play App Signing
-```
-
-Найти:
-
-```text
-App signing key certificate
-→ SHA-256
-```
-
-Добавить этот fingerprint в `assetlinks.json`:
-
-```json
-"sha256_cert_fingerprints": [
-  "UPLOAD_KEY_SHA256",
-  "GOOGLE_PLAY_APP_SIGNING_SHA256"
-]
-```
-
-Закоммитить и запушить:
-
-```bash
-git add .well-known/assetlinks.json
-git commit -m "Update Digital Asset Links"
-git push
-```
-
----
-
-## 10. Проверить именно версию из Google Play
-
-Это важно.
-
-Установить приложение **из Internal testing**, а не APK вручную.
-
-Если всё правильно, приложение открывается **без адресной строки Chrome.**
-
-Если появляется адресная строка — проверить:
-
-```bash
-adb logcat -d | grep -i -E "OriginVerifier|digital_asset_links|assetlinks"
-```
-
-Ошибка:
-
-```text
-Statement failure matching fingerprint
-```
-
-означает проблему с SHA-256 в `assetlinks.json`.
-
----
-
-## 11. Если SHA всё равно непонятен
-
-Можно получить сертификат **реально установленного APK**:
-
-```bash
-adb shell pm path YOUR.APPLICATION.ID
-```
-
-Затем:
-
-```bash
-adb pull <путь_к_base.apk> ~/app.apk
-```
-
-И:
-
-```bash
-keytool -printcert -jarfile ~/app.apk
-```
-
-Полученный:
-
-```text
-SHA256:
-```
-
-должен присутствовать в `assetlinks.json`.
-
-Это особенно полезно, если Google Play использует другой signing certificate.
-
----
-
-## 12. После успешного Internal testing
-
-Заполнить Google Play:
-
-* Store listing;
-* описание;
-* иконку;
-* feature graphic;
-* screenshots;
-* категорию;
-* Content rating;
-* Data safety;
-* Privacy policy;
-* Target audience;
-* App access.
-
-Затем создать Production release.
-
----
-
 ### Самая короткая схема
 
 ```text
@@ -357,26 +227,6 @@ Bubblewrap
        │
        ▼
      AAB
-       │
-       ▼
-Google Play
-       │
-       └── App Signing SHA-256
-       │
-       ▼
-assetlinks.json
-       │
-       ▼
-https://DOMAIN/.well-known/assetlinks.json
-       │
-       ▼
-Android verification
-       │
-       ▼
-Trusted Web Activity
-       │
-       ▼
-Google Play
 ```
 
 **Ключевой нюанс, который стоит запомнить:** для PWA на `DOMAIN/PROJECT/` файл Digital Asset Links всё равно находится в **корне домена**:

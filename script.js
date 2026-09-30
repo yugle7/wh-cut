@@ -39,6 +39,7 @@ const sun = changeThemeButton.firstElementChild;
 const toMainButton = document.getElementById("to-main");
 const toSettingIcon = document.getElementById("to-setting");
 const toCuttingIcon = document.getElementById("to-cutting");
+const noCuttingTip = document.getElementById("no-cutting");
 
 // 3. Настройки задачи раскроя
 
@@ -144,9 +145,6 @@ const cuttingPage = document.getElementById("cutting");
 
 const fastCutButton = document.getElementById("fast-cut");
 const slowCutButton = document.getElementById("slow-cut");
-
-const clearCutButton = document.getElementById("clear-cut");
-const clearCutLabel = document.querySelector("label[for='clear-cut']");
 
 const downloadCuttingButton = document.getElementById("download-cutting");
 
@@ -413,11 +411,11 @@ const clearFields = () => form.querySelectorAll('input,textarea').forEach(q => q
 
 // 2.2 Заполнение полей задачи
 
-const getTaskTitle = ({title, material}) => title || material || '..';
+const getTaskTitle = ({title, material, finish, start}) => title || material || finish || start;
 
 const setTask = () => {
     taskTitleInput.value = task.title;
-    document.title = getTaskTitle(task);
+    document.title = task.title || 'whCut';
 
     sheetRotated = task.sheet.rotated;
 
@@ -724,26 +722,6 @@ const updatePieceItem = () => {
     };
 }
 
-// 2.7 Управление задачей
-
-removeTaskButton.onclick = () => {
-    if (!task) return;
-
-    if (task.pieces.some(Boolean) || task.scraps.some(Boolean)) {
-        toRemoveTaskPage.querySelector('[data-key="title"]').innerText = getTaskTitle(task);
-        toRemoveTaskPage.classList.remove('hidden');
-    } else {
-        removeTask();
-    }
-}
-
-yesRemoveTaskButton.onclick = () => {
-    toRemoveTaskPage.classList.add('hidden');
-    removeTask();
-}
-
-noRemoveTaskButton.onclick = () => toRemoveTaskPage.classList.add('hidden');
-
 // 2.8 Навигация по форме
 
 const updateLink = () => {
@@ -766,6 +744,11 @@ const createLink = (i, f) => {
     link.firstElementChild.onclick = (e) => toEdit(e, i, f);
 }
 
+const toCancel = () => {
+    form.remove();
+    form = null;
+}
+
 const toSave = () => {
     if (!form) return;
     console.log('toSave');
@@ -786,11 +769,13 @@ const toSave = () => {
     form = null;
 }
 
+
+
 const toDelete = (e) => {
-    // if (created) {
-    //     createButton.onclick(e);
-    //     return;
-    // }
+    if (created) {
+        toCancel();
+        return;
+    }
     e.preventDefault();
     e.stopPropagation();
 
@@ -941,6 +926,7 @@ const saveTask = async () => {
 
 const removeTask = async () => {
     document.getElementById(task.id).remove();
+    document.title = 'whCut';
     changePage(mainPage);
     tasks[task.id] = null;
     localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -1329,7 +1315,6 @@ const clearCutting = () => {
     setZones();
 
     slowCutButton.remove();
-    clearCutLabel.remove();
 }
 
 const cutOverlayScreen = document.getElementById('cut-overlay');
@@ -1350,7 +1335,6 @@ const overlayCut = (cut) => {
             cut(drops, takes);
             setTimeout(() => {
                 cuttingPage.style.gridTemplateRows = '1fr 6px auto';
-                takeArea.appendChild(clearCutLabel);
                 cutOverlayScreen.style.display = 'none';
             }, 0);
         });
@@ -1361,13 +1345,22 @@ let cuttable;
 
 const canCut = () => {
     console.log('canCut');
-    cuttable = task.pieces.some(Boolean) && (task.scraps.some(Boolean) || (task.sheet.width && task.sheet.height));
+
+    const hasPieces = task.pieces.some(Boolean);
+    const hasSheet = task.scraps.some(Boolean) || (task.sheet.width && task.sheet.height);
+
+    cuttable = hasPieces && hasSheet;
     if (cuttable) {
+        noCuttingTip.classList.add('hidden');
         toCuttingLabel.classList.remove('hidden')
         toCuttingButton.classList.remove('hidden')
     } else {
-        toCuttingLabel.classList.add('hidden')
+        if (!hasPieces) noCuttingTip.innerText = S.noPiecesTip;
+        else if (!hasSheet) noCuttingTip.innerText = S.noSheetTip;
+
+        toCuttingLabel.classList.add('hidden');
         toCuttingButton.classList.add('hidden')
+        noCuttingTip.classList.remove('hidden');
     }
 }
 
@@ -1708,7 +1701,6 @@ const incTakeCount = (take) => {
     console.log('incTakeCount')
     if (take.count === 0) {
         take.html.parentElement.classList.remove('hidden');
-        clearCutLabel.remove();
         slowCutButton.remove();
     }
     take.count++;
@@ -1773,11 +1765,14 @@ const toSelect = (q) => {
 
     if (selected) {
         selected.html.classList.remove('selected');
+        selected.html.innerHTML = '';
     }
     selected = selected === q ? null : q;
     if (selected) {
         selected.html.classList.add('selected');
+        selected.html.innerHTML = sizeHtml(selected.width, selected.height, selected.width * scaleHtml, selected.height * scaleHtml);
     }
+    rotatePieceButton.classList.toggle('hidden', !selected?.rotated);
     setCutDirectionButton();
 }
 
@@ -2414,8 +2409,6 @@ slowCutButton.onclick = (e) => {
     overlayCut(slowCut);
 }
 
-clearCutButton.onclick = () => clearCutting();
-
 // 5.3 Отобразить раскрой
 
 const setTake = (drag) => {
@@ -2621,19 +2614,19 @@ const tipOverlayScreen = document.getElementById('tip-overlay');
 
 const tipModal = document.getElementById('tip');
 
-const openTip = () => tipOverlayScreen.style.display = 'flex';
-
 for (const q of document.getElementsByClassName('to-tip')) {
     const tip = document.getElementById(q.id.slice(3));
     q.onclick = (e) => {
         e.stopPropagation();
+        tipOverlayScreen.classList.add('open')
         tipModal.appendChild(tip);
-        openTip();
+        tipModal.classList.add('open');
     };
 }
 
 const closeTip = () => {
-    tipOverlayScreen.style.display = 'none';
+    tipOverlayScreen.classList.remove('open');
+    tipModal.classList.remove('open');
     tipModal.lastElementChild.remove();
 }
 
@@ -2734,6 +2727,39 @@ const loadCut = () => {
     }
     return ok;
 }
+
+// Модальное окно
+
+const question = document.getElementById('question');
+const modal = document.getElementById('modal');
+
+const confirmAction = document.getElementById('confirm');
+const cancelAction = document.getElementById('cancel');
+
+cancelAction.onclick = () => {
+    modal.hidden = true;
+}
+
+modal.onclick = e => {
+    if (e.target === modal) modal.hidden = true;
+};
+
+removeTaskButton.onclick = () => {
+    if (!task) return;
+
+    if (task.pieces.some(Boolean) || task.scraps.some(Boolean)) {
+        question.innerText = S.removeTaskQuestion;
+        modal.hidden = false;
+    } else {
+        removeTask();
+    }
+}
+
+confirmAction.onclick = (e) => {
+    e.preventDefault();
+    modal.hidden = true;
+    removeTask();
+};
 
 // Начальная загрузка
 

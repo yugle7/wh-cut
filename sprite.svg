@@ -111,12 +111,12 @@
     </symbol>
 
     <!--Реакции-->
-    <symbol id="happy" viewBox="0 0 24 24">
+    <symbol id="sad" viewBox="0 0 24 24">
         <circle cx="7" cy="4" r="1"/>
         <circle cx="17" cy="4" r="1"/>
         <path d="M 2 16 Q 12 11 22 16"/>
     </symbol>
-    <symbol id="sad" viewBox="0 0 24 24">
+    <symbol id="happy" viewBox="0 0 24 24">
         <circle cx="7" cy="4" r="1"/>
         <circle cx="17" cy="4" r="1"/>
         <path d="M 2 13 Q 12 18 22 13"/>

@@ -321,6 +321,7 @@
         </button>
 
         <label for="to-cutting" class="right" data-i18n="fastCut"></label>
+        <span id="no-cutting" class="right small red"></span>
     </nav>
 
     <div class="hidden">
@@ -622,10 +623,10 @@
                 <use href="sprite.svg#download"></use>
             </svg>
         </button>
-
         <label for="download-cutting" class="hidden"></label>
 
-        <button id="rotate-piece" class="right">
+        <span class="right"></span>
+        <button id="rotate-piece">
             <svg>
                 <use href="sprite.svg#rotate"></use>
             </svg>
@@ -648,6 +649,12 @@
                 <use href="sprite.svg#clear"></use>
             </svg>
         </button>
+
+        <button id="to-cut-tip" class="to-tip">
+            <svg class="blue">
+                <use href="sprite.svg#tip"></use>
+            </svg>
+        </button>
     </nav>
 
     <button id="slow-cut" class="eye hidden" data-i18n="slowCut"></button>
@@ -661,40 +668,37 @@
 
 <div id="tip-overlay">
     <div id="tip">
-        <button id="close-tip" data-i18n-aria-label="close">
-            <svg class="menu">
-                <use href="sprite.svg#x"></use>
-            </svg>
-        </button>
+        <button id="close-tip" class="yellow">OK</button>
     </div>
 </div>
 
+<div id="modal" hidden>
+    <div class="dialog" role="dialog" aria-modal="true">
+        <p id="question"></p>
+        <div class="actions">
+            <button id="confirm" data-i18n="yes"></button>
+            <button id="cancel" data-i18n="no"></button>
+        </div>
+    </div>
+</div>
+
+
 <div class="hidden">
-    <label for="clear-cut" class="row">
-        <span data-i18n="manualCut"></span>
-
-        <button id="to-cut-tip" class="to-tip">
-            <svg class="blue">
-                <use href="sprite.svg#tip"></use>
-            </svg>
-        </button>
-    </label>
-
     <section id="cut-tip">
-        <p>
-            <svg>
-                <use href="sprite.svg#direction"></use>
-            </svg>
-            —
-            <span data-i18n="cutTipDirection"></span>
-        </p>
-
         <p>
             <svg>
                 <use href="sprite.svg#rotate"></use>
             </svg>
             —
             <span data-i18n="cutTipRotate"></span>
+        </p>
+
+        <p>
+            <svg>
+                <use href="sprite.svg#direction"></use>
+            </svg>
+            —
+            <span data-i18n="cutTipDirection"></span>
         </p>
 
         <p>

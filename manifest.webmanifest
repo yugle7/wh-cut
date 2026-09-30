@@ -1,7 +1,16 @@
 {
   "id": "/wh-cut/",
-  "name": "Раскрой",
+  "name": "whCut",
+  "name_localized": {
+    "ru": "Это раскрой",
+    "en": "Cutting Planner"
+  },
   "short_name": "whCut",
+  "description": "Automatic and manual cutting of laminated chipboard and other sheet materials for furniture makers and cutters.",
+  "description_localized": {
+    "ru": "Автоматический и ручной раскрой ЛДСП и других листовых материалов для мебельщиков и раскройщиков.",
+    "en": "Automatic and manual cutting of laminated chipboard and other sheet materials for furniture makers and cutters."
+  },
   "description": "Автоматический и ручной раскрой ЛДСП и других листовых материалов для мебельщиков и раскройщиков.",
   "scope": "/wh-cut/",
   "start_url": "/wh-cut/",
@@ -36,72 +45,6 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "/wh-cut/screenshots/main.webp",
-      "type": "image/webp",
-      "sizes": "750x1334",
-      "form_factor": "narrow",
-      "platform": "play",
-      "label": "Выбор и создание раскроя"
-    },
-    {
-      "src": "/wh-cut/screenshots/setting.webp",
-      "type": "image/webp",
-      "sizes": "750x1334",
-      "form_factor": "narrow",
-      "platform": "play",
-      "label": "Настройки раскроя"
-    },
-    {
-      "src": "/wh-cut/screenshots/pieces.webp",
-      "type": "image/webp",
-      "sizes": "750x1334",
-      "form_factor": "narrow",
-      "platform": "play",
-      "label": "Список деталей"
-    },
-    {
-      "src": "/wh-cut/screenshots/edit.webp",
-      "type": "image/webp",
-      "sizes": "750x1334",
-      "form_factor": "narrow",
-      "platform": "play",
-      "label": "Изменение детали"
-    },
-    {
-      "src": "/wh-cut/screenshots/cutting.webp",
-      "type": "image/webp",
-      "sizes": "750x1334",
-      "form_factor": "narrow",
-      "platform": "play",
-      "label": "Автоматический раскрой"
-    },
-    {
-      "src": "/wh-cut/screenshots/cut.webp",
-      "type": "image/webp",
-      "sizes": "750x1334",
-      "form_factor": "narrow",
-      "platform": "play",
-      "label": "Ручной раскрой"
-    },
-    {
-      "src": "/wh-cut/screenshots/tips.webp",
-      "type": "image/webp",
-      "sizes": "750x1334",
-      "form_factor": "narrow",
-      "platform": "play",
-      "label": "Управление раскроем"
-    },
-    {
-      "src": "/wh-cut/screenshots/print.webp",
-      "type": "image/webp",
-      "sizes": "750x1334",
-      "form_factor": "narrow",
-      "platform": "play",
-      "label": "Печать результата"
     }
   ],
   "prefer_related_applications": false

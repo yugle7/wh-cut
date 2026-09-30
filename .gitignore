@@ -5,6 +5,7 @@ src
 dst
 tmp
 dev
+doc
 feature_graphic
 screenshots
 .env

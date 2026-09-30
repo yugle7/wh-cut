@@ -92,6 +92,7 @@ const translations = {
         extra: "Доп.об.",
 
         deleteTask: "Удалить задание",
+        cancel: "Отмена",
 
         save: "Сохранить",
         delete: "Удалить",
@@ -102,6 +103,9 @@ const translations = {
         fastCut: "Раскроить",
         slowCut: "Улучшить раскрой",
         manualCut: "Пересобрать вручную",
+
+        noPiecesTip: "Нет деталей",
+        noSheetTip: "Не задан лист",
 
         cutTipDirection: "задает направление волокон для новых деталей. Если выбрана деталь, меняет направление реза только у нее",
         cutTipRotate: "поворачивает выбранную деталь на 90°, если для нее разрешен поворот",
@@ -185,6 +189,10 @@ const translations = {
         extra: "Extra",
 
         deleteTask: "Delete task",
+        cancel: "Cancel",
+
+        noPiecesTip: "Details are missing",
+        noSheetTip: "Sheet is not specified",
 
         add: "Add",
         save: "Save",

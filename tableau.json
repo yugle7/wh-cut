@@ -1,6 +1,8 @@
 {
   "version": "0.1",
   "api_version": 1,
+  "name": "Cutting Planner",
+  "short_name": "whCut",
   "layout": {
     "logo": "https://yugle7.github.io/wh-cut/icons/icon-192.png",
     "color": "#262728",

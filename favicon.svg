@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="3" stroke-linecap="round"
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="4" stroke-linecap="round"
      stroke-linejoin="round" viewBox="0 0 48 48">
     <rect x="8" y="8" width="32" height="32" rx="4" ry="4" stroke="#4aaf8c" />
     <rect x="8" y="8" width="32" height="32" rx="4" ry="4" stroke="#7a82da" stroke-dasharray="37 100" stroke-dashoffset="-38" />
