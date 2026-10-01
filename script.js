@@ -1651,8 +1651,9 @@ const rotatePiece = (i) => {
     console.log('rotatePiece');
 
     take = takes[i];
-    if (selected !== take) toSelect(take);
+    toSelect(null);
     toRotateTake();
+    toSelect(take);
 }
 
 const changeCutDirection = () => {
@@ -1774,7 +1775,7 @@ const toSelect = (q) => {
         selected.html.classList.add('selected');
         selected.html.innerHTML = sizeHtml(selected.width, selected.height, selected.width * scaleHtml, selected.height * scaleHtml);
     }
-    rotatePieceButton.classList.toggle('hidden', !selected?.rotated);
+    selected && rotatePieceButton.classList.toggle('hidden', !selected.rotated);
     setCutDirectionButton();
 }
 
