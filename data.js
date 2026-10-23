@@ -6,8 +6,8 @@ const testTask = {
     sheet: {width: 2800, height: 2070, edge: 10, depth: 12, rotated: false},
     scraps: [],
     edgings: [
-        {line: 0, thick: 2},
-        {line: 1, thick: 0.4}
+        {line: 0, thick: 0.4},
+        {line: 1, thick: 2}
     ],
     rolls: [{inner: 52, outer: 134, line: 1, thick: 0.4, length: 29940}],
     pieces: [
