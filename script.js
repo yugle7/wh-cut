@@ -167,7 +167,7 @@ const printPage = document.getElementById('print');
 
 // 1. Редактор
 
-const edgingIcons = ['line', 'dash', 'wave'];
+const edgingIcons = ['dash', 'line', 'wave'];
 const edgingThicks = Array(edgingIcons.length).fill(null);
 
 
