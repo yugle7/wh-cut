@@ -9,7 +9,7 @@ const testTask = {
         {line: 0, thick: 0.4},
         {line: 1, thick: 2}
     ],
-    rolls: [{inner: 52, outer: 134, line: 1, thick: 0.4, length: 29940}],
+    rolls: [{inner: 52, outer: 134, line: 0, thick: 0.4, length: 29940}],
     pieces: [
         {width: 568, height: 80, rotated: true, count: 1, edging: {left: 0, right: 1, up: null, down: null}},
         {width: 384, height: 320, rotated: true, count: 2, edging: {left: null, right: 1, up: 1, down: null}},
@@ -29,7 +29,7 @@ const defaultTask = {
     sheet: {width: 2800, height: 2070, edge: null, depth: 16},
     scraps: [],
     rolls: [],
-    edgings: [{line: 0, thick: 2}, {line: 1, thick: 0.4}],
+    edgings: [{line: 0, thick: 0.4}, {line: 1, thick: 2}],
     pieces: []
 };
 
